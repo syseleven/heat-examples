@@ -1,0 +1,27 @@
+heat_template_version: 2014-10-16 
+
+description: single server resource used by resource groups.
+
+parameters:
+  network_id:
+    type: string
+  server_name:
+    type: string
+
+resources:
+  my_instance:
+    type: OS::Nova::Server
+    properties:
+      image: CirrOS 0.3.2 amd64 
+      flavor: m1.small
+      name: { get_param: server_name }
+      networks:
+        - port: { get_resource: example_port }
+
+  example_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: network_id }
+
+
+

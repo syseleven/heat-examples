@@ -1,0 +1,40 @@
+heat_template_version: 2014-10-16 
+
+#
+# you can start this stack using the following command:
+# 'heat stack-create -f group.yaml grouptest'
+#
+
+description: deploys o group of servers with internal network.
+
+resources:
+  server_group:
+    type: OS::Heat::ResourceGroup
+    depends_on: example_subnet
+    properties:
+      count: 30 
+      resource_def: 
+        type: server.yaml
+        properties:
+          network_id: { get_resource: example_net}
+          server_name: server_%index%
+      
+
+  example_net:
+    type: OS::Neutron::Net
+    properties:
+      name: example-net
+
+  example_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      name: examplae_subnet
+      dns_nameservers:
+        - 37.123.105.116
+        - 37.123.105.117
+      network_id: {get_resource: example_net}
+      ip_version: 4
+      cidr: 10.0.0.0/24
+      allocation_pools:
+      - {start: 10.0.0.10, end: 10.0.0.250}
+        
