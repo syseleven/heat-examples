@@ -10,5 +10,9 @@ This repository provides:
     - ResourceGroups
     - FloatingIPs
     - Router and RouterInterfaces
-    
+
+To work through these examples you need to install OpenStack command line clients as described here:
+
+http://docs.openstack.org/user-guide/content/install_clients.html
+
 
