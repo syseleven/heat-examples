@@ -6,7 +6,7 @@ heat_template_version: 2014-10-16
 #
 
 description: Simple template to deploy a single compute instance
-  wihtout external network (login will be possible through vnc console).
+  without external network (login will be possible through vnc console).
 
 parameters:
  key_name:
