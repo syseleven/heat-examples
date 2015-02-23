@@ -1,0 +1,70 @@
+heat_template_version: 2014-10-16 
+
+description: >
+  elasticsearch template that can be referenced in main template
+
+parameters:
+  key_name:
+    type: string
+    description: Name of keypair to assign to servers
+  server_name: 
+    type: string
+    description: server name which get assigned. 
+  image:
+    type: string
+    description: Name of image to use for servers
+  flavor:
+    type: string
+    description: Flavor to use
+  deploy_key:
+    type: string
+    description: SSH private key required to access bootstrap repository
+  kickstart_repository:
+    type: string
+    description: Git branch to use in config repository
+  kickstart_branch:
+    type: string
+    description: Git branch to use in config repository
+  kickstart_directory:
+    type: string
+    description: directory where my bootstrapping files go 
+  init_script:
+    type: string
+    description: Script to run for node initialization
+  mgm_net:
+    type: string
+    description: network for mgm traffic
+
+
+resources:
+
+  ### Elasticsearch Nodes ###
+  #######################
+  elasticsearch:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: server_name }
+      image: { get_param: image }
+      flavor: { get_param: flavor }
+      config_drive: 'true'
+      key_name: { get_param: key_name }
+      networks:
+        - port: { get_resource: elasticsearch_mgm_port }
+      metadata:
+        stack_name: { get_param: 'OS::stack_name' }
+      user_data_format: RAW  # Leave this in. 
+      user_data:
+        str_replace:
+          template: { get_param: init_script}
+          params:
+            deploy_key: { get_param: deploy_key }
+            kickstart_branch: { get_param: kickstart_branch }
+            kickstart_repository: { get_param: kickstart_repository }
+            kickstart_directory: { get_param: kickstart_directory }
+
+  elasticsearch_mgm_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: mgm_net }
+
+
