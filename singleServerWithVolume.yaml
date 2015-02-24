@@ -1,0 +1,74 @@
+heat_template_version: 2014-10-16
+
+# Start this template using
+# 'heat stack-create -f singleServerWithVolume.yaml'.
+# You need to adjust "key_name" and "floating_network".
+
+description: Simple template to deploy a single compute instance, create a volume and attach this volume.
+
+resources:
+  my_instance:
+    type: OS::Nova::Server
+    properties:
+      config_drive: true
+      name: example-machine
+      key_name: replaceMeWithARealKey 
+      image: Ubuntu 14.04 sys11-cloudimg amd64
+      flavor: m1.small
+      networks:
+        - port: { get_resource: example_port }
+
+# create an empty volume 
+  my_volume:
+   type: OS::Cinder::Volume
+   properties:
+     description: test volume 
+     name: test volume
+     size: 100 
+
+# attach volume to a server
+# note: the property 'mountpoint' is not a 
+# file system target like /mnt, but the 
+# path where the volume can be found as blockdevice,
+# for example :
+# /dev/disk/by-id/virtio-<VolumeId>
+# see here: http://docs.openstack.org/hot-reference/content/OS__Cinder__VolumeAttachment.html
+# we won't use it since it seems useless to me.
+  my_volume_attach:
+    depends_on: [ my_instance, my_volume ]
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      instance_uuid: { get_resource: my_instance }
+      # mountpoint: /mnt/ ## WRONG! this property is not the target.
+      volume_id: { get_resource: my_volume }
+
+  example_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: example_net}
+
+  example_test_floating_ip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network: replaceMeWithAFloatingNetworkID 
+      port_id: { get_resource: example_port }
+
+  example_net:
+    type: OS::Neutron::Net
+    properties: 
+      name: example-test-net
+
+  example_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      name: examplae_example_subnet
+      dns_nameservers:
+        - 37.123.105.116
+        - 37.123.105.117
+      network_id: {get_resource: example_net}
+      ip_version: 4
+      cidr: 10.0.0.0/24
+      allocation_pools:
+      - {start: 10.0.0.10, end: 10.0.0.250}
+
+
