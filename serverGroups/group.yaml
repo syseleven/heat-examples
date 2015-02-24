@@ -12,7 +12,7 @@ resources:
     type: OS::Heat::ResourceGroup
     depends_on: example_subnet
     properties:
-      count: 30 
+      count: 5 
       resource_def: 
         type: server.yaml
         properties:
