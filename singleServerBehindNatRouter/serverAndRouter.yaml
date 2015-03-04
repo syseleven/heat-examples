@@ -1,0 +1,57 @@
+heat_template_version: 2014-10-16
+
+# 2015 j.peschke@syseleven.de 
+
+description: Simple template to deploy a single compute instance with natted network
+parameters:
+  key_name:
+   default: replaceMeWithYourKey
+   type: string
+
+resources:
+  example_instance:
+    type: OS::Nova::Server
+    properties:
+      key_name: { get_param: key_name }
+      image: CirrOS 0.3.2 amd64 
+      flavor: m1.small
+      networks:
+        - port: { get_resource: example_port }
+
+  example_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: example_net}
+
+  example_net:
+    type: OS::Neutron::Net
+    properties: 
+      name: example-test-net
+
+  example_subnet:
+    type: OS::Neutron::Subnet
+    depends_on: example_router
+    properties:
+      name: examplae_example_subnet
+      dns_nameservers:
+        - 10.0.0.1
+        - 37.123.105.117
+      network_id: {get_resource: example_net}
+      ip_version: 4
+      cidr: 10.0.0.0/24
+      gateway_ip : 10.0.0.1
+      allocation_pools:
+      - {start: 10.0.0.10, end: 10.0.0.250}
+
+  example_router:
+    type: OS::Neutron::Router
+    properties:
+      external_gateway_info: {"network": "dc4d2dfb-f8d2-461c-9f16-636edbf99a0f", "enable_snat": true}
+      name: example_natpoint
+
+  router_subnet_bridge:
+    type: OS::Neutron::RouterInterface
+    depends_on:  example_subnet 
+    properties:
+      router_id: { get_resource: example_router }
+      subnet: { get_resource: example_subnet }
