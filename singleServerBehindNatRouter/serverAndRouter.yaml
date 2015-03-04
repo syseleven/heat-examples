@@ -39,6 +39,7 @@ resources:
       network_id: {get_resource: example_net}
       ip_version: 4
       cidr: 10.0.0.0/24
+      # optional
       gateway_ip : 10.0.0.1
       allocation_pools:
       - {start: 10.0.0.10, end: 10.0.0.250}
