@@ -2,7 +2,7 @@ heat_template_version: 2014-10-16
 
 #
 # you can deploy this template using the following command:
-# 'heat stack-create -f example.yaml -P key_name=<my_key> -P public_network_id=<networkID> <stack_name>'
+# 'heat stack-create -f example.yaml -P key_name=<my_key> -P public_network_id=<networkID> ip_whitelist=<yourOfficeIP> <stack_name>'
 #
 # after successful stack creation you can login with 
 # ssh -l ec2-user <externalIP> 
@@ -26,6 +26,14 @@ resources:
       description: allow incoming traffic from anywhere.
       name: allow incoming traffic, tcp
       rules: [{direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 80, port_range_max: 80, protocol: tcp} ]
+
+  allow_static_ip:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: allow incoming traffic only from specified IP.
+      name: allow incoming traffic, tcp
+      rules: [{direction: ingress, remote_ip_prefix: {get_param: ip_whitelist}, port_range_min: 22, port_range_max: 22, protocol: tcp} ]
+
 
   allow_https:
     type: OS::Neutron::SecurityGroup
