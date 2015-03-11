@@ -178,7 +178,7 @@ resources:
   loadbalancer:
     type: OS::Nova::Server
     properties:
-      name: shopsetup-loadbalancer
+      name: loadbalancer
       image: { get_param: image }
       flavor: { get_param: flavor_loadbalancer }
       config_drive: 'true'
@@ -273,7 +273,7 @@ resources:
         properties:
           app_net: { get_resource: app_net }
           mgm_net: { get_resource: mgm_net }
-          server_name: app_%index%
+          server_name: app%index%
           key_name: { get_param: key_name }
           image: { get_param: image }
           flavor: {get_param: flavor_app }
@@ -294,7 +294,7 @@ resources:
         type: elasticsearch.yaml
         properties:
           mgm_net: { get_resource: mgm_net }
-          server_name: elasticsearch_%index%
+          server_name: elasticsearch%index%
           key_name: { get_param: key_name }
           image: { get_param: image }
           flavor: {get_param: flavor_elasticsearch }
@@ -315,7 +315,7 @@ resources:
         type: dbslaves.yaml
         properties:
           mgm_net: { get_resource: mgm_net }
-          server_name: dbs_%index%
+          server_name: dbslave%index%
           key_name: { get_param: key_name }
           image: { get_param: image }
           flavor: {get_param: flavor_dbslaves }
@@ -330,7 +330,7 @@ resources:
   dbserver:
     type: OS::Nova::Server
     properties:
-      name: shopsetup-dbserver
+      name: dbmaster
       image: { get_param: image }
       flavor: { get_param: flavor_dbserver }
       config_drive: 'true'
