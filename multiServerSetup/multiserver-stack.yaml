@@ -224,6 +224,7 @@ resources:
     depends_on: mgm_net
     type: OS::Neutron::Port
     properties:
+      security_groups: [ {get_resource: allow_http}, {get_resource: allow_https}]
       network_id: { get_resource: mgm_net }
 
   loadbalancer_app_port:
@@ -268,6 +269,7 @@ resources:
     depends_on: mgm_net
     type: OS::Neutron::Port
     properties:
+      security_groups: [ {get_resource: allow_ssh} ]
       network_id: { get_resource: mgm_net }
 
   adminserver_app_port:
