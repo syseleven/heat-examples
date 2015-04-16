@@ -17,7 +17,7 @@ resources:
     type: OS::Nova::Server
     properties:
       key_name: { get_param: key_name }
-      image: CirrOS 0.3.2 amd64 
+      image: CirrOS 0.3.2 amd64
       flavor: m1.tiny
       networks:
         - port: { get_resource: example_port }

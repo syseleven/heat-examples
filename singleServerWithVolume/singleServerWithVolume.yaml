@@ -12,7 +12,7 @@ resources:
     properties:
       config_drive: true
       name: example-machine
-      key_name: replaceMeWithARealKey 
+      key_name: replaceMeWithARealKey
       image: Ubuntu 14.04 sys11-cloudimg amd64
       flavor: m1.small
       networks:
@@ -50,7 +50,7 @@ resources:
   example_test_floating_ip:
     type: OS::Neutron::FloatingIP
     properties:
-      floating_network: replaceMeWithAFloatingNetworkID 
+      floating_network: replaceMeWithAFloatingNetworkID
       port_id: { get_resource: example_port }
 
   example_net:
