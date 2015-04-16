@@ -210,7 +210,7 @@ resources:
       metadata:
         stack_name: { get_param: 'OS::stack_name' }
         floating_ip: { get_attr: [ loadbalancer_floating_ip, floating_ip_address ] }
-      user_data_format: RAW  # Leave this in. Otherwise the ssh key specified in key_name won't get deployed. I'll buy you a beer if you tell me why that happens.
+      user_data_format: RAW  # Leave this in. Otherwise the ssh key specified in key_name won't get deployed. 
       user_data:
         str_replace:
           template: { get_param: init_script}
@@ -255,7 +255,7 @@ resources:
       metadata:
         stack_name: { get_param: 'OS::stack_name' }
         floating_ip: { get_attr: [ adminserver_floating_ip, floating_ip_address ] }
-      user_data_format: RAW  # Leave this in. Otherwise the ssh key specified in key_name won't get deployed. I'll buy you a beer if you tell me why that happens.
+      user_data_format: RAW  # Leave this in. Otherwise the ssh key specified in key_name won't get deployed. 
       user_data:
         str_replace:
           template: { get_param: init_script}
@@ -362,7 +362,7 @@ resources:
         - port: { get_resource: dbserver_port }
       metadata:
         stack_name: { get_param: 'OS::stack_name' }
-      user_data_format: RAW  # Leave this in. Otherwise the ssh key specified in key_name won't get deployed. I'll buy you a beer if you tell me why that happens.
+      user_data_format: RAW  # Leave this in. Otherwise the ssh key specified in key_name won't get deployed. 
       user_data:
         str_replace:
           template: { get_param: init_script}
