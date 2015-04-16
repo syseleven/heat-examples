@@ -6,7 +6,7 @@ description: >
   start a distributed setup with loadbalancer, appserver, 
   elasticsearch servers, dbmaster an dbslaves.
   You can start this heat stack with 
-  ''heat stack-create -f multiserver-stack.yaml -e multiserver-env.yaml -P key_name=<yourRealKeyName> -P deploy_key="$(cat ~/.ssh/cloud_deploykey)" <myFancyStackName>''
+  'heat stack-create -f multiserver-stack.yaml -e multiserver-env.yaml -P key_name=<yourRealKeyName> -P deploy_key="$(cat ~/.ssh/cloud_deploykey)" <myFancyStackName>'
   This example has two private networks and two public/floating IPs (one for your jumphost
   one for the loadbalancer).
 
@@ -393,7 +393,7 @@ resources:
       volume_id: { get_resource: dbserver_volume }
 
 outputs:
-  shopsetup_loadbalancer_public_ip:
+  loadbalancer_public_ip:
     description: Floating IP address of loadbalancer in public network
     value: { get_attr: [ loadbalancer_floating_ip, floating_ip_address ] }
 

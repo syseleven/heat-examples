@@ -42,7 +42,7 @@ parameters:
 resources:
   ### Appserver Node ###
   #######################
-  shopsetup_appserver:
+  appserver:
     type: OS::Nova::Server
     properties:
       name: { get_param: server_name }
