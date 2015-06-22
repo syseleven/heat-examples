@@ -1,0 +1,93 @@
+heat_template_version: 2014-10-16
+
+#
+# you can deploy this template using the following command:
+# 'heat stack-create -f userExample.yaml -P public_key="$(cat ~/.ssh/id_rsa.pub)"  <stack_name>'
+#
+# after successful stack creation you can login with 
+# ssh -l syseleven <externalIP> 
+# 
+
+description: Simple template to deploy a single compute instance
+  with external network (login will be possible via SSH).
+  It deploys a single unix user and ssh-public-keys.
+  To be able to access the machine a security group gets deployed to allow ssh.
+  Keep in mind, that the default 'ubuntu' or 'ec2-user' won't get deployed.
+
+parameters:
+ public_key:
+  type: string
+ public_network_id:
+  type: string
+  default: dc4d2dfb-f8d2-461c-9f16-636edbf99a0f
+
+ 
+resources:
+  allow_ssh:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: allow incoming traffic from anywhere.
+      name: allow incoming ssh traffic
+      rules: [{direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 22, port_range_max: 22, protocol: tcp} ]
+
+  unixmachine:
+    type: OS::Nova::Server
+    properties:
+      name: unixmachine 
+      user_data_format: RAW
+      user_data: { get_resource: cloud-init-config }    
+      image: Ubuntu 14.04 sys11-cloudimg amd64
+      flavor: m1.tiny
+      networks:
+        - port: { get_resource: example_port }
+
+  cloud-init-config:
+   # cloud init demo resource
+   type: OS::Heat::CloudConfig
+   properties:
+     cloud_config:
+       users:
+           - name: syseleven
+             gecos: SysEleven service user 
+             passwd: '!$6$uW4Kz$p0Zw/DlY98E34qA8DtENlRnjY55ppZEEkgq82MCHxkf4FNlZtiT.j9MDrnd1JTb86Vg6TSgd8rIqNV8CR3z6H/'
+             lock-passwd: false
+             sudo: ALL=(ALL) NOPASSWD:ALL
+             ssh-authorized-keys:
+               - {get_param: public_key }
+               - 'ssh-rsa AA .. example_key_two'
+
+           - name: exampleuser_two
+             gecos: Example User
+             lock-passwd: false
+             ssh-authorized-keys:
+               - 'ssh-dss AAAAB3NzaC1kc3M ... '
+
+  example_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: example_net}
+      security_groups: [ get_resource: allow_ssh ]
+
+  example_net:
+    type: OS::Neutron::Net
+    properties: 
+      name: example-net
+
+  example_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      name: example_subnet
+      dns_nameservers:
+        - 37.123.105.116
+        - 37.123.105.117
+      network_id: {get_resource: example_net}
+      ip_version: 4
+      cidr: 10.0.0.0/24
+      allocation_pools:
+      - {start: 10.0.0.10, end: 10.0.0.250}
+
+  example_floating_ip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network: { get_param: public_network_id }
+      port_id: { get_resource: example_port }
