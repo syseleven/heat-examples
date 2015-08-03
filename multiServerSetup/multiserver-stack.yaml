@@ -128,21 +128,21 @@ resources:
     properties:
       description: allow incoming https traffic from anywhere.
       name: https incoming
-      rules: [{direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 443, port_range_max: 443, protocol: tcp} ]
+      rules: [{direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 443, port_range_max: 443, protocol: tcp}, {direction: ingress, protocol: icmp} ]
 
   allow_http:
     type: OS::Neutron::SecurityGroup
     properties:
       description: allow incoming http traffic from anywhere.
       name: http incoming
-      rules: [{direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 80, port_range_max: 80, protocol: tcp} ]
+      rules: [{direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 80, port_range_max: 80, protocol: tcp}, {direction: ingress, protocol: icmp} ]
 
-  allow_ssh:
+  allow_admintraffic:
     type: OS::Neutron::SecurityGroup
     properties:
-      description: allow incoming ssh traffic from anywhere.
+      description: allow incoming admin traffic from anywhere.
       name: ssh incoming
-      rules: [{direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 22, port_range_max: 22, protocol: tcp} ]
+      rules: [ {direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 22, port_range_max: 22, protocol: tcp} , {direction: ingress, protocol: icmp} ]
 
   mgm_router:
     type: OS::Neutron::Router
@@ -269,7 +269,7 @@ resources:
     depends_on: mgm_net
     type: OS::Neutron::Port
     properties:
-      security_groups: [ {get_resource: allow_ssh} ]
+      security_groups: [ {get_resource: allow_admintraffic} ]
       network_id: { get_resource: mgm_net }
 
   adminserver_app_port:
