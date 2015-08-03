@@ -2,7 +2,7 @@ heat_template_version: 2014-10-16
 
 #
 # you can deploy this template using the following command:
-# 'heat stack-create -f example.yaml -P key_name=<my_key> -P public_network_id=<networkID> <stack_name>'
+# 'heat stack-create -f example.yaml -P key_name=<my_key> <stack_name>'
 #
 # after successful stack creation you can login with 
 # ssh -l ec2-user <externalIP> 
@@ -16,9 +16,17 @@ parameters:
   type: string
  public_network_id:
   type: string
+  default: dc4d2dfb-f8d2-461c-9f16-636edbf99a0f
 
 
 resources:
+  allow_admintraffic:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: allow incoming SSH + ICMP from anywhere.
+      name: allow admintraffic, tcp
+      rules: [ {direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 22, port_range_max: 22, protocol: tcp} , {direction: ingress, protocol: icmp} ]
+
   my_instance:
     type: OS::Nova::Server
     properties:
