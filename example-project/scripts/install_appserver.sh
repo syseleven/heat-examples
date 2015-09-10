@@ -19,15 +19,12 @@ rm /etc/nginx/sites-enabled/default
 mkdir -p /var/www/nginx/html
 echo  '<?php phpinfo(); ?>' > /var/www/nginx/html/info.php
 
-sessionstore=$(avahi-browse _session._tcp --resolve -p -t  |awk -F';'  '/^=;eth0;IPv4/{print $8}' | sort -n)
-
-sed -i 's/session.save_handler = files/session.save_handler = memcached/g' /etc/php5/fpm/php.ini
-sed -i "s#;session.save_path = \"/var/lib/php5\"#session.save_path = 'tcp://$sessionstore:11211'#g" /etc/php5/fpm/php.ini
-
 
 # nginx + fpm version:
 service php5-fpm restart
 service nginx restart
 service avahi-daemon restart
+
+echo "* * * * * root /usr/local/sbin/update_sessionconfig >> /var/log/lb.log" > /etc/cron.d/update_sessionstore
 
 logger "finished appserver installation"

@@ -59,6 +59,12 @@ resources:
          -  content: { get_file: config/avahi-http.service }
             permissions: 0644
             path: /etc/avahi/services/avahi-http.service
+         -  content: { get_file: data/index.php }
+            permissions: 0644
+            path: /var/www/nginx/html/index.php
+         -  content: { get_file: scripts/update_sessionconfig }
+            permissions: 0700
+            path: /usr/local/sbin/update_sessionconfig
        users:
            - name: syseleven
              gecos:  Workshop user
