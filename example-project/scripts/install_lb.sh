@@ -17,3 +17,6 @@ service memcached restart
 service nginx restart
 
 /usr/local/sbin/update_lb
+
+echo "* * * * * root /usr/local/sbin/update_lb >> /var/log/lb.log" > /etc/cron.d/lbupdate
+

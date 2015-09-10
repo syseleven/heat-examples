@@ -1,0 +1,15 @@
+#!/bin/bash
+upstream_ips=$(avahi-browse _http._tcp --resolve -p -t |awk -F';'  '/^=/{print $8}' | sort -n)
+
+sum1=$(md5sum /etc/nginx/upstream.conf)
+
+# generate header:
+echo "upstream syseleven-http {" > /etc/nginx/upstream.conf
+for upstream in $upstream_ips; do  
+echo -e "\tserver ${upstream}:80;" >> /etc/nginx/upstream.conf
+done
+echo "}" >> /etc/nginx/upstream.conf
+
+sum2=$(md5sum /etc/nginx/upstream.conf)
+
+if [[ "$sum1" != "$sum2" ]]; then service nginx restart; fi
