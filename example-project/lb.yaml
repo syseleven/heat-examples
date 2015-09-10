@@ -1,0 +1,87 @@
+heat_template_version: 2014-10-16
+
+parameters:
+  name:
+    type: string
+    default: lbserver
+  syseleven_net:
+    type: string
+  public_network_id:
+    type: string
+    default: dc4d2dfb-f8d2-461c-9f16-636edbf99a0f
+
+resources:
+  allow_ssh:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: allow incoming traffic from anywhere.
+      name: allow incoming traffic, tcp
+      rules: 
+        - {direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 22, port_range_max: 22, protocol: tcp}
+        - direction: ingress
+          protocol: icmp
+
+  allow_webtraffic:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: allow incoming web traffic from anywhere.
+      name: allow incoming web traffic
+      rules: [{direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 80, port_range_max: 80, protocol: tcp}, {direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 443, port_range_max: 443, protocol: tcp} ]
+
+  syseleven_lbserver:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: name }
+      user_data_format: RAW
+      user_data: { get_resource: cloud-init-config }    
+      image: Ubuntu 14.04 sys11-cloudimg amd64
+      flavor: m1.tiny
+      networks:
+        - port: { get_resource: syseleven_port }
+
+  cloud-init-config:
+   # cloud init resource
+   type: OS::Heat::CloudConfig
+   properties:
+     cloud_config:
+       runcmd:
+         - /root/install_lb.sh
+       write_files:
+         -  content: { get_file: scripts/install_lb.sh }
+            permissions: 0755
+            path: /root/install_lb.sh
+         -  content: { get_file: config/nginx_lb.conf }
+            permissions: 0644
+            path: /etc/nginx/nginx_template.conf
+       users:
+           - name: syseleven
+             gecos:  Workshop user
+             lock-passwd: false
+             sudo: ALL=(ALL) NOPASSWD:ALL
+             shell: /bin/bash
+             ssh-authorized-keys:
+               - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBHhKPUBIv4EhNIDrXYsoBPNTCzMXtIkCcqEiXjx1AH8WNRHYN7blzV+qv9SJOzfi9OcfQ3o+qR2YwYT+z2464crW9xZHrtEerVDWMeCs3ZsnGxiFM40xpKhWHuTZNv+Y+07t8CHAdfGlSM3st2NrdwB2qWBTvoXTuhc9/4UeEM5rsLFDFIb84P4VXiMLooo8ovDWZ4I1A1+cmbiG9PDPIXn2I3LLvXfSn7rbTal5dJixZAfue1sKCwoFxzEIjdD2MRfkkwcYRbm2wyU2Gf3XTE4OOl/AIoCvgnp2+zFH6rdVme+lsX32ddS2dayoU50VpMz1jWq+fR5bnGyvYnJux janpeschke@ws171.sys11.net'
+               - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDoCIHqysYMVce0FMIUk0x03+XHUvyvAeOUd5ZwA1dmh7hYZ3Xzi6ZjXqFyH+EKM8fsZQl3oiL8XsZMbLi9sgq718Z+EOm2SHAkphqjs24bcNEzyCyl04K5rYyGkRStGaoBBbLFKsRIOF+DDC2+dZ1xAtdOlb4CG/cPKSptUYnQPRJbwwmoGfixACKy6ylYYs4zrAmbAdOo/vKGC5pTZbRDznyEltObiMTtDOm7LL9p23nwVEwiDMAtyy8A7/KGq6RR9LFOz2b711WgtQGvmqJ1mdvC5YzToA1IcobFR2MUBaPYT6NC9DXx60C8CTeGkrFWnGroYEWpHNK/Uj/gdtUmd1/clM+ekknpvXtLFUVIRWuSA6JhSAorvIFMIcqvoJyjpblF7jbHbDjk9WfpEmnvoDuokk1mYPKRBvcC75VvF/A4qcVxLJW0D0+I0NjGFixzoUL5VnIDHbIBinwkMZjsC1v7KDPCMePj2GebpUyM/mXJPn6Od9XnHX3UzLD/t8yi7dL16FnSq3CvmlcNIxEHnSCJSmUUOhu0k1OcsfBLxoOC5MACqga91hV6k16cPHUBfSJo/1wqful3Lek4JlZDQgpWOAxR0X8i/2C0K6JRF+ySvZHcN1bUzFYNrKFJQkoTu6kUQmSD+PMdT1vd+x+pv41ZeRGd0MX5bNhEyrppxw== sfunke@sfunke-sys11.local'
+
+  syseleven_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: syseleven_net}
+      security_groups: [ {get_resource: allow_ssh}, {get_resource: allow_webtraffic}, default ]
+
+  syseleven_floating_ip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network: { get_param: public_network_id }
+      port_id: { get_resource: syseleven_port }
+
+  syseleven_ip_association:
+    type: OS::Neutron::FloatingIPAssociation
+    properties:
+      floatingip_id: {get_resource: syseleven_floating_ip }
+      port_id: {get_resource: syseleven_port}
+
+outputs:
+  lb_ip:
+    description: loadbalancer floating ip
+    value: { get_resource: syseleven_floating_ip }
