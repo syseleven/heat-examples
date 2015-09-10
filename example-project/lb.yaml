@@ -56,6 +56,9 @@ resources:
          -  content: { get_file: scripts/update_lb }
             permissions: 0700
             path: /usr/local/sbin/update_lb
+         -  content: { get_file: config/avahi-session.service }
+            permissions: 0644
+            path: /etc/avahi/services/avahi-session.service
        users:
            - name: syseleven
              gecos:  Workshop user

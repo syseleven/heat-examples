@@ -1,5 +1,5 @@
 #!/bin/bash
-upstream_ips=$(avahi-browse _http._tcp --resolve -p -t |awk -F';'  '/^=/{print $8}' | sort -n)
+upstream_ips=$(avahi-browse _http._tcp --resolve -p -t |awk -F';'  '/^=;eth0;IPv4/{print $8}' | sort -n)
 
 sum1=$(md5sum /etc/nginx/upstream.conf)
 

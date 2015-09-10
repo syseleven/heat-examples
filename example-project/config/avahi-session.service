@@ -1,0 +1,9 @@
+<?xml version="1.0" standalone='no'?><!--*-nxml-*-->
+ <!DOCTYPE service-group SYSTEM "avahi-service.dtd">
+  <service-group>
+   <name replace-wildcards="yes">%h SessionStore</name>
+   <service>
+   <type>_session._tcp</type>
+  <port>11211</port>
+ </service>
+</service-group>

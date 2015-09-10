@@ -47,6 +47,9 @@ resources:
          -  content: { get_file: scripts/install_dbserver.sh }
             permissions: 0755
             path: /root/install_dbserver.sh
+         -  content: { get_file: config/avahi-db.service }
+            permissions: 0644
+            path: /etc/avahi/services/avahi-db.service
        users:
            - name: syseleven
              gecos: workshop user

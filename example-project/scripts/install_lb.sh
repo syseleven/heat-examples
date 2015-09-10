@@ -15,6 +15,7 @@ sed -i s'/127.0.0.1/0.0.0.0/'g /etc/memcached.conf
 
 service memcached restart
 service nginx restart
+service avahi-daemon restart
 
 /usr/local/sbin/update_lb
 
