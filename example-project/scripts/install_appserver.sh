@@ -22,5 +22,6 @@ echo  '<?php phpinfo(); ?>' > /var/www/nginx/html/info.php
 # nginx + fpm version:
 service php5-fpm restart
 service nginx restart
+service avahi-daemon restart
 
 logger "finished appserver installation"

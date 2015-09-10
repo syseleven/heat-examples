@@ -53,6 +53,9 @@ resources:
          -  content: { get_file: config/nginx_lb.conf }
             permissions: 0644
             path: /etc/nginx/nginx_template.conf
+         -  content: { get_file: scripts/update_lb }
+            permissions: 0700
+            path: /usr/local/sbin/update_lb
        users:
            - name: syseleven
              gecos:  Workshop user
