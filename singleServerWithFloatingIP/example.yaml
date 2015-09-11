@@ -1,66 +1,107 @@
 heat_template_version: 2014-10-16
 
-#
-# you can deploy this template using the following command:
-# 'heat stack-create -f example.yaml -P key_name=<my_key> <stack_name>'
-#
-# after successful stack creation you can login with 
-# ssh -l ec2-user <externalIP> 
-# 
-
-description: Simple template to deploy a single compute instance
-  with external network (login will be possible through vnc console and via SSH).
-
+description: Creates a router + net + subnet + interface + VM
 parameters:
- key_name:
-  type: string
- public_network_id:
-  type: string
-  default: dc4d2dfb-f8d2-461c-9f16-636edbf99a0f
-
+  key_name:
+    type: string
+  public_network_id:
+    type: string
+  image:
+    type: string
+  flavor:
+    type: string
+    default: m1.small
 
 resources:
-  allow_admintraffic:
-    type: OS::Neutron::SecurityGroup
-    properties:
-      description: allow incoming SSH + ICMP from anywhere.
-      name: allow admintraffic, tcp
-      rules: [ {direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 22, port_range_max: 22, protocol: tcp} , {direction: ingress, protocol: icmp} ]
+#  server1_instance:
+#    type: OS::Nova::Server
+#    properties:
+#      key_name: { get_param: key_name }
+#      image: Ubuntu 14.04 sys11-cloudimg amd64
+#      flavor: m1.small
+#      networks:
+#        - port: { get_resource: server1_port }
+#
+#  server1_port:
+#    type: OS::Neutron::Port
+#    properties:
+#      network_id: { get_resource: network}
+#      security_groups: [{ get_resource: server_security_group }]
+#
+#  server1_floating_ip:
+#    type: OS::Neutron::FloatingIP
+#    properties:
+#      floating_network: { get_param: public_network_id }
+#      port_id: { get_resource: server1_port }
 
-  my_instance:
+  server2_instance:
     type: OS::Nova::Server
+    #depends_on: server1_instance
     properties:
       key_name: { get_param: key_name }
-      image: Ubuntu 14.04 sys11-cloudimg amd64
-      flavor: m1.tiny
+      image: { get_param: image }
+      flavor: { get_param: flavor }
       networks:
-        - port: { get_resource: example_port }
+        - port: { get_resource: server2_port }
 
-  example_port:
+  server2_port:
     type: OS::Neutron::Port
     properties:
-      network_id: { get_resource: example_net}
+      network_id: { get_resource: network}
+      security_groups: [{ get_resource: server_security_group }]
 
-  example_net:
-    type: OS::Neutron::Net
-    properties: 
-      name: example-net
-
-  example_subnet:
-    type: OS::Neutron::Subnet
-    properties:
-      name: example_subnet
-      dns_nameservers:
-        - 37.123.105.116
-        - 37.123.105.117
-      network_id: {get_resource: example_net}
-      ip_version: 4
-      cidr: 10.0.0.0/24
-      allocation_pools:
-      - {start: 10.0.0.10, end: 10.0.0.250}
-
-  example_floating_ip:
+  server2_floating_ip:
     type: OS::Neutron::FloatingIP
     properties:
       floating_network: { get_param: public_network_id }
-      port_id: { get_resource: example_port }
+      port_id: { get_resource: server2_port }
+
+  network:
+    type: OS::Neutron::Net
+    properties:
+      name: example-test-net
+
+  subnet:
+    type: OS::Neutron::Subnet
+    depends_on: router
+    properties:
+      name: examplae_subnet
+      dns_nameservers:
+        - 37.123.105.117
+      network_id: {get_resource: network}
+      ip_version: 4
+      cidr: 10.0.0.0/24
+      # optional
+      gateway_ip : 10.0.0.1
+      allocation_pools:
+      - {start: 10.0.0.10, end: 10.0.0.250}
+
+  router:
+    type: OS::Neutron::Router
+    properties:
+      external_gateway_info: {"network": { get_param: public_network_id }}
+      name: example_natpoint
+
+  router_subnet_bridge:
+    type: OS::Neutron::RouterInterface
+    depends_on:  subnet
+    properties:
+      router_id: { get_resource: router }
+      subnet: { get_resource: subnet }
+
+  server_security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: Test group to demonstrate Neutron security group functionality with Heat.
+      name: test-security-group
+      rules: [
+        {remote_ip_prefix: 0.0.0.0/0,
+        protocol: tcp,
+        port_range_min: 22,
+        port_range_max: 22},
+        {remote_ip_prefix: 0.0.0.0/0,
+        protocol: icmp},
+        {remote_ip_prefix: 10.0.0.0/8,
+        protocol: tcp,
+        port_range_min: 5,
+        port_range_max: 10000}]
