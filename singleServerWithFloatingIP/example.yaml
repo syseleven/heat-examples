@@ -1,6 +1,8 @@
 heat_template_version: 2014-10-16
 
-description: Creates a router + net + subnet + interface + VM
+description: >
+    Creates a router + net + subnet + interface + VM
+    WARNING: This assigns 2 floating IPs - 1 for router, 1 for VM
 parameters:
   key_name:
     type: string
