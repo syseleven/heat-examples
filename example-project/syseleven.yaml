@@ -5,12 +5,12 @@ heat_template_version: 2014-10-16
 # 'heat stack-create -f syseleven.yaml <stack_name>'
 #
 # after successful stack creation you can login with 
-# ssh -l <youUser> <loadbalancerIP> 
+# ssh -l <yourUser> <loadbalancerIP> 
 # 
 
-description: Simple template to deploy a single compute instance
-  with external network (login will be possible through vnc console and via SSH).
-  It deploys several workshop user, a puppet agent and openstack-CLI-tools.
+description: A template to deploy and configure a full blown server setup..
+  For demonstration pruposes there are some shell scripts that provision these servers. 
+  In production system we recommend to use tools like puppet, chef or salt for that.
 
 parameters:
   number_appservers: 
