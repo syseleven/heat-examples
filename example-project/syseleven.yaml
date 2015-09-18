@@ -15,7 +15,7 @@ description: A template to deploy and configure a full blown server setup..
 parameters:
   number_appservers: 
     type: string
-    default: 3
+    default: 4
   number_dbservers: 
     type: string
     default: 1

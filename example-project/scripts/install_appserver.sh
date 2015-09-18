@@ -11,7 +11,7 @@ apt-get install -y avahi-daemon avahi-utils haveged git curl screen bc wget
 # install nginx
 apt-get install -y nginx-extras
 ## install php-fpm
-apt-get install -y php5-fpm php5-cli php5-memcached
+apt-get install -y php5-fpm php5-cli php5-memcached php5-pgsql
 
 ln -s /etc/nginx/sites-available/syseleven.conf /etc/nginx/sites-enabled/
 rm /etc/nginx/sites-enabled/default
@@ -25,6 +25,6 @@ service php5-fpm restart
 service nginx restart
 service avahi-daemon restart
 
-echo "* * * * * root /usr/local/sbin/update_sessionconfig >> /var/log/lb.log" > /etc/cron.d/update_sessionstore
+echo "* * * * * root /usr/local/sbin/update_sessionconfig >> /var/log/sessionconfig.log" > /etc/cron.d/update_sessionstore
 
 logger "finished appserver installation"
