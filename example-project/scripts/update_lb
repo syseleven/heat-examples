@@ -1,4 +1,5 @@
 #!/bin/bash
+update_lb(){
 upstream_ips=$(avahi-browse _http._tcp --resolve -p -t |awk -F';'  '/^=;eth0;IPv4/{print $8}' | sort -n)
 
 sum1=$(md5sum /etc/nginx/upstream.conf)
@@ -13,3 +14,6 @@ echo "}" >> /etc/nginx/upstream.conf
 sum2=$(md5sum /etc/nginx/upstream.conf)
 
 if [[ "$sum1" != "$sum2" ]]; then service nginx restart; fi
+}
+
+for i in a b c; do update_lb; sleep 19; done

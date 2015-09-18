@@ -16,12 +16,18 @@ echo "<h1> AnyApp </h1>";
 echo "<br>";
 session_start();
 echo "<br>";
-if (strpos($_SESSION['upstream-servers'], $_SERVER['SERVER_ADDR']) !== false) {
+if (isset($_SESSION['upstream-servers'])) {
+  if (strpos($_SESSION['upstream-servers'], $_SERVER['SERVER_ADDR']) !== false) {
+  } else {
+  	$_SESSION['upstream-servers'] = $_SERVER["SERVER_ADDR"]." ".$_SESSION['upstream-servers'];
+  }
 } else {
-	$_SESSION['upstream-servers'] = $_SERVER["SERVER_ADDR"]." ".$_SESSION['upstream-servers'];
+  	$_SESSION['upstream-servers'] = $_SERVER["SERVER_ADDR"]." ";
 }
-echo "<br>";
-echo "Upstream server list:<br>".$_SESSION['upstream-servers'];
+if (isset($_SESSION['upstream-servers'])) {
+  echo "<br>";
+  echo "Upstream server list:<br>".$_SESSION['upstream-servers'];
+}
 echo "<br>";
 echo "<br>";
 echo "Backend server ".$_SERVER["SERVER_ADDR"];
