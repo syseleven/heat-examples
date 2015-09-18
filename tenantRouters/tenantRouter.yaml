@@ -1,0 +1,44 @@
+# HOT template
+#
+# 2015, j.grassler@syseleven.de
+# 
+# Invocation example: heat stack-create -f tenantRouter.yaml -P public_net_id=379ce1fb-1937-4614-9402-1508b0d32123 tenant_router
+# 
+heat_template_version: 2014-10-16
+
+description: >
+  This heat template creates a router that provides SNAT connectivity to
+  instances without Floating IPs and routes Floating IP addresses to instances
+  with Floating IPs. We recommend creating one of these per public network and
+  tenant, since each router will consume an IP address from its associated
+  public network.
+  
+parameters:
+  public_net_id:
+    type: string
+    default: dc4d2dfb-f8d2-461c-9f16-636edbf99a0f
+    description: ID of external network the router uses for its Internet side interface. The router will consume one of the IP addresses on this network for its own external IP.
+
+resources:
+
+  router:
+    type: OS::Neutron::Router
+    properties:
+      name:
+        list_join:
+          - '_'
+          -
+            - 'router'
+            - { get_param: public_net_id }
+
+      external_gateway_info:
+        network: { get_param: public_net_id }
+        enable_snat: true
+
+outputs:
+  router:
+    description: The created router's UUID.
+    value: { get_resource: router }
+  public_net:
+    description: The public network this router uses for its external interface (UUID).
+    value: { get_param: public_net_id }
