@@ -20,9 +20,9 @@ Navigate to
 --> "Orchestration"
   --> "Stacks"
     --> "Launch Stack"
-Here you can select "Direct Input" as source and press "Next"
+Here you can select "Direct Input" as source and press "Next".
 Fill in any stack name you like and a password (which is necessary but unused this time).
-Then fill in the name of your imported public key and press "Launch"
+Then fill in the name of your imported public key and press "Launch".
 
 After a couple of seconds you should see a new machine spawning under
 --> "Compute"
