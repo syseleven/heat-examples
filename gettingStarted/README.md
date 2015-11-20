@@ -41,10 +41,12 @@ After you changed these credentials, you have to source this file:
 ```source openrc```
 Now you are ready to deploy any template from this repository or any other heat template.
 As a quick test we can list our currently running machines:
-```syselevenstack@kickstart:~$ nova list
+```
+syselevenstack@kickstart:~$ nova list
 +--------------------------------------+----------------+--------+------------+-------------+----------------------------------------+
 | ID                                   | Name           | Status | Task State | Power State | Networks                               |
 +--------------------------------------+----------------+--------+------------+-------------+----------------------------------------+
 | a35fb8ed-3c8f-4cf1-a6d5-7fa1c6c57fcc | kickstart      | ACTIVE | -          | Running     | kickstart-net=10.0.0.11, 77.247.84.214 |
-+--------------------------------------+----------------+--------+------------+-------------+----------------------------------------+```
++--------------------------------------+----------------+--------+------------+-------------+----------------------------------------+
+```
 
