@@ -14,7 +14,7 @@ This can be done under
 and weather import or create a fresh public key. You just have to remeber the given
 key name.
 
-# Launch the heat template
+### Launch the heat template
 
 Navigate to 
 --> Orchestration
@@ -46,6 +46,5 @@ As a quick test we can list our currently running machines:
 | ID                                   | Name           | Status | Task State | Power State | Networks                               |
 +--------------------------------------+----------------+--------+------------+-------------+----------------------------------------+
 | a35fb8ed-3c8f-4cf1-a6d5-7fa1c6c57fcc | kickstart      | ACTIVE | -          | Running     | kickstart-net=10.0.0.11, 77.247.84.214 |
-+--------------------------------------+----------------+--------+------------+-------------+----------------------------------------+
-```
++--------------------------------------+----------------+--------+------------+-------------+----------------------------------------+```
 
