@@ -1,0 +1,152 @@
+heat_template_version: 2014-10-16
+#
+# you can deploy this template using the following command:
+# 'heat stack-create -f kickstart.yaml -P key_name=<my_key> <stack_name>'
+# 
+# or you can just paste it into the web-ui under "orchestration" >> "launch stack"
+#
+# after successful stack creation you can login with 
+# ssh -l syselevenstack <externalIP> 
+# 
+
+description: Simple template to deploy a single compute instance
+  with external network (login will be possible through vnc console and via SSH).
+  It deploys a user named syselevenstack with sudo permissions and the openstack-CLI-tools.
+  This template is prepared to be used with https://dashboard.cloud.syseleven.net
+
+parameters:
+ key_name:
+  type: string
+ public_network_id:
+  type: string
+  default: 02fc43b8-6de5-4e26-8bc7-7e70f0f3ca1a 
+
+resources:
+  allow_ssh:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: allow incoming SSH and ICMP traffic from anywhere.
+      name: allow incoming traffic, tcp port 22 and icmp
+      rules: 
+        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 22, port_range_max: 22, protocol: tcp } 
+        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, protocol: icmp } 
+
+  host:
+    type: OS::Nova::Server
+    properties:
+      name: kickstart
+      user_data_format: RAW
+      user_data: { get_resource: cloud-init-config }    
+      image: Ubuntu-14.04-LTS from cloud-images.ubuntu.com 
+      key_name: {get_param: key_name}
+      flavor: m1.micro
+      networks:
+        - port: { get_resource: port }
+
+  cloud-init-config:
+   # cloud init demo resource
+   type: OS::Heat::CloudConfig
+   properties:
+     cloud_config:
+       users:
+           - name: syseleven
+             gecos: SysEleven service user 
+             passwd: $6$uW4KAKIz$p0Zw/DlY98E34qA8DtENlRnjY55ppZEEkgq82MCHxkf4FNlZtiT.j9MDrnd1JTb86Vg6TSgd8rIqNV8CR3z6H/
+             lock-passwd: false
+             sudo: ALL=(ALL) NOPASSWD:ALL
+             shell: /bin/bash
+             ssh-authorized-keys:
+               - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBHhKPUBIv4EhNIDrXYsoBPNTCzMXtIkCcqEiXjx1AH8WNRHYN7blzV+qv9SJOzfi9OcfQ3o+qR2YwYT+z2464crW9xZHrtEerVDWMeCs3ZsnGxiFM40xpKhWHuTZNv+Y+07t8CHAdfGlSM3st2NrdwB2qWBTvoXTuhc9/4UeEM5rsLFDFIb84P4VXiMLooo8ovDWZ4I1A1+cmbiG9PDPIXn2I3LLvXfSn7rbTal5dJixZAfue1sKCwoFxzEIjdD2MRfkkwcYRbm2wyU2Gf3XTE4OOl/AIoCvgnp2+zFH6rdVme+lsX32ddS2dayoU50VpMz1jWq+fR5bnGyvYnJux janpeschke@ws171.sys11.net'
+           - name: syselevenstack
+             gecos: SysEleven Stack user
+             sudo: ALL=(ALL) NOPASSWD:ALL
+             shell: /bin/bash
+
+       write_files:
+         -  content: |
+              #!/usr/bin/env bash
+              # wait for valid network
+              until ping -c 1 syseleven.de > /dev/null; do sleep 2; done
+              # wait for a valid user
+              until id syselevenstack > /dev/null; do sleep 2; done
+              mkdir /home/syselevenstack/.ssh
+              curl -s http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key > /home/syselevenstack/.ssh/authorized_keys
+              chown -R syselevenstack: /home/syselevenstack
+            path: /root/inject_userkey
+            permissions: 0700
+         -  content: | 
+              # replace "demo_tenant", "demo_password" and "demo_user" by your corresponding credentials
+              export OS_AUTH_URL=https://keystone.cloud.syseleven.net:5000
+              export OS_TENANT_NAME="demo_tenant"
+              unset OS_PROJECT_ID
+              unset OS_PROJECT_NAME
+              unset OS_USER_DOMAIN_NAME
+              export OS_USERNAME="demo_user"
+              export OS_PASSWORD="demo_password"
+              export OS_REGION_NAME="RegionOne"
+              if [ -z "$OS_REGION_NAME" ]; then unset OS_REGION_NAME; fi
+            path: /etc/skel/openrc
+            owner: root
+            permissions: 0600
+       runcmd:
+         - /root/inject_userkey
+       # we need an additional repo for newer openstack CLI clients that support the openstack kilo API
+       apt_preserve_sources_list: true
+       apt_sources:
+         - source: deb http://ubuntu-cloud.archive.canonical.com/ubuntu trusty-updates/kilo main
+           keyid: 5EDB1B62EC4926EA
+       packages:
+         - git
+         - wget
+         - unzip
+         - screen
+         - python-cinderclient
+         - python-glanceclient
+         - python-novaclient
+         - python-keystoneclient
+         - python-neutronclient
+         - python-heatclient
+         - python-openstackclient
+             
+  port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: net}
+      security_groups: [ get_resource: allow_ssh ]
+
+  net:
+    type: OS::Neutron::Net
+    properties: 
+      name: kickstart-net
+
+  subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      name: kickstart-subnet
+      dns_nameservers:
+        - 37.123.105.116
+        - 37.123.105.117
+      network_id: {get_resource: net}
+      ip_version: 4
+      cidr: 10.0.0.0/24
+      allocation_pools:
+      - {start: 10.0.0.10, end: 10.0.0.250}
+
+  router:
+    type: OS::Neutron::Router
+    properties:
+      external_gateway_info: {"network": { get_param: public_network_id }}
+      name: kickstart-router
+
+  router_subnet_bridge:
+    type: OS::Neutron::RouterInterface
+    depends_on: subnet
+    properties:
+      router_id: { get_resource: router }
+      subnet: { get_resource: subnet }
+
+  floating_ip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network: { get_param: public_network_id }
+      port_id: { get_resource: port }
