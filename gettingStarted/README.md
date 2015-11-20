@@ -17,30 +17,34 @@ key name.
 ### Launch the heat template
 
 Navigate to 
---> Orchestration
-  --> Stacks
-    --> Launch Stack
+--> "Orchestration"
+  --> "Stacks"
+    --> "Launch Stack"
 Here you can select "Direct Input" as source and press "Next"
 Fill in any stack name you like and a password (which is necessary but unused this time).
 Then fill in the name of your imported public key and press "Launch"
 
 After a couple of seconds you should see a new machine spawning under
---> Compute
- --> Instances
+--> "Compute"
+ --> "Instances"
 Copy the IP address from "Floating IPs" and you should be ready to login via SSH.
 
 ```ssh syselevenstack@77.247.XX.XX```
 
 The home directory has a prepared "openrc" file, which allows you to work with the 
 openstack endpoints:
+
 ```syselevenstack@kickstart:~$ ls
 openrc```
 
 Within this openrc file you just need to adjust tenant name, user name and user password.
 After you changed these credentials, you have to source this file:
+
 ```source openrc```
+
 Now you are ready to deploy any template from this repository or any other heat template.
 As a quick test we can list our currently running machines:
+
 ```
 syselevenstack@kickstart:~$ nova list
 +--------------------------------------+----------------+--------+------------+-------------+----------------------------------------+
