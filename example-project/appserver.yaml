@@ -32,7 +32,7 @@ resources:
       user_data_format: RAW
       user_data: { get_resource: cloud-init-config }    
       image: Ubuntu 14.04 sys11-cloudimg amd64 
-      flavor: m1.tiny
+      flavor: m1.micro
       networks:
         - port: { get_resource: syseleven_port }
 
