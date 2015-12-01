@@ -81,12 +81,6 @@ resources:
       floating_network: { get_param: public_network_id }
       port_id: { get_resource: syseleven_port }
 
-  syseleven_ip_association:
-    type: OS::Neutron::FloatingIPAssociation
-    properties:
-      floatingip_id: {get_resource: syseleven_floating_ip }
-      port_id: {get_resource: syseleven_port}
-
 outputs:
   lb_ip:
     description: loadbalancer floating ip
