@@ -13,7 +13,7 @@ echo "}" >> /etc/nginx/upstream.conf
 
 sum2=$(md5sum /etc/nginx/upstream.conf)
 
-if [[ "$sum1" != "$sum2" ]]; then service nginx restart; fi
+if [[ "$sum1" != "$sum2" ]]; then service nginx restart; service memcached restart; fi
 }
 
 for i in a b c; do update_lb; sleep 19; done
