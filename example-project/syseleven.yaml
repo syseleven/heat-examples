@@ -21,7 +21,7 @@ parameters:
     default: 1
   public_network_id:
     type: string
-    default: dc4d2dfb-f8d2-461c-9f16-636edbf99a0f
+    default: 4c23774c-395b-49d0-b8e1-347e886fa9bf 
 
 resources:
   syseleven_net:
