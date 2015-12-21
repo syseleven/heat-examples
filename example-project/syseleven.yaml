@@ -8,7 +8,7 @@ heat_template_version: 2014-10-16
 # ssh -l <yourUser> <loadbalancerIP> 
 # 
 
-description: A template to deploy and configure a full blown server setup..
+description: A template to deploy and configure a full blown server setup.
   For demonstration pruposes there are some shell scripts that provision these servers. 
   In production system we recommend to use tools like puppet, chef or salt for that.
 
@@ -49,7 +49,7 @@ resources:
 
   router_subnet_connect:
     type: OS::Neutron::RouterInterface
-    depends_on: [ syseleven_subnet, syseleven_router ]
+    depends_on: [ syseleven_subnet, syseleven_router, syseleven_net ]
     properties:
       router_id: { get_resource: syseleven_router }
       subnet: { get_resource: syseleven_subnet }
@@ -58,7 +58,7 @@ resources:
   #######################
   lb_group:
     type: OS::Heat::ResourceGroup
-    depends_on: [ syseleven_net, syseleven_subnet ]
+    depends_on: [ syseleven_net, syseleven_subnet, router_subnet_connect ]
     properties:
       count: 1 
       resource_def: 
