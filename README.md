@@ -26,7 +26,7 @@ This repository provides:
 	instance. Volumes are recommended if you work with databases or any
 	content you want to use longer than your VMs life cycle.
 
-The example "multiServerSetup" combines theses examples in one setup. Here you can see that 
+The "example-project" combines theses examples in one setup. Here you can see that 
 resource dependencies play an important role.
 
 To work through these examples you need to install OpenStack command line clients as described here:
