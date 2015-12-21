@@ -4,14 +4,16 @@ heat_template_version: 2014-10-16
 # You have to prepare two parameters before you can start this stack:
 # 1. a public network id. 
 # 2. a reserved, but not assigned ip address from this net.
-# you can deploy this template using the following command:
 #
 # you can get a list of Network-IDs with the following command:
 # 'neutron net-list'
 # you get a list of floating IPs with this command:
 # 'neutron floatingip-list'
+# if no IP is already reserved for your project, you can do so using this command:
+# 'neutron floatingip-create <networkNameOrID>'
 #
-# 'heat stack-create -f example.yaml -P key_name=<my_key> -P public_network_id=<networkID> -P fixed_ip=<ipID> <stack_name>'
+# you can deploy this template using the following command:
+# 'heat stack-create -f example.yaml -P key_name=<my_key> -P fixed_ip=<ipID> -P rpublic_network_id=<sameNetworkAsReserveddIP> <stack_name>'
 #
 # after successful stack creation you can login with 
 # ssh -l ec2-user <externalIP> 
@@ -25,11 +27,10 @@ description: Template to deploy a single compute instance
 parameters:
  key_name:
   type: string
- public_network_id:
-  type: string
  fixed_ip:
   type: string
-
+ public_network_id:
+  type: string
 
 resources:
   my_instance:
@@ -37,14 +38,25 @@ resources:
     properties:
       key_name: { get_param: key_name }
       image: Ubuntu 14.04 sys11-cloudimg amd64
-      flavor: m1.tiny
+      flavor: m1.small
       networks:
         - port: { get_resource: example_port }
+
+  allow_ssh:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: allow incoming admin traffic from anywhere.
+      name: allow incoming
+      rules: 
+        - {direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 22, port_range_max: 22, protocol: tcp}
+        - direction: ingress
+          protocol: icmp
 
   example_port:
     type: OS::Neutron::Port
     properties:
       network_id: { get_resource: example_net}
+      security_groups: [ {get_resource: allow_ssh}, default ]
 
   example_net:
     type: OS::Neutron::Net
@@ -64,15 +76,23 @@ resources:
       allocation_pools:
       - {start: 10.0.0.10, end: 10.0.0.250}
 
-#  example_floating_ip:
-#    type: OS::Neutron::FloatingIP
-#    properties:
-#      floating_network: { get_param: public_network_id }
-#      port_id: { get_resource: example_port }
+  example_router:
+    type: OS::Neutron::Router
+    properties:
+      external_gateway_info: {"network": { get_param: public_network_id }, "enable_snat": true}
+      name: example_natpoint
+
+  router_subnet_bridge:
+    type: OS::Neutron::RouterInterface
+    depends_on:  example_subnet 
+    properties:
+      router_id: { get_resource: example_router }
+      subnet: { get_resource: example_subnet }
 
   associate_my_ip:
     type: OS::Nova::FloatingIPAssociation
-    depends_on: my_instance
+    depends_on: [ my_instance, router_subnet_bridge ]
     properties:
       floating_ip: { get_param: fixed_ip }
       server_id: { get_resource: my_instance }
+
