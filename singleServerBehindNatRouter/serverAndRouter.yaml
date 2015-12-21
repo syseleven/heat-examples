@@ -1,11 +1,12 @@
 heat_template_version: 2014-10-16
 
+# you can start this template using the following command:
+# 'heat stack-create -f serverAndRouter.yaml -P key_name=<yourPubkeyName> <stackName>'
 # 2015 j.peschke@syseleven.de 
 
 description: Simple template to deploy a single compute instance with natted network
 parameters:
   key_name:
-   default: replaceMeWithYourKey
    type: string
 
 resources:
@@ -13,7 +14,7 @@ resources:
     type: OS::Nova::Server
     properties:
       key_name: { get_param: key_name }
-      image: CirrOS 0.3.2 amd64 
+      image: CirrOS 0.3.4 amd64 
       flavor: m1.small
       networks:
         - port: { get_resource: example_port }
@@ -39,15 +40,13 @@ resources:
       network_id: {get_resource: example_net}
       ip_version: 4
       cidr: 10.0.0.0/24
-      # optional
-      gateway_ip : 10.0.0.1
       allocation_pools:
       - {start: 10.0.0.10, end: 10.0.0.250}
 
   example_router:
     type: OS::Neutron::Router
     properties:
-      external_gateway_info: {"network": "dc4d2dfb-f8d2-461c-9f16-636edbf99a0f", "enable_snat": true}
+      external_gateway_info: {"network": "b68b2797-fe8d-4a4d-b40a-780ddb505909", "enable_snat": true}
       name: example_natpoint
 
   router_subnet_bridge:
