@@ -2,7 +2,7 @@ heat_template_version: 2014-10-16
 
 #
 # you can deploy this template using the following command:
-# 'heat stack-create -f example.yaml -P key_name=<my_key> -P public_network_id=<networkID> -P ip_whitelist=<yourOfficeIP> <stack_name>'
+# 'heat stack-create -f singleMachineDevEnv.yaml -P key_name=<my_key> -P public_network_id=<networkID> -P ip_whitelist=<yourOfficeIP> <stack_name>'
 #
 # after successful stack creation you can login with 
 # ssh -l ec2-user <externalIP> 
@@ -35,7 +35,7 @@ resources:
     properties:
       key_name: { get_param: key_name }
       image: Ubuntu 14.04 sys11-cloudimg amd64
-      flavor: m1.tiny
+      flavor: m1.micro
       networks:
         - port: { get_resource: example_port }
 
@@ -62,6 +62,18 @@ resources:
       cidr: 10.0.0.0/24
       allocation_pools:
       - {start: 10.0.0.10, end: 10.0.0.250}
+
+  example_router:
+    type: OS::Neutron::Router
+    properties:
+      external_gateway_info: {"network": { get_param: public_network_id }, "enable_snat": true}
+
+  router_subnet_connect:
+    type: OS::Neutron::RouterInterface
+    depends_on: [ example_subnet, example_router ]
+    properties:
+      router_id: { get_resource: example_router }
+      subnet: { get_resource: example_subnet }
 
   example_floating_ip:
     type: OS::Neutron::FloatingIP

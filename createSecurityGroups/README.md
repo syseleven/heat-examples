@@ -1,6 +1,6 @@
 # Maintain Security Groups with Heat
 
-These templates show some use cases where security groups are maintained with heat. These use casess cover the following scenarios:
+These templates show some use cases where security groups are maintained with heat. These use cases cover the following scenarios:
 
 1. A development environment, only accessible from your office IP (range).
 Template: singleMachineDevEnv.yaml
