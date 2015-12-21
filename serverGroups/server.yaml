@@ -12,7 +12,7 @@ resources:
   my_instance:
     type: OS::Nova::Server
     properties:
-      image: CirrOS 0.3.2 amd64 
+      image: CirrOS 0.3.4 amd64 
       flavor: m1.small
       name: { get_param: server_name }
       networks:
