@@ -10,53 +10,32 @@ parameters:
     type: string
   image:
     type: string
+    default: Ubuntu 14.04 sys11-cloudimg amd64 
   flavor:
     type: string
     default: m1.small
 
 resources:
-#  server1_instance:
-#    type: OS::Nova::Server
-#    properties:
-#      key_name: { get_param: key_name }
-#      image: Ubuntu 14.04 sys11-cloudimg amd64
-#      flavor: m1.small
-#      networks:
-#        - port: { get_resource: server1_port }
-#
-#  server1_port:
-#    type: OS::Neutron::Port
-#    properties:
-#      network_id: { get_resource: network}
-#      security_groups: [{ get_resource: server_security_group }]
-#
-#  server1_floating_ip:
-#    type: OS::Neutron::FloatingIP
-#    properties:
-#      floating_network: { get_param: public_network_id }
-#      port_id: { get_resource: server1_port }
-
-  server2_instance:
+  example_instance:
     type: OS::Nova::Server
-    #depends_on: server1_instance
     properties:
       key_name: { get_param: key_name }
       image: { get_param: image }
       flavor: { get_param: flavor }
       networks:
-        - port: { get_resource: server2_port }
+        - port: { get_resource: example_port }
 
-  server2_port:
+  example_port:
     type: OS::Neutron::Port
     properties:
       network_id: { get_resource: network}
       security_groups: [{ get_resource: server_security_group }]
 
-  server2_floating_ip:
+  example_floating_ip:
     type: OS::Neutron::FloatingIP
     properties:
       floating_network: { get_param: public_network_id }
-      port_id: { get_resource: server2_port }
+      port_id: { get_resource: example_port }
 
   network:
     type: OS::Neutron::Net
@@ -73,8 +52,6 @@ resources:
       network_id: {get_resource: network}
       ip_version: 4
       cidr: 10.0.0.0/24
-      # optional
-      gateway_ip : 10.0.0.1
       allocation_pools:
       - {start: 10.0.0.10, end: 10.0.0.250}
 
@@ -94,16 +71,12 @@ resources:
   server_security_group:
     type: OS::Neutron::SecurityGroup
     properties:
-      description: Test group to demonstrate Neutron security group functionality with Heat.
-      name: test-security-group
+      description: Open SSH and Ping traffic.
+      name: single-server-security-group 
       rules: [
         {remote_ip_prefix: 0.0.0.0/0,
         protocol: tcp,
         port_range_min: 22,
         port_range_max: 22},
         {remote_ip_prefix: 0.0.0.0/0,
-        protocol: icmp},
-        {remote_ip_prefix: 10.0.0.0/8,
-        protocol: tcp,
-        port_range_min: 5,
-        port_range_max: 10000}]
+        protocol: icmp}]
