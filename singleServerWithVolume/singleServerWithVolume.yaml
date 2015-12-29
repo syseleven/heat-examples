@@ -1,8 +1,10 @@
 heat_template_version: 2014-10-16
 
 # Start this template using
-# 'heat stack-create -f singleServerWithVolume.yaml'.
+# 'heat stack-create -f singleServerWithVolume.yaml <stackName>'.
 # You need to adjust "key_name" and "floating_network".
+# You can login via ssh using the following command:
+# ssh ec2-user@<IP-Address>
 
 description: Simple template to deploy a single compute instance, create a volume and attach this volume.
 
