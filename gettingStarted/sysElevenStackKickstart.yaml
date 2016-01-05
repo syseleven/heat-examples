@@ -57,6 +57,7 @@ resources:
              shell: /bin/bash
              ssh-authorized-keys:
                - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBHhKPUBIv4EhNIDrXYsoBPNTCzMXtIkCcqEiXjx1AH8WNRHYN7blzV+qv9SJOzfi9OcfQ3o+qR2YwYT+z2464crW9xZHrtEerVDWMeCs3ZsnGxiFM40xpKhWHuTZNv+Y+07t8CHAdfGlSM3st2NrdwB2qWBTvoXTuhc9/4UeEM5rsLFDFIb84P4VXiMLooo8ovDWZ4I1A1+cmbiG9PDPIXn2I3LLvXfSn7rbTal5dJixZAfue1sKCwoFxzEIjdD2MRfkkwcYRbm2wyU2Gf3XTE4OOl/AIoCvgnp2+zFH6rdVme+lsX32ddS2dayoU50VpMz1jWq+fR5bnGyvYnJux janpeschke@ws171.sys11.net'
+               - 'ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAvfTxEm59MSzCoZgSd/gkD+MCxxgsCrlkvq/37mwzW65YrEggWM7MArISaJGzj8iqpR53B524Z72pc0nkrlv6tb4ECHEDsTHuYVjCr70wBreyGBVlLswMKHPL/mXmaUvis/rJvbHJtTJZpehJteMIiwwJEBqhch6Jj6suQaSeT11QJrIvFpF5ddphopwqe90VCby0RyIbi0MISjWILcsEUvLMgPHTOXFFS5NPs6hKiNPC9gl7BZizMf1bZvizlwZ7SKVSPttB6ZTMiea9WauPcMYH7zYjdHOLvWVgpoefp/0o01uCzQSsBBiX1+SRZLe9uxrrrsg8xlvaD/aIBN9Avw== norbertauler@ws159.sys11.net'
            - name: syselevenstack
              gecos: SysEleven Stack user
              sudo: ALL=(ALL) NOPASSWD:ALL
