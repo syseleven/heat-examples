@@ -1,0 +1,24 @@
+heat_template_version: 2015-04-30
+
+# Start this template using
+# 'heat stack-create -f empty_volume.yaml <name>'.
+
+description: creates an empty volume for later use 
+
+parameters:
+ volume_size:
+  type: string
+  default: 100
+ volume_name:
+  type: string
+  default: syselevenVolume
+
+resources:
+# create an empty volume 
+  my_volume:
+   type: OS::Cinder::Volume
+   properties:
+     description: a fresh volume
+     name: { get_param: volume_name }
+     size: { get_param: volume_size } 
+

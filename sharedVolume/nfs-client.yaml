@@ -1,0 +1,60 @@
+heat_template_version: 2015-04-30
+
+description: Simple template to deploy NFS clients
+
+parameters:
+  name:
+    type: string
+  syseleven_net:
+    type: string
+
+resources:
+  nfs_server:
+    type: OS::Nova::Server 
+    properties:
+      image: Ubuntu-14.04-LTS from cloud-images.ubuntu.com
+      user_data_format: RAW
+      user_data: { get_resource: cloud-init-config }
+      name:  { get_param: name }
+      flavor: m1.micro
+      networks:
+        - port: { get_resource: syseleven_port }
+  
+  allow_ssh:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: allow incoming traffic on ssh port and icmp
+      name: allow incoming traffic on ssh and icmp
+      rules: [{direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 22, port_range_max: 22, protocol: tcp} , {direction: ingress, protocol: icmp}]
+
+  syseleven_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: syseleven_net}
+      security_groups: [ {get_resource: allow_ssh}, default ]
+  
+  cloud-init-config:
+   # cloud init demo resource
+   type: OS::Heat::CloudConfig
+   properties:
+     cloud_config:
+       runcmd:
+         - /root/client_nfs_share.sh
+       write_files:
+         -  content: { get_file: scripts/client_nfs_share.sh }
+            permissions: 0755
+            path: /root/client_nfs_share.sh
+       users:
+           - name: syseleven
+             gecos:  Workshop user
+             lock-passwd: false
+             sudo: ALL=(ALL) NOPASSWD:ALL
+             shell: /bin/bash
+             ssh-authorized-keys:
+               - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCkPtl0uw+a00JonDV0Q7iypFzVp0pBAOGGL2hP5QzKzP8o8UBzpRpOWPUllFvlrg4RxoFUVyvMJIlLrdDy3apdPtK+pgMorA6T1AXEte1bwzvcHv6vYMCXe8auU4i1z9yp2piSyzJ39J8LdgXeeualZgaAD5RWCgEqAw+YiyXgp5w7Rl80wWKlNdX9NYeFFfHDqVF4gBNZZqI7qe7BdpK1JVc0hiMCCm7zW1BDEh2gnFRBNXVYUDeAVdmvfEXE0cB6GrIeCtwnDz3SQeKzNdLwZsvbRMCma1CdfNycS7PFj1mlPeEzgSL/jWPjExVNBH7o3NdxM8TtvfiznGqf7lYoFv73CDlOMiQ3Xo+3dDA3DrKDxBxiFWbywJsZft6a5DdTTjzm178Qx7M5POAYdw2PczgmvtP+1QnLjTDKQbAdF1+yKNDgxEeZoMT1Jfw5RGzzXdOCtg5ijQa7cYObu5O9vC14PQVICbQl+qWi9KQpCv/qW6eL1aERxGwZfwhwSc9KF4Wr+qalDwGrGxZXe4Ti0fb4rWcuvjS20Fo4q08karZGBw7o8/l6CJE0AKgjNy28agEs2moDPe13b1KMCh0PPnrVD3zBRzTwUdNPpHK1kPcKJo3DIrsTcx0L62t77qqEDwDqjZ3MxdmlOgbx7aSRJpF+GmNqwK7+qlha9iIvAQ== d.jarosch@szop'
+               - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDCNEuyVcKyUSZkdfXRzrtEGPsoBRasrswTS8ffSH86d+fnr17SX+nJYWE3dzeR6vzfUhoXUDksoKvo74ACDZX/eJdS/tjsMHWOZVlmLAyG5uuc7mI93swG5jHLMJweBP/XEYWWBk593bp4F2/7kTMuOHXQjMJz6pDgY+iNjEfW6NLI4x4btJLPiubbC1q7REEtu73rNa9lI2GAMWtx7bRsTZTXnhKRiP7EaurajbHIfzz9Vt2a/YZWcNnMmdOKa7xm1PWDD3TLATqQFweqf31pIqAE02bxOBOQg72tKiSiSkra3nMCR5c+KFAf9qKKR0uo6j6MmC/nayW6YQ72VF1M5PyL5MkB2JWIwHLKXpIHtXS/yd1vSdx6MEMPiKcVMy/lEqyws9fmy76diDjLG3iF7et6LSK03D6kV5b18wDXQmhIqO+QL+7RtiM09axk84iLPSdtPC4Nd95CTTUiRRTzGZnAvCmgoHpSdWQANqzjNl18zAGNR7GX7uXnhCMexbWXPKbzTSemoOmP6fo/yNfoSksvnQtw+Xqfb1e+oZu69peJF5pPRiTGcFIqG5MiRBqLrLlN1m17eCVfPwCS3fBzMixEYW4ECPaghczNAY28RILSZ4/A/JJI1ZTlIi27E+wpbyAZXYzEpkKU2qipkqYVcuU2hqjlKNAVCekCZhd/5w== fflaegel@fflaegel'
+
+outputs:
+  interesting_stuff:
+    description: show syseleven_port infos
+    value: { get_attr: [syseleven_port, show] }
