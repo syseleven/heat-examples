@@ -11,7 +11,7 @@ description: Simple template to deploy a single compute instance, create a volum
 parameters:
   public_network_id:
     type: string
-    default: 4c23774c-395b-49d0-b8e1-347e886fa9bf
+    default: b68b2797-fe8d-4a4d-b40a-780ddb505909
   key_name:
     type: string
 
