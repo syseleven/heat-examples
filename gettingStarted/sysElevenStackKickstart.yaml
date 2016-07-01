@@ -77,7 +77,7 @@ resources:
             permissions: 0700
          -  content: | 
               # replace "demo_tenant", "demo_password" and "demo_user" by your corresponding credentials
-              export OS_AUTH_URL=https://keystone.cloud.syseleven.net:5000
+              export OS_AUTH_URL=https://api.bbk.cloud.syseleven.net:5000
               export OS_TENANT_NAME="demo_tenant"
               unset OS_PROJECT_ID
               unset OS_PROJECT_NAME
