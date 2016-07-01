@@ -19,7 +19,7 @@ parameters:
   type: string
  public_network_id:
   type: string
-  default: b68b2797-fe8d-4a4d-b40a-780ddb505909
+  default: 4c23774c-395b-49d0-b8e1-347e886fa9bf 
 
 resources:
   allow_ssh:
@@ -37,7 +37,7 @@ resources:
       name: kickstart
       user_data_format: RAW
       user_data: { get_resource: cloud-init-config }    
-      image: Ubuntu-14.04-LTS from cloud-images.ubuntu.com 
+      image: Ubuntu-16.04-LTS from cloud-images.ubuntu.com 
       key_name: {get_param: key_name}
       flavor: m1.micro
       networks:
@@ -57,12 +57,11 @@ resources:
              shell: /bin/bash
              ssh-authorized-keys:
                - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBHhKPUBIv4EhNIDrXYsoBPNTCzMXtIkCcqEiXjx1AH8WNRHYN7blzV+qv9SJOzfi9OcfQ3o+qR2YwYT+z2464crW9xZHrtEerVDWMeCs3ZsnGxiFM40xpKhWHuTZNv+Y+07t8CHAdfGlSM3st2NrdwB2qWBTvoXTuhc9/4UeEM5rsLFDFIb84P4VXiMLooo8ovDWZ4I1A1+cmbiG9PDPIXn2I3LLvXfSn7rbTal5dJixZAfue1sKCwoFxzEIjdD2MRfkkwcYRbm2wyU2Gf3XTE4OOl/AIoCvgnp2+zFH6rdVme+lsX32ddS2dayoU50VpMz1jWq+fR5bnGyvYnJux janpeschke@ws171.sys11.net'
-               - 'ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAvfTxEm59MSzCoZgSd/gkD+MCxxgsCrlkvq/37mwzW65YrEggWM7MArISaJGzj8iqpR53B524Z72pc0nkrlv6tb4ECHEDsTHuYVjCr70wBreyGBVlLswMKHPL/mXmaUvis/rJvbHJtTJZpehJteMIiwwJEBqhch6Jj6suQaSeT11QJrIvFpF5ddphopwqe90VCby0RyIbi0MISjWILcsEUvLMgPHTOXFFS5NPs6hKiNPC9gl7BZizMf1bZvizlwZ7SKVSPttB6ZTMiea9WauPcMYH7zYjdHOLvWVgpoefp/0o01uCzQSsBBiX1+SRZLe9uxrrrsg8xlvaD/aIBN9Avw== norbertauler@ws159.sys11.net'
+               - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCj5yHe82xC8UcFMOdfWBQSgpPcMdxd+72KlaDVDU7rA6h+cYztCOLHb82ZZyfsu8jBDRVwLQG18bH+2cz47+UqIPd9emN76a3V0WY1PspxdXfEWje38iF4k/7HYPb1KUyoEdaHibwKECnLx8Y3vLE/eXHq8H7gH9LDB+qrWX7ZklXPwu1iEuOmMtZu7coargA0ayJ/3yGpNcv3ZcWbGJf28TSh/B4Lk+GkXhYm7nJXtV6MBKSamz0LYUXI0WHCyB0lTkmoISincy8CVcKMaol1TckjysChy1A7SSz9SoPI7XWMJqHYlNK94MbaOCnAkuzbiYy8l8XWcUwqjhjhHHlN Simon-Pearce'
            - name: syselevenstack
              gecos: SysEleven Stack user
              sudo: ALL=(ALL) NOPASSWD:ALL
              shell: /bin/bash
-
        write_files:
          -  content: |
               #!/usr/bin/env bash
@@ -77,7 +76,7 @@ resources:
             permissions: 0700
          -  content: | 
               # replace "demo_tenant", "demo_password" and "demo_user" by your corresponding credentials
-              export OS_AUTH_URL=https://api.bbk.cloud.syseleven.net:5000
+              export OS_AUTH_URL=https://keystone.cloud.syseleven.net:5000
               export OS_TENANT_NAME="demo_tenant"
               unset OS_PROJECT_ID
               unset OS_PROJECT_NAME
@@ -91,11 +90,6 @@ resources:
             permissions: 0600
        runcmd:
          - /root/inject_userkey
-       # we need an additional repo for newer openstack CLI clients that support the openstack kilo API
-       apt_preserve_sources_list: true
-       apt_sources:
-         - source: deb http://ubuntu-cloud.archive.canonical.com/ubuntu trusty-updates/kilo main
-           keyid: 5EDB1B62EC4926EA
        packages:
          - git
          - wget
