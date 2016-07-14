@@ -19,7 +19,7 @@ parameters:
   type: string
  public_network_id:
   type: string
-  default: 4c23774c-395b-49d0-b8e1-347e886fa9bf 
+  default: caf8de33-1059-4473-a2c1-2a62d12294fa 
 
 resources:
   allow_ssh:
@@ -37,7 +37,7 @@ resources:
       name: kickstart
       user_data_format: RAW
       user_data: { get_resource: cloud-init-config }    
-      image: Ubuntu-16.04-LTS from cloud-images.ubuntu.com 
+      image: Ubuntu Server 16.04 LTS 
       key_name: {get_param: key_name}
       flavor: m1.micro
       networks:
@@ -76,15 +76,16 @@ resources:
             permissions: 0700
          -  content: | 
               # replace "demo_tenant", "demo_password" and "demo_user" by your corresponding credentials
-              export OS_AUTH_URL=https://keystone.cloud.syseleven.net:5000
-              export OS_TENANT_NAME="demo_tenant"
+              export OS_AUTH_URL=https://api.cbk.cloud.syseleven.net:5000
               unset OS_PROJECT_ID
               unset OS_PROJECT_NAME
               unset OS_USER_DOMAIN_NAME
+              export OS_TENANT_NAME="demo_tenant"
+              export OS_INTERFACE=public
+              export OS_ENDPOINT_TYPE=public
               export OS_USERNAME="demo_user"
               export OS_PASSWORD="demo_password"
-              export OS_REGION_NAME="RegionOne"
-              if [ -z "$OS_REGION_NAME" ]; then unset OS_REGION_NAME; fi
+              export OS_REGION_NAME="cbk"
             path: /etc/skel/openrc
             owner: root
             permissions: 0600
