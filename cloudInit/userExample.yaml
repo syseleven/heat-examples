@@ -2,7 +2,7 @@ heat_template_version: 2014-10-16
 
 #
 # you can deploy this template using the following command:
-# 'heat stack-create -f userExample.yaml -P public_key="$(cat ~/.ssh/id_rsa.pub)"  <stack_name>'
+# 'openstack stack create -t userExample.yaml -e userExampleEnv.yaml  <stack_name>'
 #
 # after successful stack creation you can login with 
 # ssh -l syseleven <externalIP> 
@@ -15,11 +15,11 @@ description: Simple template to deploy a single compute instance
   Keep in mind, that the default 'ubuntu' or 'ec2-user' won't get deployed.
 
 parameters:
- public_key:
-  type: string
+ public_keys:
+  type: comma_delimited_list
  public_network_id:
   type: string
-  default: b68b2797-fe8d-4a4d-b40a-780ddb505909 
+  default: caf8de33-1059-4473-a2c1-2a62d12294fa 
  
 resources:
   allow_ssh:
@@ -32,10 +32,10 @@ resources:
   unixmachine:
     type: OS::Nova::Server
     properties:
-      name: unixmachine 
+      name: cloudInitUserExample 
       user_data_format: RAW
       user_data: { get_resource: cloud-init-config }    
-      image: Ubuntu 14.04 sys11-cloudimg amd64
+      image: Ubuntu 16.04 sys11-cloudimg amd64 
       flavor: m1.micro 
       networks:
         - port: { get_resource: example_port }
@@ -47,19 +47,10 @@ resources:
      cloud_config:
        users:
            - name: syseleven
-             gecos: SysEleven service user 
-             passwd: '!$6$uW4Kz$p0Zw/DlY98E34qA8DtENlRnjY55ppZEEkgq82MCHxkf4FNlZtiT.j9MDrnd1JTb86Vg6TSgd8rIqNV8CR3z6H/'
-             lock-passwd: false
+             gecos: SysEleven user 
              sudo: ALL=(ALL) NOPASSWD:ALL
-             ssh-authorized-keys:
-               - {get_param: public_key }
-               - 'ssh-rsa AA .. example_key_two'
-
-           - name: exampleuser_two
-             gecos: Example User
-             lock-passwd: false
-             ssh-authorized-keys:
-               - 'ssh-dss AAAAB3NzaC1kc3M ... '
+             shell: /bin/bash
+             ssh-authorized-keys: { get_param: public_keys }
 
   example_port:
     type: OS::Neutron::Port
@@ -88,7 +79,7 @@ resources:
   example_router:
     type: OS::Neutron::Router
     properties:
-      external_gateway_info: {"network": { get_param: public_network_id }, "enable_snat": true}
+      external_gateway_info: {"network": { get_param: public_network_id }}
 
   router_subnet_connect:
     type: OS::Neutron::RouterInterface
