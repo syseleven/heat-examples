@@ -2,7 +2,7 @@ heat_template_version: 2014-10-16
 
 #
 # you can start this stack using the following command:
-# 'heat stack-create -f group.yaml grouptest'
+# 'openstack stack create -t group.yaml <stackName>'
 #
 
 description: deploys o group of servers with internal network.
@@ -28,7 +28,7 @@ resources:
   example_subnet:
     type: OS::Neutron::Subnet
     properties:
-      name: examplae_subnet
+      name: example_subnet
       dns_nameservers:
         - 37.123.105.116
         - 37.123.105.117

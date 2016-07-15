@@ -1,4 +1,4 @@
-heat_template_version: 2014-10-16 
+heat_template_version: 2014-10-16
 
 description: single server resource used by resource groups.
 
@@ -12,7 +12,7 @@ resources:
   my_instance:
     type: OS::Nova::Server
     properties:
-      image: CirrOS 0.3.4 amd64 
+      image: Ubuntu 16.04 sys11-cloudimg amd64 
       flavor: m1.small
       name: { get_param: server_name }
       networks:
