@@ -5,14 +5,14 @@ heat_template_version: 2014-10-16
 # 'openstack stack create -t group.yaml <stackName>'
 #
 
-description: deploys o group of servers with internal network.
+description: deploys a group of servers with only internal network.
 
 resources:
   server_group:
     type: OS::Heat::ResourceGroup
     depends_on: example_subnet
     properties:
-      count: 5 
+      count: 2 
       resource_def: 
         type: server.yaml
         properties:
@@ -38,3 +38,4 @@ resources:
       allocation_pools:
       - {start: 10.0.0.10, end: 10.0.0.250}
         
+
