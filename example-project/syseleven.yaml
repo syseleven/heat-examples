@@ -21,7 +21,7 @@ parameters:
     default: 1
   public_network_id:
     type: string
-    default: 4c23774c-395b-49d0-b8e1-347e886fa9bf 
+    default: caf8de33-1059-4473-a2c1-2a62d12294fa 
 
 resources:
   syseleven_net:
@@ -45,7 +45,7 @@ resources:
   syseleven_router:
     type: OS::Neutron::Router
     properties:
-      external_gateway_info: {"network": { get_param: public_network_id }, "enable_snat": true}
+      external_gateway_info: {"network": { get_param: public_network_id }}
 
   router_subnet_connect:
     type: OS::Neutron::RouterInterface
