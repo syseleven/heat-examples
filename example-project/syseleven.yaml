@@ -2,7 +2,7 @@ heat_template_version: 2014-10-16
 
 #
 # you can deploy this template using the following command:
-# 'heat stack-create -f syseleven.yaml <stack_name>'
+# 'openstack stack create -t syseleven.yaml <stack_name>'
 #
 # after successful stack creation you can login with 
 # ssh -l <yourUser> <loadbalancerIP> 
