@@ -11,7 +11,7 @@ description: Simple template to deploy a single compute instance, create a volum
 parameters:
   public_network_id:
     type: string
-    default: b68b2797-fe8d-4a4d-b40a-780ddb505909
+    default: caf8de33-1059-4473-a2c1-2a62d12294fa 
   key_name:
     type: string
 
@@ -31,9 +31,10 @@ resources:
     properties:
       config_drive: true
       name: machine with volume
+      user_data_format: RAW
       key_name: { get_param: key_name }
-      image: Ubuntu 14.04 sys11-cloudimg amd64
-      flavor: m1.small
+      image: Ubuntu 16.04 sys11-cloudimg amd64
+      flavor: m1.micro
       networks:
         - port: { get_resource: example_port }
 
@@ -92,7 +93,7 @@ resources:
         - 37.123.105.117
       network_id: {get_resource: example_net}
       ip_version: 4
-      cidr: 10.0.0.0/24
+      cidr: 10.0.0.0/8
       allocation_pools:
       - {start: 10.0.0.10, end: 10.0.0.250}
 
