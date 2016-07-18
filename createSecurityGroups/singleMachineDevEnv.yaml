@@ -2,10 +2,10 @@ heat_template_version: 2014-10-16
 
 #
 # you can deploy this template using the following command:
-# 'heat stack-create -f singleMachineDevEnv.yaml -P key_name=<my_key> -P public_network_id=<networkID> -P ip_whitelist=<yourOfficeIP> <stack_name>'
+# 'openstack stack create -t singleMachineDevEnv.yaml --parameter key_name=<publicKeyName> --parameter ip_whitelist=<ipAddrRangInCIDR>'
 #
 # after successful stack creation you can login with 
-# ssh -l ec2-user <externalIP> 
+# ssh -l ubuntu <externalIP> 
 # 
 
 
@@ -17,6 +17,7 @@ parameters:
   type: string
  public_network_id:
   type: string
+  default: caf8de33-1059-4473-a2c1-2a62d12294fa
  ip_whitelist:
   type: string
   description: ip address or range in CIDR
@@ -28,7 +29,7 @@ resources:
     properties:
       description: allow incoming traffic only from specified IP.
       name: allow incoming traffic, tcp
-      rules: [{direction: ingress, remote_ip_prefix: {get_param: ip_whitelist}, port_range_min: 0, port_range_max: 65535, protocol: tcp} ]
+      rules: [{direction: ingress, remote_ip_prefix: {get_param: ip_whitelist}, port_range_min: 1, port_range_max: 65535, protocol: tcp} ]
 
   secured_instance:
     type: OS::Nova::Server
@@ -36,6 +37,7 @@ resources:
       key_name: { get_param: key_name }
       image: Ubuntu 14.04 sys11-cloudimg amd64
       flavor: m1.micro
+      user_data_format: RAW
       networks:
         - port: { get_resource: example_port }
 
@@ -59,14 +61,14 @@ resources:
         - 37.123.105.117
       network_id: {get_resource: example_net}
       ip_version: 4
-      cidr: 10.0.0.0/24
+      cidr: 10.0.0.0/8
       allocation_pools:
       - {start: 10.0.0.10, end: 10.0.0.250}
 
   example_router:
     type: OS::Neutron::Router
     properties:
-      external_gateway_info: {"network": { get_param: public_network_id }, "enable_snat": true}
+      external_gateway_info: {"network": { get_param: public_network_id }}
 
   router_subnet_connect:
     type: OS::Neutron::RouterInterface
