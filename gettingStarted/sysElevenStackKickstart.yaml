@@ -1,7 +1,7 @@
 heat_template_version: 2014-10-16
 #
 # you can deploy this template using the following command:
-# 'heat stack-create -f sysElevenStackKickstart.yaml -P key_name=<my_key> <stack_name>'
+# 'openstack stack create -t sysElevenStackKickstart.yaml --parameter key_name=<publicKeyName> <stackName>'
 # 
 # or you can just paste it into the web-ui under "orchestration" >> "launch stack"
 #
