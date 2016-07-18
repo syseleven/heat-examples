@@ -2,15 +2,15 @@ heat_template_version: 2014-10-16
 
 description: >
     Creates a router + net + subnet + interface + VM
-    WARNING: This assigns 2 floating IPs - 1 for router, 1 for VM
 parameters:
   key_name:
     type: string
   public_network_id:
     type: string
+    default: caf8de33-1059-4473-a2c1-2a62d12294fa 
   image:
     type: string
-    default: Ubuntu 14.04 sys11-cloudimg amd64 
+    default: Ubuntu 16.04 sys11-cloudimg amd64 
   flavor:
     type: string
     default: m1.small
@@ -20,6 +20,7 @@ resources:
     type: OS::Nova::Server
     properties:
       key_name: { get_param: key_name }
+      user_data_format: RAW
       image: { get_param: image }
       flavor: { get_param: flavor }
       networks:
