@@ -16,7 +16,7 @@ resources:
   nfs_server:
     type: OS::Nova::Server 
     properties:
-      image: Ubuntu-14.04-LTS from cloud-images.ubuntu.com
+      image: Ubuntu 16.04 sys11-cloudimg amd64 
       user_data_format: RAW
       user_data: { get_resource: cloud-init-config }
       name: { get_param: name }
@@ -69,8 +69,7 @@ resources:
              sudo: ALL=(ALL) NOPASSWD:ALL
              shell: /bin/bash
              ssh-authorized-keys:
-               - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCkPtl0uw+a00JonDV0Q7iypFzVp0pBAOGGL2hP5QzKzP8o8UBzpRpOWPUllFvlrg4RxoFUVyvMJIlLrdDy3apdPtK+pgMorA6T1AXEte1bwzvcHv6vYMCXe8auU4i1z9yp2piSyzJ39J8LdgXeeualZgaAD5RWCgEqAw+YiyXgp5w7Rl80wWKlNdX9NYeFFfHDqVF4gBNZZqI7qe7BdpK1JVc0hiMCCm7zW1BDEh2gnFRBNXVYUDeAVdmvfEXE0cB6GrIeCtwnDz3SQeKzNdLwZsvbRMCma1CdfNycS7PFj1mlPeEzgSL/jWPjExVNBH7o3NdxM8TtvfiznGqf7lYoFv73CDlOMiQ3Xo+3dDA3DrKDxBxiFWbywJsZft6a5DdTTjzm178Qx7M5POAYdw2PczgmvtP+1QnLjTDKQbAdF1+yKNDgxEeZoMT1Jfw5RGzzXdOCtg5ijQa7cYObu5O9vC14PQVICbQl+qWi9KQpCv/qW6eL1aERxGwZfwhwSc9KF4Wr+qalDwGrGxZXe4Ti0fb4rWcuvjS20Fo4q08karZGBw7o8/l6CJE0AKgjNy28agEs2moDPe13b1KMCh0PPnrVD3zBRzTwUdNPpHK1kPcKJo3DIrsTcx0L62t77qqEDwDqjZ3MxdmlOgbx7aSRJpF+GmNqwK7+qlha9iIvAQ== d.jarosch@szop'
-               - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDCNEuyVcKyUSZkdfXRzrtEGPsoBRasrswTS8ffSH86d+fnr17SX+nJYWE3dzeR6vzfUhoXUDksoKvo74ACDZX/eJdS/tjsMHWOZVlmLAyG5uuc7mI93swG5jHLMJweBP/XEYWWBk593bp4F2/7kTMuOHXQjMJz6pDgY+iNjEfW6NLI4x4btJLPiubbC1q7REEtu73rNa9lI2GAMWtx7bRsTZTXnhKRiP7EaurajbHIfzz9Vt2a/YZWcNnMmdOKa7xm1PWDD3TLATqQFweqf31pIqAE02bxOBOQg72tKiSiSkra3nMCR5c+KFAf9qKKR0uo6j6MmC/nayW6YQ72VF1M5PyL5MkB2JWIwHLKXpIHtXS/yd1vSdx6MEMPiKcVMy/lEqyws9fmy76diDjLG3iF7et6LSK03D6kV5b18wDXQmhIqO+QL+7RtiM09axk84iLPSdtPC4Nd95CTTUiRRTzGZnAvCmgoHpSdWQANqzjNl18zAGNR7GX7uXnhCMexbWXPKbzTSemoOmP6fo/yNfoSksvnQtw+Xqfb1e+oZu69peJF5pPRiTGcFIqG5MiRBqLrLlN1m17eCVfPwCS3fBzMixEYW4ECPaghczNAY28RILSZ4/A/JJI1ZTlIi27E+wpbyAZXYzEpkKU2qipkqYVcuU2hqjlKNAVCekCZhd/5w== fflaegel@fflaegel'
+               - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBHhKPUBIv4EhNIDrXYsoBPNTCzMXtIkCcqEiXjx1AH8WNRHYN7blzV+qv9SJOzfi9OcfQ3o+qR2YwYT+z2464crW9xZHrtEerVDWMeCs3ZsnGxiFM40xpKhWHuTZNv+Y+07t8CHAdfGlSM3st2NrdwB2qWBTvoXTuhc9/4UeEM5rsLFDFIb84P4VXiMLooo8ovDWZ4I1A1+cmbiG9PDPIXn2I3LLvXfSn7rbTal5dJixZAfue1sKCwoFxzEIjdD2MRfkkwcYRbm2wyU2Gf3XTE4OOl/AIoCvgnp2+zFH6rdVme+lsX32ddS2dayoU50VpMz1jWq+fR5bnGyvYnJux janpeschke@ws171.sys11.net'
 
 outputs:
   lb_ip:

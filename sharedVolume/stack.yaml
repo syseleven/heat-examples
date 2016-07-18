@@ -8,7 +8,7 @@ parameters:
     default: 2
   public_network_id:
     type: string
-    default: b68b2797-fe8d-4a4d-b40a-780ddb505909 
+    default: caf8de33-1059-4473-a2c1-2a62d12294fa 
   volume_id:
     type: string
 
@@ -27,14 +27,14 @@ resources:
         - 37.123.105.117
       network_id: {get_resource: syseleven_net}
       ip_version: 4
-      cidr: 10.10.10.0/24
+      cidr: 10.10.10.0/8
       allocation_pools:
       - {start: 10.10.10.2, end: 10.10.10.10}
 
   syseleven_router:
     type: OS::Neutron::Router
     properties:
-      external_gateway_info: {"network": { get_param: public_network_id }, "enable_snat": true}
+      external_gateway_info: {"network": { get_param: public_network_id }}
 
   router_subnet_connect:
     type: OS::Neutron::RouterInterface

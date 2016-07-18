@@ -8,13 +8,13 @@ This way we can keep our data during several livetimes of an application stack. 
 ## Start volume stack first
 
 ```
-heat stack-create -f persistent_volume.yaml volume_storage
+openstack stack create -t persistent_volume.yaml volume_storage
 ```
 
 ## Get cinder volume ID
 
 ```
-cinder list
+openstack volume list
 ```
 
 ## Paste Cinder volume ID to env.yaml i.e.
@@ -41,6 +41,6 @@ users:
 Create the stack with the following command
 
 ```
-heat stack-create -f stack.yaml -e env.yaml demo_stack
+openstack stack create -t stack.yaml -e env.yaml demo_stack
 ```
 
