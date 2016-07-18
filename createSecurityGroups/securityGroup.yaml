@@ -1,11 +1,11 @@
 heat_template_version: 2014-10-16
 
 # this stack opens up your firewall for external traffic.
-# start it with "heat stack-create -f securityGroup.yaml <yourName>". 
+# start it with "openstack stack create -t securityGroup.yaml <stackName>". 
 resources:
   open_incoming:
     type: OS::Neutron::SecurityGroup
     properties:
       description: allow incoming traffic from anywhere.
       name: allow incoming traffic, tcp
-      rules: [{direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 0, port_range_max: 65535, protocol: tcp} ]
+      rules: [{direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 1, port_range_max: 65535, protocol: tcp} ]
