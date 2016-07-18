@@ -1,0 +1,15 @@
+heat_template_version: 2014-10-16
+
+description: reserve one IP for later use
+
+parameters:
+  public_network_id:
+    type: string
+    default: caf8de33-1059-4473-a2c1-2a62d12294fa 
+
+resources:
+  syseleven_floating_ip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network: { get_param: public_network_id }
+

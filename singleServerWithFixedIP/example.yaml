@@ -1,28 +1,9 @@
 heat_template_version: 2014-10-16
 
-#
-# You have to prepare two parameters before you can start this stack:
-# 1. a public network id. 
-# 2. a reserved, but not assigned ip address from this net.
-#
-# you can get a list of Network-IDs with the following command:
-# 'neutron net-list'
-# you get a list of floating IPs with this command:
-# 'neutron floatingip-list'
-# if no IP is already reserved for your project, you can do so using this command:
-# 'neutron floatingip-create <networkNameOrID>'
-#
-# you can deploy this template using the following command:
-# 'heat stack-create -f example.yaml -P key_name=<my_key> -P fixed_ip=<ipID> -P rpublic_network_id=<sameNetworkAsReserveddIP> <stack_name>'
-#
-# after successful stack creation you can login with 
-# ssh -l ec2-user <externalIP> 
-# 
-
 description: Template to deploy a single compute instance
   with external network (login will be possible through vnc console and via SSH).
-  Use it with caution, you break the most important feature in OpenStack... to 
-  deploy your setup more than once. 
+  Use it with caution, you break the most important feature in OpenStack... for example 
+  to deploy your setup more than once. 
 
 parameters:
  key_name:
@@ -31,14 +12,16 @@ parameters:
   type: string
  public_network_id:
   type: string
+  default: caf8de33-1059-4473-a2c1-2a62d12294fa 
 
 resources:
   my_instance:
     type: OS::Nova::Server
     properties:
+      user_data_format: RAW
       key_name: { get_param: key_name }
-      image: Ubuntu 14.04 sys11-cloudimg amd64
-      flavor: m1.small
+      image: Ubuntu 16.04 sys11-cloudimg amd64
+      flavor: m1.micro
       networks:
         - port: { get_resource: example_port }
 
@@ -72,14 +55,14 @@ resources:
         - 37.123.105.117
       network_id: {get_resource: example_net}
       ip_version: 4
-      cidr: 10.0.0.0/24
+      cidr: 10.0.0.0/8
       allocation_pools:
       - {start: 10.0.0.10, end: 10.0.0.250}
 
   example_router:
     type: OS::Neutron::Router
     properties:
-      external_gateway_info: {"network": { get_param: public_network_id }, "enable_snat": true}
+      external_gateway_info: {"network": { get_param: public_network_id }}
       name: example_natpoint
 
   router_subnet_bridge:
