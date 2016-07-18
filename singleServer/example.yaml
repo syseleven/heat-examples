@@ -2,23 +2,24 @@ heat_template_version: 2014-10-16
 
 #
 # you can deploy this template using the following command:
-# 'heat stack-create -f example.yaml -P key_name=<my_key> <stack_name>'
+# 'openstack stack create -t example.yaml  <stackName>'
 #
 
 description: Simple template to deploy a single compute instance
   without external network (login will be possible through vnc console).
 
 parameters:
- key_name:
-  type: string
+ public_network_id:
+   type: string
+   default: caf8de33-1059-4473-a2c1-2a62d12294fa 
 
 resources:
   my_instance:
     type: OS::Nova::Server
     properties:
-      key_name: { get_param: key_name }
-      image: CirrOS 0.3.4 amd64 
+      image: cirros 
       flavor: m1.small
+      user_data_format: RAW
       networks:
         - port: { get_resource: example_port }
 
@@ -44,5 +45,17 @@ resources:
       cidr: 10.0.0.0/24
       allocation_pools:
       - {start: 10.0.0.10, end: 10.0.0.250}
+
+  example_router:
+    type: OS::Neutron::Router
+    properties:
+      external_gateway_info: {"network": { get_param: public_network_id }}
+
+  router_subnet_connect:
+    type: OS::Neutron::RouterInterface
+    depends_on: [ example_subnet, example_router, example_net ]
+    properties:
+      router_id: { get_resource: example_router }
+      subnet: { get_resource: example_subnet }
 
 
