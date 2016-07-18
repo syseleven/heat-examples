@@ -2,10 +2,10 @@ heat_template_version: 2014-10-16
 
 #
 # you can deploy this template using the following command:
-# 'heat stack-create -f singleMachineProdEnv.yaml -P key_name=<my_key> -P public_network_id=<networkID> ip_whitelist=<yourOfficeIP> <stack_name>'
+# 'openstack stack create -t singleMachineProdEnv.yaml --parameter key_name=<publicKeyName> --parameter ip_whitelist=<ipAddrRangInCIDR>'
 #
 # after successful stack creation you can login with 
-# ssh -l ec2-user <externalIP> 
+# ssh -l ubuntu <externalIP> 
 # 
 
 
@@ -17,6 +17,7 @@ parameters:
   type: string
  public_network_id:
   type: string
+  default: caf8de33-1059-4473-a2c1-2a62d12294fa
  ip_whitelist:
   type: string
 
@@ -46,8 +47,9 @@ resources:
     type: OS::Nova::Server
     properties:
       key_name: { get_param: key_name }
-      image: Ubuntu 14.04 sys11-cloudimg amd64
+      image: Ubuntu 16.04 sys11-cloudimg amd64
       flavor: m1.micro
+      user_data_format: RAW
       networks:
         - port: { get_resource: example_port }
 
@@ -78,7 +80,7 @@ resources:
   example_router:
     type: OS::Neutron::Router
     properties:
-      external_gateway_info: {"network": { get_param: public_network_id }, "enable_snat": true}
+      external_gateway_info: {"network": { get_param: public_network_id }}
 
   router_subnet_connect:
     type: OS::Neutron::RouterInterface
