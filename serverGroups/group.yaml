@@ -8,7 +8,7 @@ heat_template_version: 2014-10-16
 description: deploys a group of servers with only internal network.
 
 resources:
-  server_group:
+  same_hosts:
     type: OS::Heat::ResourceGroup
     depends_on: example_subnet
     properties:
@@ -18,7 +18,34 @@ resources:
         properties:
           network_id: { get_resource: example_net}
           server_name: server_%index%
-      
+          affinity_group: { get_resource: affinity_group }
+
+  separate_hosts:
+    type: OS::Heat::ResourceGroup
+    depends_on: example_subnet
+    properties:
+      count: 2 
+      resource_def: 
+        type: server.yaml
+        properties:
+          network_id: { get_resource: example_net}
+          server_name: antiserver_%index%
+          affinity_group: { get_resource: anti-affinity_group }
+
+
+  anti-affinity_group:
+   type: OS::Nova::ServerGroup
+   properties:
+    name: hosts on separate compute nodes
+    policies: 
+     - anti-affinity
+
+  affinity_group:
+   type: OS::Nova::ServerGroup
+   properties:
+    name: hosts on one compute-node
+    policies: 
+     - affinity
 
   example_net:
     type: OS::Neutron::Net

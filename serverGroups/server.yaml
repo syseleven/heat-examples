@@ -7,6 +7,8 @@ parameters:
     type: string
   server_name:
     type: string
+  affinity_group:
+    type: string
 
 resources:
   my_instance:
@@ -18,6 +20,8 @@ resources:
       name: { get_param: server_name }
       networks:
         - port: { get_resource: example_port }
+      scheduler_hints:
+        group: { get_param: affinity_group }
 
   example_port:
     type: OS::Neutron::Port
