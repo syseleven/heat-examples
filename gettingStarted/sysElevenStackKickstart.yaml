@@ -44,20 +44,11 @@ resources:
         - port: { get_resource: port }
 
   cloud-init-config:
-   # cloud init demo resource
+   # cloud init resource
    type: OS::Heat::CloudConfig
    properties:
      cloud_config:
        users:
-           - name: syseleven
-             gecos: SysEleven service user 
-             passwd: $6$uW4KAKIz$p0Zw/DlY98E34qA8DtENlRnjY55ppZEEkgq82MCHxkf4FNlZtiT.j9MDrnd1JTb86Vg6TSgd8rIqNV8CR3z6H/
-             lock-passwd: false
-             sudo: ALL=(ALL) NOPASSWD:ALL
-             shell: /bin/bash
-             ssh-authorized-keys:
-               - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBHhKPUBIv4EhNIDrXYsoBPNTCzMXtIkCcqEiXjx1AH8WNRHYN7blzV+qv9SJOzfi9OcfQ3o+qR2YwYT+z2464crW9xZHrtEerVDWMeCs3ZsnGxiFM40xpKhWHuTZNv+Y+07t8CHAdfGlSM3st2NrdwB2qWBTvoXTuhc9/4UeEM5rsLFDFIb84P4VXiMLooo8ovDWZ4I1A1+cmbiG9PDPIXn2I3LLvXfSn7rbTal5dJixZAfue1sKCwoFxzEIjdD2MRfkkwcYRbm2wyU2Gf3XTE4OOl/AIoCvgnp2+zFH6rdVme+lsX32ddS2dayoU50VpMz1jWq+fR5bnGyvYnJux janpeschke@ws171.sys11.net'
-               - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCj5yHe82xC8UcFMOdfWBQSgpPcMdxd+72KlaDVDU7rA6h+cYztCOLHb82ZZyfsu8jBDRVwLQG18bH+2cz47+UqIPd9emN76a3V0WY1PspxdXfEWje38iF4k/7HYPb1KUyoEdaHibwKECnLx8Y3vLE/eXHq8H7gH9LDB+qrWX7ZklXPwu1iEuOmMtZu7coargA0ayJ/3yGpNcv3ZcWbGJf28TSh/B4Lk+GkXhYm7nJXtV6MBKSamz0LYUXI0WHCyB0lTkmoISincy8CVcKMaol1TckjysChy1A7SSz9SoPI7XWMJqHYlNK94MbaOCnAkuzbiYy8l8XWcUwqjhjhHHlN Simon-Pearce'
            - name: syselevenstack
              gecos: SysEleven Stack user
              sudo: ALL=(ALL) NOPASSWD:ALL
@@ -74,6 +65,7 @@ resources:
               chown -R syselevenstack: /home/syselevenstack
             path: /root/inject_userkey
             permissions: 0700
+         # don't replace content in this hot template, only write your credentials inside the newly generated vm!
          -  content: | 
               # replace "demo_tenant", "demo_password" and "demo_user" by your corresponding credentials
               export OS_AUTH_URL=https://api.cbk.cloud.syseleven.net:5000
