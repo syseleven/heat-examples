@@ -55,7 +55,7 @@ resources:
             path: /etc/nginx/sites-available/syseleven.conf
          -  content: { get_file: config/fpm.conf }
             permissions: 0644
-            path: /etc/php5/fpm/pool.d/syseleven.conf
+            path: /etc/php/7.0/fpm/pool.d/syseleven.conf
          -  content: { get_file: config/avahi-http.service }
             permissions: 0644
             path: /etc/avahi/services/avahi-http.service
@@ -73,6 +73,7 @@ resources:
              shell: /bin/bash
              ssh-authorized-keys:
                - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBHhKPUBIv4EhNIDrXYsoBPNTCzMXtIkCcqEiXjx1AH8WNRHYN7blzV+qv9SJOzfi9OcfQ3o+qR2YwYT+z2464crW9xZHrtEerVDWMeCs3ZsnGxiFM40xpKhWHuTZNv+Y+07t8CHAdfGlSM3st2NrdwB2qWBTvoXTuhc9/4UeEM5rsLFDFIb84P4VXiMLooo8ovDWZ4I1A1+cmbiG9PDPIXn2I3LLvXfSn7rbTal5dJixZAfue1sKCwoFxzEIjdD2MRfkkwcYRbm2wyU2Gf3XTE4OOl/AIoCvgnp2+zFH6rdVme+lsX32ddS2dayoU50VpMz1jWq+fR5bnGyvYnJux janpeschke@ws171.sys11.net'
+               - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDzJ51cNXJJWfW+EehZFt9YoUi+dNmXaAjoi6vqPhEZHNXzYRpwy/iyR+y2S1ItGdaypMutehPIuXK6RtBdpTG/blnlmmA9ASrYuqh5qsI5b78eSITMfDKnMd55ccjqZ8sIC/DZAaPVv5VOEJEmZniO+6JwDq0+A9tSOf/ZHWDVhrbKTN4O55WYnrPvJupuA1xP5YEOwF86atx8AwSDELiecZh34o6V0EbkQCvaRAMluph4EoDPqbE0RxdcHF0XueME3P2MDdV813UCdl7ka6qaoKkPJTM7Or0xOlqtQybXTLgebR9JgeihRZgnio/K06eSmK4p2aPm0p5SV93WcxkW/XM2U+lXEL21bjbYXL5nr7UzBptsqG7/GHCJD7PqssYZdXV+l/rKR50PqGsKBhbiImk0T8IVvznt/H9f35YLADiRt9VlRe7uURMO5VkWnY9aYsvvxv/Z3H2hqssbPT1H+zqqWI4EZi6++GpeRbL/aLNz0s6e53yerhZHNZtN1CkRmO2YI83I4BtbeO8rIuxZM8AOJ+vMdXJbtQFZT8cHPfB8grt6rCUf/HderR8eulXgkmRROchXAAm9uK1Dm5O07up8qVu9ODWajVUD+X2uYFYf3wQ1w5y3Hdx3rZrH2Cs3qjL3VhYyG84NoJZBdTPPp80MaAWdaRNtoHOfVZY3KQ== SFunke'
 
   syseleven_port:
     type: OS::Neutron::Port

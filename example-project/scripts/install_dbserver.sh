@@ -17,10 +17,10 @@ mypass=$(pwgen 16 1)
 #sed -i "s/SECRET/$mypass/"g /root/.my.cnf
 
 # change listen address
-echo "listen_addresses = '0.0.0.0'" >> /etc/postgresql/9.3/main/postgresql.conf
-sed -i "s#127.0.0.1/32#192.168.2.0/24#"g /etc/postgresql/9.3/main/pg_hba.conf
-service postgresql restart
-service avahi-daemon restart
+echo "listen_addresses = '0.0.0.0'" >> /etc/postgresql/9.5/main/postgresql.conf
+sed -i "s#127.0.0.1/32#192.168.2.0/24#"g /etc/postgresql/9.5/main/pg_hba.conf
+systemctl restart postgresql
+systemctl restart avahi-daemon
 
 su -c "psql -d template1 -c \"CREATE USER syseleven WITH PASSWORD 'syseleven_pass'\"" postgres
 su -c "psql -d template1 -c \"CREATE DATABASE syseleven\"" postgres

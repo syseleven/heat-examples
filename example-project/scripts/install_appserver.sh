@@ -11,7 +11,7 @@ apt-get install -y avahi-daemon avahi-utils haveged git curl screen bc wget
 # install nginx
 apt-get install -y nginx-extras
 ## install php-fpm
-apt-get install -y php5-fpm php5-cli php5-memcached php5-pgsql
+apt-get install -y php7.0-fpm php7.0-cli php-memcached php7.0-pgsql
 
 ln -s /etc/nginx/sites-available/syseleven.conf /etc/nginx/sites-enabled/
 rm /etc/nginx/sites-enabled/default
@@ -21,9 +21,9 @@ echo  '<?php phpinfo(); ?>' > /var/www/nginx/html/info.php
 
 
 # nginx + fpm version:
-service php5-fpm restart
-service nginx restart
-service avahi-daemon restart
+systemctl restart php7.0-fpm
+systemctl restart nginx
+systemctl restart avahi-daemon
 
 echo "* * * * * root /usr/local/sbin/update_sessionconfig >> /var/log/sessionconfig.log" > /etc/cron.d/update_sessionstore
 
