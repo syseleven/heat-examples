@@ -104,7 +104,7 @@ resources:
               if [ -x $bin/terraform ]; then exit 0; else (echo "Error while installing terraform"; exit 99); fi
            path: /root/terra-install.sh
            owner: root
-           permissions: 0600
+           permissions: 0700
 
        runcmd:
          - /root/inject_userkey
