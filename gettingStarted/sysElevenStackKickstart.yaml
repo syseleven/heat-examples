@@ -6,12 +6,12 @@ heat_template_version: 2014-10-16
 # or you can just paste it into the web-ui under "orchestration" >> "launch stack"
 #
 # after successful stack creation you can login with 
-# ssh -l syselevenstack <externalIP> 
+# ssh -l syseleven <externalIP> 
 # 
 
 description: Simple template to deploy a single compute instance
   with external network (login will be possible through vnc console and via SSH).
-  It deploys a user named syselevenstack with sudo permissions and the openstack-CLI-tools.
+  It deploys a user named syseleven with sudo permissions and the openstack-CLI-tools.
   This template is prepared to be used with https://dashboard.cloud.syseleven.net
 
 parameters:
@@ -49,7 +49,7 @@ resources:
    properties:
      cloud_config:
        users:
-           - name: syselevenstack
+           - name: syseleven
              gecos: SysEleven Stack user
              sudo: ALL=(ALL) NOPASSWD:ALL
              shell: /bin/bash
@@ -58,11 +58,17 @@ resources:
               #!/usr/bin/env bash
               # wait for valid network
               until ping -c 1 syseleven.de > /dev/null; do sleep 2; done
+              apt-get remove --purge -y landscape-common
               # wait for a valid user
-              until id syselevenstack > /dev/null; do sleep 2; done
-              mkdir /home/syselevenstack/.ssh
-              curl -s http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key > /home/syselevenstack/.ssh/authorized_keys
-              chown -R syselevenstack: /home/syselevenstack
+              until id syseleven > /dev/null; do sleep 2; done
+              mkdir /home/syseleven/.ssh
+              curl -s http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key > /home/syseleven/.ssh/authorized_keys
+              cat <<EOF> /home/syseleven/.ssh/config
+              Host 185.56.* 
+               UserKnownHostsFile=/dev/null
+               StrictHostKeyChecking=no
+              EOF
+              chown -R syseleven: /home/syseleven
             path: /root/inject_userkey
             permissions: 0700
          # don't replace content in this hot template, only write your credentials inside the newly generated vm!
@@ -81,6 +87,12 @@ resources:
             path: /etc/skel/openrc
             owner: root
             permissions: 0600
+         -  content: { get_file: "https://raw.githubusercontent.com/syseleven/heattemplates-examples/master/gettingStarted/motd.txt" }
+            path: /etc/motd
+            owner: root
+            permissions: 0444
+              
+
        runcmd:
          - /root/inject_userkey
        packages:
@@ -88,6 +100,7 @@ resources:
          - wget
          - unzip
          - screen
+         - terraform
          - python-cinderclient
          - python-glanceclient
          - python-novaclient
