@@ -58,7 +58,6 @@ resources:
               #!/usr/bin/env bash
               # wait for valid network
               until ping -c 1 syseleven.de > /dev/null; do sleep 2; done
-              apt-get remove --purge -y landscape-common
               # wait for a valid user
               until id syseleven > /dev/null; do sleep 2; done
               mkdir /home/syseleven/.ssh
@@ -69,6 +68,9 @@ resources:
                StrictHostKeyChecking=no
               EOF
               chown -R syseleven: /home/syseleven
+              # disable ubuntu landscape scripts
+              curl "https://raw.githubusercontent.com/syseleven/heattemplates-examples/master/gettingStarted/motd.txt" > /etc/motd 
+              chmod 400 /etc/update-motd.d/*
             path: /root/inject_userkey
             permissions: 0700
          # don't replace content in this hot template, only write your credentials inside the newly generated vm!
@@ -87,11 +89,6 @@ resources:
             path: /etc/skel/openrc
             owner: root
             permissions: 0600
-         -  content: { get_file: "https://raw.githubusercontent.com/syseleven/heattemplates-examples/master/gettingStarted/motd.txt" }
-            path: /etc/motd
-            owner: root
-            permissions: 0444
-              
 
        runcmd:
          - /root/inject_userkey
