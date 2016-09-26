@@ -90,9 +90,25 @@ resources:
             path: /etc/skel/openrc
             owner: root
             permissions: 0600
+         - content: |
+              #!/usr/bin/env bash
+              until id syseleven > /dev/null; do sleep 2; done
+              url="https://releases.hashicorp.com/terraform/0.7.4/terraform_0.7.4_linux_amd64.zip"
+              bin="/home/syseleven/bin"
+              tmp="/tmp/terraform.zip"
+              /bin/mkdir -p $bin
+              /usr/bin/curl -s -o $tmp $url
+              /usr/bin/unzip -q $tmp -d $bin
+              /bin/chown syseleven:syseleven $bin/terraform
+              if [ -f $tmp ]; then rm $tmp; fi
+              if [ -x $bin/terraform ]; then exit 0; else (echo "Error while installing terraform"; exit 99); fi
+           path: /root/terra-install.sh
+           owner: root
+           permissions: 0600
 
        runcmd:
          - /root/inject_userkey
+         - /root/terra-install.sh
        packages:
          - git
          - wget
