@@ -48,6 +48,7 @@ resources:
    type: OS::Heat::CloudConfig
    properties:
      cloud_config:
+       manage_etc_hosts: true
        users:
            - name: syseleven
              gecos: SysEleven Stack user
@@ -97,7 +98,6 @@ resources:
          - wget
          - unzip
          - screen
-         - terraform
          - python-cinderclient
          - python-glanceclient
          - python-novaclient
