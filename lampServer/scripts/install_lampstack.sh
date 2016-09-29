@@ -32,6 +32,16 @@ EOF
 
 sed -i "s/password/${customerpass}/g" /root/createDB.sql
 
+cat <<EOF> /etc/motd
+
+DB-Name: syseleven
+DB-User: syseleven
+DB-Server: localhost
+DB-Password: ${customerpass}
+
+EOF
+
+
 mysql < /root/createDB.sql
 
 # basic deployment of any app
