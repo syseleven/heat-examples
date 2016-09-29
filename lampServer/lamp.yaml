@@ -40,8 +40,7 @@ resources:
   host:
     type: OS::Nova::Server
     properties:
-      name: kickstart
-      admin_user: syseleven
+      name: lampserver 
       user_data_format: RAW
       user_data: { get_resource: cloud-init-config }    
       image: Ubuntu Server 16.04 LTS 
@@ -56,11 +55,11 @@ resources:
    properties:
      cloud_config:
        manage_etc_hosts: true
-#       users:
-#           - name: syseleven
-#             gecos: SysEleven Stack user
-#             sudo: ALL=(ALL) NOPASSWD:ALL
-#             shell: /bin/bash
+       users:
+           - name: syseleven
+             gecos: SysEleven Stack user
+             sudo: ALL=(ALL) NOPASSWD:ALL
+             shell: /bin/bash
        write_files:
          -  content: |
               #!/usr/bin/env bash
@@ -68,13 +67,8 @@ resources:
               until ping -c 1 syseleven.de > /dev/null; do sleep 2; done
               # wait for a valid user
               until id syseleven > /dev/null; do sleep 2; done
-#              mkdir /home/syseleven/.ssh
-#              curl -s http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key > /home/syseleven/.ssh/authorized_keys
-              cat <<EOF> /home/syseleven/.ssh/config
-              Host 185.56.* 
-               UserKnownHostsFile=/dev/null
-               StrictHostKeyChecking=no
-              EOF
+              mkdir /home/syseleven/.ssh
+              curl -s http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key > /home/syseleven/.ssh/authorized_keys
               chown -R syseleven: /home/syseleven
               # get install script
               curl "https://raw.githubusercontent.com/syseleven/heattemplates-examples/master/lampServer/scripts/install_lampstack.sh" > /root/install_lampstack.sh
@@ -82,8 +76,11 @@ resources:
             path: /root/inject_userkey
             permissions: 0700
        runcmd:
-         - /root/ininject_userkey
+         - /root/inject_userkey
          - /root/install_lampstack.sh
+       packages:
+         - curl
+
              
   port:
     type: OS::Neutron::Port
