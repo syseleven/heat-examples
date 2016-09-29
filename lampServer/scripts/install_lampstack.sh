@@ -25,8 +25,8 @@ EOF
 
 cat <<EOF> /root/createDB.sql
 CREATE DATABASE syseleven;
-CREATE USER 'newuser'@'localhost' IDENTIFIED BY 'password';
-GRANT ALL PRIVILEGES ON syseleven.* TO 'newuser'@'localhost';
+CREATE USER 'syseleven'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON syseleven.* TO 'syseleven'@'localhost';
 FLUSH PRIVILEGES;
 EOF
 
@@ -48,7 +48,6 @@ mysql < /root/createDB.sql
 rm /var/www/html/*
 git clone https://gitlab.syseleven.de/j.peschke/anyapp.git /var/www/html/
 curl "https://raw.githubusercontent.com/syseleven/heattemplates-examples/master/lampServer/exampleApp/index.php" > /var/www/html/index.php
-
 
 echo "finished generic lamp setup"
 
