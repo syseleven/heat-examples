@@ -1,0 +1,129 @@
+heat_template_version: 2014-10-16
+#
+# you can deploy this template using the following command:
+# 'openstack stack create -t lamp.yaml --parameter key_name=<publicKeyName> <stackName>'
+# 
+# or you can just paste it into the web-ui under "orchestration" >> "launch stack"
+#
+# after successful stack creation you can login with 
+# ssh -l syseleven <externalIP> 
+# 
+
+description: Simple template to deploy a lamp stack 
+  where you can deploy and run you PHP-Appliaction.
+
+parameters:
+ key_name:
+  type: string
+ public_network_id:
+  type: string
+  default: caf8de33-1059-4473-a2c1-2a62d12294fa 
+
+resources:
+  allow_ssh:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: allow incoming SSH and ICMP traffic from anywhere.
+      name: allow incoming traffic, tcp port 22 and icmp
+      rules: 
+        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 22, port_range_max: 22, protocol: tcp } 
+        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, protocol: icmp } 
+
+  allow_webtraffic:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: allow incoming SSH and ICMP traffic from anywhere.
+      name: allow incoming traffic, tcp port 22 and icmp
+      rules: 
+        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 80, port_range_max: 80, protocol: tcp } 
+
+  host:
+    type: OS::Nova::Server
+    properties:
+      name: kickstart
+      admin_user: syseleven
+      user_data_format: RAW
+      user_data: { get_resource: cloud-init-config }    
+      image: Ubuntu Server 16.04 LTS 
+      key_name: {get_param: key_name}
+      flavor: m1.micro
+      networks:
+        - port: { get_resource: port }
+
+  cloud-init-config:
+   # cloud init resource
+   type: OS::Heat::CloudConfig
+   properties:
+     cloud_config:
+       manage_etc_hosts: true
+#       users:
+#           - name: syseleven
+#             gecos: SysEleven Stack user
+#             sudo: ALL=(ALL) NOPASSWD:ALL
+#             shell: /bin/bash
+       write_files:
+         -  content: |
+              #!/usr/bin/env bash
+              # wait for valid network
+              until ping -c 1 syseleven.de > /dev/null; do sleep 2; done
+              # wait for a valid user
+              until id syseleven > /dev/null; do sleep 2; done
+#              mkdir /home/syseleven/.ssh
+#              curl -s http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key > /home/syseleven/.ssh/authorized_keys
+              cat <<EOF> /home/syseleven/.ssh/config
+              Host 185.56.* 
+               UserKnownHostsFile=/dev/null
+               StrictHostKeyChecking=no
+              EOF
+              chown -R syseleven: /home/syseleven
+              # get install script
+              curl "https://raw.githubusercontent.com/syseleven/heattemplates-examples/master/lampServer/scripts/install_lampstack.sh" > /root/install_lampstack.sh
+              chmod 700 /root/install_lampstack.sh
+            path: /root/inject_userkey
+            permissions: 0700
+       runcmd:
+         - /root/ininject_userkey
+         - /root/install_lampstack.sh
+             
+  port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: net}
+      security_groups: [ get_resource: allow_ssh, get_resource: allow_webtraffic ]
+
+  net:
+    type: OS::Neutron::Net
+    properties: 
+      name: kickstart-net
+
+  subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      name: kickstart-subnet
+      dns_nameservers:
+        - 37.123.105.116
+        - 37.123.105.117
+      network_id: {get_resource: net}
+      ip_version: 4
+      cidr: 10.0.0.0/24
+      allocation_pools:
+      - {start: 10.0.0.10, end: 10.0.0.250}
+
+  router:
+    type: OS::Neutron::Router
+    properties:
+      external_gateway_info: {"network": { get_param: public_network_id }}
+      name: kickstart-router
+
+  router_subnet_bridge:
+    type: OS::Neutron::RouterInterface
+    depends_on: subnet
+    properties:
+      router_id: { get_resource: router }
+      subnet: { get_resource: subnet }
+
+  floating_ip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network: { get_param: public_network_id }
+      port_id: { get_resource: port }
