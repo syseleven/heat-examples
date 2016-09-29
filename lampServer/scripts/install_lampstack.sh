@@ -37,7 +37,7 @@ mysql < /root/createDB.sql
 # basic deployment of any app
 rm /var/www/html/*
 git clone https://gitlab.syseleven.de/j.peschke/anyapp.git /var/www/html/
-curl "https://raw.githubusercontent.com/syseleven/heattemplates-examples/master/lampServer/exampleApp/index.php > /var/www/html/index.php
+curl "https://raw.githubusercontent.com/syseleven/heattemplates-examples/master/lampServer/exampleApp/index.php" > /var/www/html/index.php
 
 
 echo "finished generic lamp setup"
