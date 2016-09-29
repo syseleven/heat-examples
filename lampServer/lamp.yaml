@@ -91,12 +91,12 @@ resources:
   net:
     type: OS::Neutron::Net
     properties: 
-      name: kickstart-net
+      name: lampserver-net
 
   subnet:
     type: OS::Neutron::Subnet
     properties:
-      name: kickstart-subnet
+      name: lampserver-subnet
       dns_nameservers:
         - 37.123.105.116
         - 37.123.105.117
@@ -110,7 +110,7 @@ resources:
     type: OS::Neutron::Router
     properties:
       external_gateway_info: {"network": { get_param: public_network_id }}
-      name: kickstart-router
+      name: lampserver-router
 
   router_subnet_bridge:
     type: OS::Neutron::RouterInterface
