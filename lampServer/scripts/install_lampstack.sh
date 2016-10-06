@@ -9,7 +9,9 @@ until ping -c 1 syseleven.de; do sleep 5; done
 # install necessary services
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
-apt-get install -q -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" composer pwgen haveged unzip wget jq git apache2 libapache2-mod-php mysql-server php7.0 php7.0-mysql php7.0-curl php7.0-intl php7.0-mbstring 
+apt-get install -q -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" composer pwgen haveged unzip wget jq git apache2 libapache2-mod-php mysql-server php7.0 php7.0-mysql php7.0-curl php7.0-intl php7.0-mbstring php7.0-xml 
+
+phpenmod  mbstring xml intl curl mysql 
 
 # creating a database
 rootpass=$(pwgen 16 1)
@@ -31,6 +33,7 @@ FLUSH PRIVILEGES;
 EOF
 
 sed -i "s/password/${customerpass}/g" /root/createDB.sql
+mysql < /root/createDB.sql
 
 cat <<EOF> /etc/motd
 
@@ -41,7 +44,17 @@ DB-Password: ${customerpass}
 
 EOF
 
-mysql < /root/createDB.sql
+cat <<EOF> /home/syseleven/dbcredentials
+
+DB-Name: syseleven
+DB-User: syseleven
+DB-Server: localhost
+DB-Password: ${customerpass}
+
+EOF
+
+chmod 400 /home/syseleven/dbcredentials
+chown syseleven: /home/syseleven/dbcredentials
 
 echo "finished generic lamp setup"
 
