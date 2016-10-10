@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # 2016 j.peschke@syseleven.de
 
 # wait for a valid network configuration
