@@ -1,0 +1,15 @@
+## Volume
+ with this example we demonstrate a cluster setup with the following features:
+
+- a loadbalancer
+- a server group with dynamic numbers of servers
+- a database server
+
+These servers are provisioned only with cloud-init/ shell scripts. For service discovery we use consul.
+
+The bootstrap process goes:
+
+Any node installs consul via cloud-init/ a simple shell script.
+Any node joins a cluster with the first three nodes  
+ in the internal network range as (as defined in OS::Neutron::Subnet)
+
