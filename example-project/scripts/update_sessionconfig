@@ -1,9 +1,0 @@
-#!/bin/bash
-
-sessionstore=$(avahi-browse _session._tcp --resolve -p -t  |awk -F';'  '/^=;eth0;IPv4/{print $8}' | sort -n)
-
-sed -i 's/session.save_handler = files/session.save_handler = memcached/g' /etc/php/7.0/fpm/php.ini
-sed -i "s#;session.save_path = \"/var/lib/php/sessions\"#session.save_path = '$sessionstore:11211'#g" /etc/php/7.0/fpm/php.ini
-
-systemctl restart php7.0-fpm
-

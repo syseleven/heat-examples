@@ -1,5 +1,0 @@
-## Volume
-
-In this example, the volume is only created once and then used several times by the created stack. 
-This reflects a use case where you want to keep your data for longer than your stack with your virtual machines.
-The drawback ist, that you can only start one stack using this volume.
