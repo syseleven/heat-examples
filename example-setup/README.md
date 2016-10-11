@@ -26,7 +26,12 @@ If the bastion host (called "servicehost") and the loadbalancer as proxy are com
 ## How to start this setup
 
 * add your public SSH key to clustersetup-env.yaml 
-* openstack stack create -t clustersetup.yaml -e clustersetup-env.yaml <stack_name>
+* Start the setup:
+
+```
+openstack stack create -t clustersetup.yaml -e clustersetup-env.yaml <stack_name>
+```
+
 
 
 
