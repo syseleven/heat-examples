@@ -10,6 +10,8 @@
 - a database server
 - a bastion host
 
+![Setup overview](img/setup_overview.png)
+
 These servers are provisioned only with cloud-init/ shell scripts. For service discovery we use consul.
 
 Any node installs consul via cloud-init/ a simple shell script.
