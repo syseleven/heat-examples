@@ -12,8 +12,6 @@
 
 These servers are provisioned only with cloud-init/ shell scripts. For service discovery we use consul.
 
-The bootstrap process goes:
-
 Any node installs consul via cloud-init/ a simple shell script.
 Any node joins a cluster with the first three nodes  
  in the internal network range. 
