@@ -37,6 +37,21 @@ mysql < /root/createDB.sql
 
 cat <<EOF> /etc/motd
 
+  Welcome to SysEleven Stack
+
+	    /\
+	  /\\//\
+        /\\//\\//\
+        \//\\//\\/
+        /\\//\\/
+        \//\\/
+          \/
+
+     engage.build.run
+            
+For documentation please visit
+http://doc.cloud.syseleven.net/openstack-kundendoku/
+
 DB-Name: syseleven
 DB-User: syseleven
 DB-Server: localhost
