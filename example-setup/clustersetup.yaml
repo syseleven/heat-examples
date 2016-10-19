@@ -49,6 +49,7 @@ resources:
 
   syseleven_subnet:
     type: OS::Neutron::Subnet
+    depends_on: [ syseleven_net ]
     properties:
       name: syseleven_subnet
       dns_nameservers:
@@ -62,12 +63,13 @@ resources:
 
   syseleven_router:
     type: OS::Neutron::Router
+    depends_on: [ syseleven_subnet ]
     properties:
       external_gateway_info: {"network": { get_param: public_network_id }}
 
   router_subnet_connect:
     type: OS::Neutron::RouterInterface
-    depends_on: [ syseleven_subnet, syseleven_router, syseleven_net ]
+    depends_on: [ syseleven_router ]
     properties:
       router_id: { get_resource: syseleven_router }
       subnet: { get_resource: syseleven_subnet }
