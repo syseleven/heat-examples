@@ -21,7 +21,7 @@ This repository provides:
 	You need a router, if you don't want to waste public/ floating IPs for 
 	instances that do not need public interfaces. 
 
-    - working with volumes
+    - Volumes as blockstorage
 	Volumes are a way to get data persistence even if you terminate your 
 	instance. Volumes are recommended if you work with databases or any
 	content you want to use longer than your VMs life cycle.
