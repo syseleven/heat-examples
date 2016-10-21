@@ -50,7 +50,7 @@ cat <<EOF> /etc/motd
      engage.build.run
             
 For documentation please visit
-http://doc.cloud.syseleven.net/openstack-kundendoku/
+https://doc.syselevenstack.com/
 
 DB-Name: syseleven
 DB-User: syseleven
