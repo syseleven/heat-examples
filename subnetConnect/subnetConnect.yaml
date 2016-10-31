@@ -1,0 +1,127 @@
+heat_template_version: 2016-04-08
+#
+# you can deploy this template using the following command:
+# 'openstack stack create -t subnetConnect.yaml --parameter key_name=<SSH_KEY_ID> <stack_name>'
+# 
+
+description: deploy two networks, two subnets and connect them with each other 
+
+parameters:
+ public_network_id:
+  type: string
+  default: caf8de33-1059-4473-a2c1-2a62d12294fa 
+ key_name:
+  type: string
+            
+resources:
+  mgm_net:
+    type: OS::Neutron::Net
+    properties: 
+      name: management network
+
+  mgm_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      name: management subnet
+      host_routes: [{"destination": 192.168.2.0/24, "nexthop": 10.0.0.1}]
+      dns_nameservers:
+        - 8.8.8.8
+        - 8.8.4.4
+      network_id: {get_resource: mgm_net}
+      ip_version: 4
+      cidr: 10.0.0.0/8
+      allocation_pools:
+      - {start: 10.0.0.10, end: 10.255.255.250}
+
+  application_net:
+    type: OS::Neutron::Net
+    properties: 
+      name: kickstart-net
+
+  application_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      host_routes: [{"destination": 10.0.0.0/24, "nexthop": 192.168.2.1}]
+      name: appliaction subnet
+      dns_nameservers:
+        - 8.8.4.4
+        - 8.8.8.8
+      network_id: {get_resource: application_net}
+      ip_version: 4
+      cidr: 192.168.2.0/24
+      allocation_pools:
+      - {start: 192.168.2.10, end: 192.168.2.250}
+
+  router:
+    type: OS::Neutron::Router
+    properties:
+      external_gateway_info: {"network": { get_param: public_network_id }}
+      name: network router
+
+  mgm_subnet_connect:
+    type: OS::Neutron::RouterInterface
+    depends_on: mgm_subnet
+    properties:
+      router_id: { get_resource: router }
+      subnet: { get_resource: mgm_subnet }
+
+  application_subnet_connect:
+    type: OS::Neutron::RouterInterface
+    depends_on: application_subnet
+    properties:
+      router_id: { get_resource: router }
+      subnet: { get_resource: application_subnet }
+
+  mgm_node:
+    type: OS::Nova::Server
+    properties:
+      key_name: { get_param: key_name }
+      user_data_format: RAW
+      image: Ubuntu 16.04 sys11-cloudimg amd64 
+      flavor: m1.micro
+      name: manager
+      networks:
+        - port: { get_resource: mgm_node_port }
+
+  mgm_node_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: mgm_net}
+      security_groups: [{ get_resource: server_security_group }]
+
+  application_node:
+    type: OS::Nova::Server
+    properties:
+      key_name: { get_param: key_name }
+      user_data_format: RAW
+      image: Ubuntu 16.04 sys11-cloudimg amd64 
+      flavor: m1.micro
+      name: appserver
+      networks:
+        - port: { get_resource: appserver_port }
+
+  appserver_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: application_net}
+      security_groups: [{ get_resource: server_security_group }]
+
+  server_security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: Open SSH and ICMP traffic.
+      name: single-server-security-group 
+      rules: [
+        {remote_ip_prefix: 0.0.0.0/0,
+        protocol: tcp,
+        port_range_min: 22,
+        port_range_max: 22},
+        {remote_ip_prefix: 0.0.0.0/0,
+        protocol: icmp}]
+
+  example_floating_ip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network: { get_param: public_network_id }
+      port_id: { get_resource: mgm_node_port }
+
