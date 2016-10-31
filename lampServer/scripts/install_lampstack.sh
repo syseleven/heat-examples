@@ -12,6 +12,9 @@ apt-get update
 apt-get install -q -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" composer pwgen haveged unzip wget jq git apache2 libapache2-mod-php mysql-server php7.0 php7.0-mysql php7.0-curl php7.0-intl php7.0-mbstring php7.0-xml 
 
 phpenmod  mbstring xml intl curl mysqli mysqlnd 
+
+# disable unneeded apache modules
+a2dismod autoindex deflate status localized-error-pages serve-cgi-bin   
 systemctl restart apache2
 
 # creating a database
@@ -62,7 +65,7 @@ echo ''
 echo ''
 }
 
-create_motd
+create_motd > /etc/motd
 
 cat <<EOF> /home/syseleven/dbcredentials
 
