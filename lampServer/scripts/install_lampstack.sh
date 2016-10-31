@@ -36,29 +36,33 @@ EOF
 sed -i "s/password/${customerpass}/g" /root/createDB.sql
 mysql < /root/createDB.sql
 
-cat <<EOF> /etc/motd
+create_motd(){
+echo ''
+echo ''
+echo '  Welcome to SysEleven Stack'
+echo ''
+echo '            /\'
+echo '          /\\//\'
+echo '        /\\//\\//\'
+echo '        \//\\//\\/'
+echo '        /\\//\\/'
+echo '        \//\\/'
+echo '          \/'
+echo '     engage.build.run'
+echo ''
+echo ''
+echo 'For documentation please visit'
+echo 'https://doc.syselevenstack.com/'
+echo ''
+echo 'DB-Name: syseleven'
+echo 'DB-User: syseleven'
+echo 'DB-Server: localhost'
+echo "DB-Password: ${customerpass}"
+echo ''
+echo ''
+}
 
-  Welcome to SysEleven Stack
-
-	    /\
-	  /\\//\
-        /\\//\\//\
-        \//\\//\\/
-        /\\//\\/
-        \//\\/
-          \/
-
-     engage.build.run
-            
-For documentation please visit
-https://doc.syselevenstack.com/
-
-DB-Name: syseleven
-DB-User: syseleven
-DB-Server: localhost
-DB-Password: ${customerpass}
-
-EOF
+create_motd
 
 cat <<EOF> /home/syseleven/dbcredentials
 
