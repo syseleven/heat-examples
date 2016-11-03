@@ -29,7 +29,7 @@ After a couple of seconds you should see a new machine spawning under
  --> "Instances"
 Copy the IP address from "Floating IPs" and you should be ready to login via SSH.
 
-```ssh syselevenstack@77.247.XX.XX```
+```ssh syseleven@XX.XX.XX.XX```
 
 The home directory has a prepared "openrc" file, which allows you to work with the 
 openstack endpoints:
