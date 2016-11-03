@@ -1,4 +1,4 @@
-heat_template_version: 2016-04-07
+heat_template_version: 2016-04-08
 
 # this file is referenced by cluster.yaml
 # start the cluster using "openstack stack create -t cluster.yaml <stackName>". 
@@ -7,8 +7,10 @@ description: This is a template for a single CoreOS instance
 
 parameters:
   coreos_security_group:
-    type: comma_delimited_list
+    type: string
   coreos_net:
+    type: string
+  public_network_id:
     type: string
   image:
     type: string
@@ -16,6 +18,9 @@ parameters:
     type: string
   name:
     type: string
+  key_name:
+    type: string
+
 
 resources:
   coreos_port:
@@ -24,12 +29,19 @@ resources:
       security_groups: [ { get_param: coreos_security_group }, default ]
       network_id: { get_param: coreos_net }
 
+  floating_ip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network: { get_param: public_network_id }
+      port_id: { get_resource: coreos_port }
+
   coreos_instance:
     type: OS::Nova::Server
     properties:
       name: { get_param: name }
       flavor: { get_param: flavor }
       image: { get_param: image }
+      key_name: { get_param: key_name }
       user_data_format: RAW
       user_data: { get_resource: cloud-init-config }    
       networks:
@@ -57,10 +69,5 @@ resources:
                 ExecStart=/usr/bin/docker run --rm --name nginx -p 80:80 nginx
                 ExecStop=/usr/bin/docker stop nginx
 
-  glance_image:
-    type: OS::Glance::Image
-    properties:
-      container_format: bare
-      disk_format: qcow2
-      name: Gentoo
-      location: http://gentoo.osuosl.org/experimental/amd64/openstack/gentoo-openstack-amd64-default-20161008.qcow2
+
+

@@ -1,6 +1,6 @@
-heat_template_version: 2016-04-07
+heat_template_version: 2016-04-08
 
-# start it with "openstack stack create -t cluster.yaml <stackName>". 
+# start it with "openstack stack create -t cluster.yaml coreos-test --parameter key_name=default". 
 
 description: This template starts a number of CoreOS VMs to run docker containers
 
@@ -16,11 +16,9 @@ parameters:
   flavor:
     type: string
     default: m1.micro
-  # TODO image
-  image_url:
+  image:
     type: string
-    default: https://stable.release.core-os.net/amd64-usr/current/coreos_production_openstack_image.img.bz2
-
+    default: private_coreos
 
 resources:
   coreos_net:
@@ -39,7 +37,7 @@ resources:
       ip_version: 4
       cidr: 10.0.0.0/8
       allocation_pools:
-      - { start: 10.0.0.10, end: 10.255.255.255 }
+      - { start: 10.0.0.10, end: 10.255.255.254 }
 
   coreos_security_group:
     type: OS::Neutron::SecurityGroup
@@ -75,13 +73,6 @@ resources:
           flavor: { get_param: flavor }
           image: { get_param: image }
           coreos_net: { get_resource: coreos_net }
+          public_network_id: { get_param: public_network_id }
           coreos_security_group: { get_resource: coreos_security_group }
           key_name: { get_param: key_name }
-
-  glance_image:
-    type: OS::Glance::Image
-    properties:
-      container_format: bare
-      disk_format: qcow2
-      name: CoreOS
-      location: { get_param: image_url }
