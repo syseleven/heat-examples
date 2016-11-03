@@ -1,0 +1,66 @@
+heat_template_version: 2016-04-07
+
+# this file is referenced by cluster.yaml
+# start the cluster using "openstack stack create -t cluster.yaml <stackName>". 
+
+description: This is a template for a single CoreOS instance
+
+parameters:
+  coreos_security_group:
+    type: comma_delimited_list
+  coreos_net:
+    type: string
+  image:
+    type: string
+  flavor:
+    type: string
+  name:
+    type: string
+
+resources:
+  coreos_port:
+    type: OS::Neutron::Port
+    properties:
+      security_groups: [ { get_param: coreos_security_group }, default ]
+      network_id: { get_param: coreos_net }
+
+  coreos_instance:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: name }
+      flavor: { get_param: flavor }
+      image: { get_param: image }
+      user_data_format: RAW
+      user_data: { get_resource: cloud-init-config }    
+      networks:
+        - port: { get_resource: coreos_port }
+
+  cloud-init-config:
+    type: OS::Heat::CloudConfig
+    properties:
+      cloud_config:
+        coreos:
+          units:
+            - name: "docker-example-nginx.service"
+              command: "start"
+              content: |
+                [Unit]
+                Description=Example Nginx container
+                Author=Example Author
+                After=docker.service
+
+                [Service]
+                Restart=always
+                ExecStartPre=-/usr/bin/docker kill nginx
+                ExecStartPre=-/usr/bin/docker rm nginx
+                ExecStartPre=/usr/bin/docker pull nginx
+                ExecStart=/usr/bin/docker run --rm --name nginx -p 80:80 nginx
+                ExecStop=/usr/bin/docker stop nginx
+
+  glance_image:
+    type: OS::Glance::Image
+    properties:
+      container_format: bare
+      disk_format: qcow2
+      name: Gentoo
+      location: http://gentoo.osuosl.org/experimental/amd64/openstack/gentoo-openstack-amd64-default-20161008.qcow2
