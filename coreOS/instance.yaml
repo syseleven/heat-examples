@@ -1,7 +1,7 @@
 heat_template_version: 2016-04-08
 
 # this file is referenced by cluster.yaml
-# start the cluster using "openstack stack create -t cluster.yaml <stackName>". 
+# start the cluster using "openstack stack create -t cluster.yaml <stack name> --parameter key_name=<ssh key name> --wait". 
 
 description: This is a template for a single CoreOS instance
 
@@ -68,6 +68,3 @@ resources:
                 ExecStartPre=/usr/bin/docker pull nginx
                 ExecStart=/usr/bin/docker run --rm --name nginx -p 80:80 nginx
                 ExecStop=/usr/bin/docker stop nginx
-
-
-
