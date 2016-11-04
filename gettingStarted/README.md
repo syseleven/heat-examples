@@ -29,16 +29,15 @@ After a couple of seconds you should see a new machine spawning under
  --> "Instances"
 Copy the IP address from "Floating IPs" and you should be ready to login via SSH.
 
-```ssh syselevenstack@77.247.XX.XX```
+```ssh syseleven@XX.XX.XX.XX```
 
 The home directory has a prepared "openrc" file, which allows you to work with the 
-openstack endpoints:
+openstack endpoints. Open it with a text editor of your choice.
 
-```syselevenstack@kickstart:~$ ls
-openrc```
+```syseleven@kickstart:~$ vim openrc```
 
-Within this openrc file you just need to adjust tenant name, user name and user password.
-After you changed these credentials, you have to source this file:
+You just need to adjust `OS_TENANT_NAME`, `OS_USERNAME` and `OS_PASSWORD` to the actual values..
+To be able to use the command line tools just source the environment variables:
 
 ```source openrc```
 
