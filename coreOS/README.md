@@ -11,6 +11,8 @@ Using this template you can start any number of CoreOS instances.
     ```$ ./upload_replacing_coreos_image.sh```
 
     It will download the [official coreOS image](https://coreos.com/os/docs/latest/booting-on-openstack.html), delete any of your existing images named `private_coreos` and upload it your SysEleven Stack image store.
+    
+    The script will ensure you always use the latest production release.
 
 2. Launch the CoreOS cluster.
 
