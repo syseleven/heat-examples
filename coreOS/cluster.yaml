@@ -1,0 +1,78 @@
+heat_template_version: 2016-04-08
+
+# start it with "openstack stack create -t cluster.yaml <stack name> --parameter key_name=<ssh key name> --wait". 
+
+description: This template starts a number of CoreOS VMs to run docker containers
+
+parameters:
+  key_name:
+    type: string
+  number_instances:
+    type: number
+    default: 1
+  public_network_id:
+    type: string
+    default: caf8de33-1059-4473-a2c1-2a62d12294fa
+  flavor:
+    type: string
+    default: m1.micro
+  image:
+    type: string
+    default: private_coreos
+
+resources:
+  coreos_net:
+    type: OS::Neutron::Net
+    properties: 
+      name: coreos-net
+
+  coreos_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      name: coreos-subnet
+      dns_nameservers:
+        - 37.123.105.116
+        - 37.123.105.117
+      network_id: { get_resource: coreos_net }
+      ip_version: 4
+      cidr: 10.0.0.0/8
+      allocation_pools:
+      - { start: 10.0.0.10, end: 10.255.255.254 }
+
+  coreos_security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: allow incoming traffic from anywhere.
+      name: allow incoming traffic, tcp
+      rules:
+        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 80, port_range_max: 80, protocol: tcp }
+        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 22, port_range_max: 22, protocol: tcp }
+        - { direction: ingress, protocol: icmp }
+
+  coreos_router:
+    type: OS::Neutron::Router
+    properties:
+      external_gateway_info: { "network": { get_param: public_network_id } }
+
+  router_subnet_connect:
+    type: OS::Neutron::RouterInterface
+    depends_on: [ coreos_subnet, coreos_router ]
+    properties:
+      router_id: { get_resource: coreos_router }
+      subnet: { get_resource: coreos_subnet }
+
+  coreos_group:
+    type: OS::Heat::ResourceGroup
+    depends_on: [ router_subnet_connect ]
+    properties:
+      count: { get_param: number_instances } 
+      resource_def: 
+        type: instance.yaml
+        properties:
+          name: coreos%index%
+          flavor: { get_param: flavor }
+          image: { get_param: image }
+          coreos_net: { get_resource: coreos_net }
+          public_network_id: { get_param: public_network_id }
+          coreos_security_group: { get_resource: coreos_security_group }
+          key_name: { get_param: key_name }
