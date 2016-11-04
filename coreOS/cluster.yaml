@@ -1,6 +1,6 @@
 heat_template_version: 2016-04-08
 
-# start it with "openstack stack create -t cluster.yaml coreos-test --parameter key_name=default". 
+# start it with "openstack stack create -t cluster.yaml <stack name> --parameter key_name=<ssh key name> --wait". 
 
 description: This template starts a number of CoreOS VMs to run docker containers
 
