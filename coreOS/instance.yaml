@@ -1,6 +1,6 @@
 heat_template_version: 2016-04-08
 
-# this file is referenced by cluster.yaml and does not work stand alone
+# this file is referenced by cluster.yaml
 
 description: This is a template for a single CoreOS instance
 
