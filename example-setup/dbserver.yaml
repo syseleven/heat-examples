@@ -58,6 +58,16 @@ resources:
             sudo: ALL=(ALL) NOPASSWD:ALL
             shell: /bin/bash
             ssh-authorized-keys: { get_param: ssh_keys }
+       apt:
+         sources:
+           percona_repo:
+             source: "deb http://repo.percona.com/apt xenial main"
+             keyid: 8507EFA5 
+             filename: xtradb.list
+
+
+## deb http://repo.percona.com/apt xenial main
+## deb-src http://repo.percona.com/apt xenial main
 
   dbserver_port:
     type: OS::Neutron::Port

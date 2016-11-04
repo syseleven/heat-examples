@@ -6,7 +6,8 @@ until ping -c 1 syseleven.de; do sleep 1; done
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
-apt-get install -y mysql-server
+## apt-get install -y mysql-server
+apt-get install -y percona-xtradb-cluster-57 
 
 # implement consul health check
 cat <<EOF> /etc/consul.d/dbserver_health.json
