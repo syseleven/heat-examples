@@ -25,5 +25,5 @@ Using this template you can start any number of CoreOS instances.
 - **key_name** – ssh key name
 - **number_instances** number of CoreOS instances to spawn
   - default: 1
-- **flavor** instance types. You can find a list of the available [flavors in the documentation](https://doc.syselevenstack.com/en/documentation/compute/#instance-types)
+- **flavor** instance types. In our documentaton, you can find the [list of available flavors](https://doc.syselevenstack.com/en/documentation/compute/#instance-types)
 
