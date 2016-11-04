@@ -34,5 +34,5 @@ To work through these examples you need to install OpenStack command line client
 http://docs.openstack.org/user-guide/content/install_clients.html
 
 Or you can build your own environment using the "gettingStarted" template. This template is prepared to 
-be used as a copy&paste file that you can use within the openstack dashboard. The only needed Parameter
+be used as a copy & paste file that you can use within the openstack dashboard. The only needed Parameter
 is "key_name", where you insert the name of your public SSH key.
