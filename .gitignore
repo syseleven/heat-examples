@@ -1,0 +1,9 @@
+.DS_Store
+venv/
+ssh_rsa
+__pycache__
+.cache
+.idea
+*.py[oc]
+.tox
+ssh_rsa*
