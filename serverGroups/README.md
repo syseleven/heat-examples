@@ -12,7 +12,7 @@ Using this template you can start two instances organised which are organised as
 
 ## Code organisation
     
-    This example uses two files as input. These files are organised hierarchically, which means that the file group.yaml uses the file server.yaml as often, as the variable "count" states.
+    The file group.yaml references the resources in server.yaml via the resource group. The property count controls the number of times the resources in server.yaml will be instantiated.
 
 ## Parameters
 
