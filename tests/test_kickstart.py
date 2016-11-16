@@ -6,7 +6,7 @@ testinfra_hosts = ["syseleven@kickstart"]
 
 @pytest.fixture(scope="module", autouse=True)
 def HeatKickstart(HeatTemplate, OpenstackSshKey):
-    template = HeatTemplate("examples/gettingStarted/sysElevenStackKickstart.yaml",
+    template = HeatTemplate("gettingStarted/sysElevenStackKickstart.yaml",
                             key_name=OpenstackSshKey)
     template.create()
     time.sleep(100)
