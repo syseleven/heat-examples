@@ -2,7 +2,7 @@
 
 ## Overview
 
-Using this template you can start two instances organised which are organised as ResourceGroups
+Using this template you can start two instances organised which are organised as `OS::Heat::ResourceGroups`.
 
 ## Usage
 
