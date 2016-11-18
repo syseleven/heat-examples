@@ -15,6 +15,6 @@ openstack image create private_coreos \
   --file coreos_production_openstack_image.img \
   --property "version=$COREOS_VERSION" \
   --private
-  
+
 # delete temporary files
 rm coreos_production_openstack_image.img
