@@ -9,11 +9,12 @@ curl https://stable.release.core-os.net/amd64-usr/current/coreos_production_open
 echo "Uploading image..."
 
 # upload image
-openstack image create \
+openstack image create private_coreos \
   --container-format bare \
   --disk-format qcow2 \
   --file coreos_production_openstack_image.img \
-  --private "Private CoreOS $COREOS_VERSION"
-
+  --property "version=$COREOS_VERSION" \
+  --private
+  
 # delete temporary files
 rm coreos_production_openstack_image.img
