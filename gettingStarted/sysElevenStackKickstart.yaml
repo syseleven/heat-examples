@@ -100,6 +100,7 @@ resources:
               /usr/bin/curl -s -o $tmp $url
               /usr/bin/unzip -q $tmp -d $bin
               /bin/chown syseleven:syseleven $bin/terraform
+              /bin/chown -R syseleven:syseleven $bin/
               if [ -f $tmp ]; then rm $tmp; fi
               if [ -x $bin/terraform ]; then exit 0; else (echo "Error while installing terraform"; exit 99); fi
            path: /root/terra-install.sh
