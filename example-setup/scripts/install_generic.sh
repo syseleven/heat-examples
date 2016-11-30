@@ -10,11 +10,15 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get install -q -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" curl haveged unzip wget jq git dnsmasq
 
-wget https://releases.hashicorp.com/consul/0.7.0/consul_0.7.0_linux_amd64.zip 
+# add a user for consul
+adduser --quiet --shell /bin/sh --no-create-home --disabled-password --disabled-login --home /var/lib/misc --gecos "Consul system user" consul
+
+# install consul
+wget https://releases.hashicorp.com/consul/0.7.1/consul_0.7.1_linux_amd64.zip 
 wget https://releases.hashicorp.com/consul-template/0.16.0/consul-template_0.16.0_linux_amd64.zip 
-unzip consul_0.7.0_linux_amd64.zip
+unzip consul_0.7.1_linux_amd64.zip
 mv consul /usr/local/sbin/
-rm consul_0.7.0_linux_amd64.zip
+rm consul_0.7.1_linux_amd64.zip
 mkdir -p /etc/consul.d
 
 unzip consul-template_0.16.0_linux_amd64.zip
@@ -38,7 +42,7 @@ Requires=network-online.target
 After=network-online.target
 
 [Service]
-User=root
+User=consul
 EnvironmentFile=-/etc/default/consul
 Environment=GOMAXPROCS=2
 Restart=on-failure
