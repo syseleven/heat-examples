@@ -1,0 +1,68 @@
+heat_template_version: 2014-10-16
+
+#
+# you can start this stack using the following command:
+# 'openstack stack create -t servergroups.yaml <stackName>'
+#
+
+description: deploys a group of servers with affinity and anti-affinity groups.
+
+resources:
+  same_hosts:
+    type: OS::Heat::ResourceGroup
+    depends_on: example_subnet
+    properties:
+      count: 2
+      resource_def:
+        type: server.yaml
+        properties:
+          network_id: { get_resource: example_net}
+          server_name: server_%index%
+          affinity_group: { get_resource: affinity_group }
+
+  separate_hosts:
+    type: OS::Heat::ResourceGroup
+    depends_on: example_subnet
+    properties:
+      count: 2
+      resource_def:
+        type: server.yaml
+        properties:
+          network_id: { get_resource: example_net}
+          server_name: antiserver_%index%
+          affinity_group: { get_resource: anti-affinity_group }
+
+
+  anti-affinity_group:
+   type: OS::Nova::ServerGroup
+   properties:
+    name: hosts on separate compute nodes
+    policies:
+     - anti-affinity
+
+  affinity_group:
+   type: OS::Nova::ServerGroup
+   properties:
+    name: hosts on one compute-node
+    policies:
+     - affinity
+
+  example_net:
+    type: OS::Neutron::Net
+    properties:
+      name: example-net
+
+  example_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      name: example_subnet
+      dns_nameservers:
+        - 37.123.105.116
+        - 37.123.105.117
+      network_id: {get_resource: example_net}
+      ip_version: 4
+      cidr: 10.0.0.0/24
+      allocation_pools:
+      - {start: 10.0.0.10, end: 10.0.0.250}
+
+
