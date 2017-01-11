@@ -1,0 +1,30 @@
+heat_template_version: 2014-10-16
+
+description: single server resource used by resource groups.
+
+parameters:
+  network_id:
+    type: string
+  server_name:
+    type: string
+  affinity_group:
+    type: string
+
+resources:
+  my_instance:
+    type: OS::Nova::Server
+    properties:
+      user_data_format: RAW
+      image: Ubuntu 16.04 sys11-cloudimg amd64
+      flavor: m1.small
+      name: { get_param: server_name }
+      networks:
+        - port: { get_resource: example_port }
+      scheduler_hints:
+        group: { get_param: affinity_group }
+
+  example_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: network_id }
+
