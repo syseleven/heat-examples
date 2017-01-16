@@ -55,7 +55,7 @@ resources:
     type: OS::Neutron::RouterInterface
     depends_on: [ example_subnet, example_router, example_net ]
     properties:
-      router_id: { get_resource: example_router }
+      router: { get_resource: example_router }
       subnet: { get_resource: example_subnet }
 
 

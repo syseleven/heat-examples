@@ -58,7 +58,7 @@ resources:
     type: OS::Neutron::RouterInterface
     depends_on: [ coreos_subnet, coreos_router ]
     properties:
-      router_id: { get_resource: coreos_router }
+      router: { get_resource: coreos_router }
       subnet: { get_resource: coreos_subnet }
 
   coreos_group:

@@ -71,7 +71,7 @@ resources:
     type: OS::Neutron::RouterInterface
     depends_on: [ syseleven_router ]
     properties:
-      router_id: { get_resource: syseleven_router }
+      router: { get_resource: syseleven_router }
       subnet: { get_resource: syseleven_subnet }
 
   ### LB Node as resource group ###

@@ -70,7 +70,7 @@ resources:
     type: OS::Neutron::RouterInterface
     depends_on:  example_subnet
     properties:
-      router_id: { get_resource: router }
+      router: { get_resource: router }
       subnet: { get_resource: example_subnet }
 
   example_test_floating_ip:

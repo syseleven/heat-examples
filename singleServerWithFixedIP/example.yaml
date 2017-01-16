@@ -69,7 +69,7 @@ resources:
     type: OS::Neutron::RouterInterface
     depends_on:  example_subnet 
     properties:
-      router_id: { get_resource: example_router }
+      router: { get_resource: example_router }
       subnet: { get_resource: example_subnet }
 
   associate_my_ip:

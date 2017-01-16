@@ -62,14 +62,14 @@ resources:
     type: OS::Neutron::RouterInterface
     depends_on: mgm_subnet
     properties:
-      router_id: { get_resource: router }
+      router: { get_resource: router }
       subnet: { get_resource: mgm_subnet }
 
   application_subnet_connect:
     type: OS::Neutron::RouterInterface
     depends_on: application_subnet
     properties:
-      router_id: { get_resource: router }
+      router: { get_resource: router }
       subnet: { get_resource: application_subnet }
 
   mgm_node:
