@@ -29,7 +29,7 @@ resources:
   example_port:
     type: OS::Neutron::Port
     properties:
-      network_id: { get_resource: network}
+      network: { get_resource: network}
       security_groups: [{ get_resource: server_security_group }]
 
   example_floating_ip:
@@ -50,7 +50,7 @@ resources:
       name: examplae_subnet
       dns_nameservers:
         - 37.123.105.117
-      network_id: {get_resource: network}
+      network: {get_resource: network}
       ip_version: 4
       cidr: 10.0.0.0/24
       allocation_pools:

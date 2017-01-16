@@ -27,7 +27,7 @@ resources:
       dns_nameservers:
         - 8.8.8.8
         - 8.8.4.4
-      network_id: {get_resource: mgm_net}
+      network: {get_resource: mgm_net}
       ip_version: 4
       cidr: 10.0.0.0/8
       allocation_pools:
@@ -46,7 +46,7 @@ resources:
       dns_nameservers:
         - 8.8.4.4
         - 8.8.8.8
-      network_id: {get_resource: application_net}
+      network: {get_resource: application_net}
       ip_version: 4
       cidr: 192.168.2.0/24
       allocation_pools:
@@ -86,7 +86,7 @@ resources:
   mgm_node_port:
     type: OS::Neutron::Port
     properties:
-      network_id: { get_resource: mgm_net}
+      network: { get_resource: mgm_net}
       security_groups: [{ get_resource: server_security_group }]
 
   application_node:
@@ -103,7 +103,7 @@ resources:
   appserver_port:
     type: OS::Neutron::Port
     properties:
-      network_id: { get_resource: application_net}
+      network: { get_resource: application_net}
       security_groups: [{ get_resource: server_security_group }]
 
   server_security_group:

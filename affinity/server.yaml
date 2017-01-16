@@ -26,5 +26,5 @@ resources:
   example_port:
     type: OS::Neutron::Port
     properties:
-      network_id: { get_param: network_id }
+      network: { get_param: network_id }
 

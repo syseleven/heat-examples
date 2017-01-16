@@ -33,7 +33,7 @@ resources:
       dns_nameservers:
         - 37.123.105.116
         - 37.123.105.117
-      network_id: { get_resource: coreos_net }
+      network: { get_resource: coreos_net }
       ip_version: 4
       cidr: 10.0.0.0/8
       allocation_pools:

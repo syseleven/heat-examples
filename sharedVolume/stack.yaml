@@ -25,7 +25,7 @@ resources:
       dns_nameservers:
         - 37.123.105.116
         - 37.123.105.117
-      network_id: {get_resource: syseleven_net}
+      network: {get_resource: syseleven_net}
       ip_version: 4
       cidr: 10.10.10.0/8
       allocation_pools:
