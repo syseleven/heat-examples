@@ -73,4 +73,4 @@ resources:
     type: OS::Neutron::Port
     properties:
       name: dbserver port
-      network_id: { get_param: syseleven_net}
+      network: { get_param: syseleven_net}

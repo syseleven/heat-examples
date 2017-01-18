@@ -57,7 +57,7 @@ resources:
     type: OS::Neutron::Port
     properties:
       security_groups: [ {get_resource: allow_http}, {get_resource: allow_https}, {get_resource: allow_static_ip} ]
-      network_id: { get_resource: example_net}
+      network: { get_resource: example_net}
 
   example_net:
     type: OS::Neutron::Net
@@ -71,7 +71,7 @@ resources:
       dns_nameservers:
         - 37.123.105.116
         - 37.123.105.117
-      network_id: {get_resource: example_net}
+      network: {get_resource: example_net}
       ip_version: 4
       cidr: 10.0.0.0/24
       allocation_pools:
@@ -86,7 +86,7 @@ resources:
     type: OS::Neutron::RouterInterface
     depends_on: [ example_subnet, example_router ]
     properties:
-      router_id: { get_resource: example_router }
+      router: { get_resource: example_router }
       subnet: { get_resource: example_subnet }
 
   example_floating_ip:

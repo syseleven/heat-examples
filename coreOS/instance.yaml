@@ -26,7 +26,7 @@ resources:
     type: OS::Neutron::Port
     properties:
       security_groups: [ { get_param: coreos_security_group }, default ]
-      network_id: { get_param: coreos_net }
+      network: { get_param: coreos_net }
 
   floating_ip:
     type: OS::Neutron::FloatingIP

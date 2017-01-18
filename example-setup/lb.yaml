@@ -65,7 +65,7 @@ resources:
     type: OS::Neutron::Port
     properties:
       name: lb port
-      network_id: { get_param: syseleven_net}
+      network: { get_param: syseleven_net}
       security_groups: 
         - { get_resource: allow_webtraffic }
         - default

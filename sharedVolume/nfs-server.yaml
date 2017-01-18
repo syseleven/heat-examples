@@ -34,7 +34,7 @@ resources:
   syseleven_port:
     type: OS::Neutron::Port
     properties:
-      network_id: { get_param: syseleven_net}
+      network: { get_param: syseleven_net}
       security_groups: [ {get_resource: allow_ssh}, default ]
   
   syseleven_floating_ip:

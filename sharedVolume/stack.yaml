@@ -25,7 +25,7 @@ resources:
       dns_nameservers:
         - 37.123.105.116
         - 37.123.105.117
-      network_id: {get_resource: syseleven_net}
+      network: {get_resource: syseleven_net}
       ip_version: 4
       cidr: 10.10.10.0/8
       allocation_pools:
@@ -40,7 +40,7 @@ resources:
     type: OS::Neutron::RouterInterface
     depends_on: [ syseleven_subnet, syseleven_router, syseleven_net ]
     properties:
-      router_id: { get_resource: syseleven_router }
+      router: { get_resource: syseleven_router }
       subnet: { get_resource: syseleven_subnet }
 
   ### NFS Node as resource group ###

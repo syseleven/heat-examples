@@ -85,7 +85,7 @@ resources:
   port:
     type: OS::Neutron::Port
     properties:
-      network_id: { get_resource: net}
+      network: { get_resource: net}
       security_groups: [ get_resource: allow_ssh, get_resource: allow_webtraffic ]
 
   net:
@@ -100,7 +100,7 @@ resources:
       dns_nameservers:
         - 37.123.105.116
         - 37.123.105.117
-      network_id: {get_resource: net}
+      network: {get_resource: net}
       ip_version: 4
       cidr: 10.0.0.0/24
       allocation_pools:
@@ -116,7 +116,7 @@ resources:
     type: OS::Neutron::RouterInterface
     depends_on: subnet
     properties:
-      router_id: { get_resource: router }
+      router: { get_resource: router }
       subnet: { get_resource: subnet }
 
   floating_ip:

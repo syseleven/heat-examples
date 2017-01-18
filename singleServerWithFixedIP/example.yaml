@@ -38,7 +38,7 @@ resources:
   example_port:
     type: OS::Neutron::Port
     properties:
-      network_id: { get_resource: example_net}
+      network: { get_resource: example_net}
       security_groups: [ {get_resource: allow_ssh}, default ]
 
   example_net:
@@ -53,7 +53,7 @@ resources:
       dns_nameservers:
         - 37.123.105.116
         - 37.123.105.117
-      network_id: {get_resource: example_net}
+      network: {get_resource: example_net}
       ip_version: 4
       cidr: 10.0.0.0/8
       allocation_pools:
@@ -69,7 +69,7 @@ resources:
     type: OS::Neutron::RouterInterface
     depends_on:  example_subnet 
     properties:
-      router_id: { get_resource: example_router }
+      router: { get_resource: example_router }
       subnet: { get_resource: example_subnet }
 
   associate_my_ip:
