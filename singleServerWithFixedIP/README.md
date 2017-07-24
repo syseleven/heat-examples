@@ -1,14 +1,15 @@
 
-To use a fixed IP where you can be shure, that a special machine 
+To use a fixed IP where you can be sure, that a special machine 
 uses this special IP, you need to follow these steps:
 
 First, create a floating ip which is not assigned to a running machine. 
 
 ````
-openstack stack create -t reservedIP.yaml devIP
+openstack stack create -t reservedIP.yaml reserved-ips
 ````
+You have now created your stack containing the IP.
 
-Then you search for the uniq id of this object:
+Then you search for the unique ID of this object:
 
 ````
 openstack ip floating list
