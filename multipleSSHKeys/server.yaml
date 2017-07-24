@@ -1,0 +1,94 @@
+heat_template_version: 2014-10-16
+# 
+# You can deploy this template using the following command:
+# 'openstack stack create -t server.yaml -e server-env.yaml <stackName>'
+# 
+# after successful stack creation you can login with 
+# ssh -l syseleven <externalIP> 
+# 
+
+description: Simple template for demo server with multiple ssh keys.
+
+parameters:
+  ssh_keys:
+    type: comma_delimited_list
+  public_network_id:
+    type: string
+    default: caf8de33-1059-4473-a2c1-2a62d12294fa
+
+resources:
+  allow_ssh:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: allow incoming SSH and ICMP traffic from anywhere.
+      name: allow incoming traffic, tcp port 22 and icmp
+      rules: 
+        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 22, port_range_max: 22, protocol: tcp } 
+        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, protocol: icmp } 
+
+  host:
+    type: OS::Nova::Server
+    properties:
+      name: demo 
+      user_data_format: RAW
+      user_data: { get_resource: cloud-init-config }
+      image: Ubuntu Server 16.04 LTS
+      flavor: m1.micro
+      networks:
+        - port: { get_resource: port }
+
+  cloud-init-config:
+   # cloud init resource
+   type: OS::Heat::CloudConfig
+   properties:
+     cloud_config:
+       manage_etc_hosts: true
+       users:
+           - name: syseleven
+             gecos: SysEleven Stack user
+             sudo: ALL=(ALL) NOPASSWD:ALL
+             shell: /bin/bash
+             ssh-authorized-keys: { get_param: ssh_keys }
+
+  port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: net}
+      security_groups: [ get_resource: allow_ssh ]
+
+  net:
+    type: OS::Neutron::Net
+    properties:
+      name: demo-net
+
+  subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      name: demo-subnet
+      dns_nameservers:
+        - 37.123.105.116
+        - 37.123.105.117
+      network: {get_resource: net}
+      ip_version: 4
+      cidr: 10.0.0.0/24
+      allocation_pools:
+      - {start: 10.0.0.10, end: 10.0.0.250}
+
+  router:
+    type: OS::Neutron::Router
+    properties:
+      external_gateway_info: {"network": { get_param: public_network_id }}
+      name: demo-router
+
+  router_subnet_bridge:
+    type: OS::Neutron::RouterInterface
+    depends_on: subnet
+    properties:
+      router: { get_resource: router }
+      subnet: { get_resource: subnet }
+
+  floating_ip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network: { get_param: public_network_id }
+      port_id: { get_resource: port }
