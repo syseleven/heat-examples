@@ -7,13 +7,13 @@ testinfra_hosts = ["core@coreos0", "core@coreos1"]
 
 
 @pytest.fixture(scope="module", autouse=True)
-def HeatCoreos(HeatTemplate, OpenstackSshKey):
+def HeatStack(HeatTemplate, OpenstackSshKey):
     template = HeatTemplate("coreOS/cluster.yaml",
                             number_instances=2,
                             key_name=OpenstackSshKey)
     template.create()
     time.sleep(100)
-    yield
+    yield template.stack_name
     template.destroy()
 
 
