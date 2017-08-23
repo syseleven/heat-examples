@@ -98,7 +98,7 @@ resources:
          - content: |
               #!/usr/bin/env bash
               until id syseleven > /dev/null; do sleep 2; done
-              url="https://releases.hashicorp.com/terraform/0.7.4/terraform_0.7.4_linux_amd64.zip"
+              url="https://releases.hashicorp.com/terraform/0.10.2/terraform_0.10.2_linux_amd64.zip"
               bin="/home/syseleven/bin"
               tmp="/tmp/terraform.zip"
               /bin/mkdir -p $bin
