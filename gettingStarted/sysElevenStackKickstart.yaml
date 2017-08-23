@@ -76,17 +76,22 @@ resources:
             permissions: 0700
          # don't replace content in this hot template, only write your credentials inside the newly generated vm!
          -  content: | 
-              # replace "demo_tenant", "demo_password" and "demo_user" by your corresponding credentials
-              export OS_AUTH_URL=https://api.cbk.cloud.syseleven.net:5000
-              unset OS_PROJECT_ID
-              unset OS_PROJECT_NAME
-              unset OS_USER_DOMAIN_NAME
-              export OS_TENANT_NAME="demo_tenant"
+              # replace "demo_project_id", "demo_password" and "demo_user" by your corresponding credentials
+              export OS_AUTH_URL=https://api.cbk.cloud.syseleven.net:5000/v3
+              export OS_IDENTITY_API_VERSION=3
+              export OS_PROJECT_ID="demo_project_id"
+              export OS_USER_DOMAIN_NAME="Default"
+              unset OS_TENANT_ID
+              unset OS_TENANT_NAME
               export OS_INTERFACE=public
               export OS_ENDPOINT_TYPE=public
               export OS_USERNAME="demo_user"
               export OS_PASSWORD="demo_password"
               export OS_REGION_NAME="cbk"
+
+              # Don't leave a blank variable, unset it if it was empty
+              if [ -z "$OS_REGION_NAME" ]; then unset OS_REGION_NAME; fi
+              if [ -z "$OS_USER_DOMAIN_NAME" ]; then unset OS_USER_DOMAIN_NAME; fi
             path: /etc/skel/openrc
             owner: root
             permissions: 0600
