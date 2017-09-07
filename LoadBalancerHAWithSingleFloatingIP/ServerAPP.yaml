@@ -1,0 +1,72 @@
+heat_template_version: 2014-10-16
+parameters:
+  int_network:
+    type: string
+  name:
+    type: string
+  image:
+    type: string
+  flavor:
+    type: string
+  allow_ssh:
+    type: string
+  allow_webtraffic:
+    type: string
+  ssh_keys:
+    type: comma_delimited_list
+  int_subnet:
+    type: string
+  static_ip:
+    type: string
+  port_name:
+    type: string
+
+
+resources:
+  server:
+    type: OS::Nova::Server
+    properties:
+      flavor: {get_param: flavor}
+      image: {get_param: image}
+      name: { get_param: name }
+      networks:
+      - port: {get_resource: server_int_port}
+      user_data_format: RAW
+      user_data: { get_resource: cloud-init-config }
+
+  server_int_port:
+    type: OS::Neutron::Port
+    properties:
+      name: {get_param: port_name}
+      network_id: {get_param: int_network}
+      fixed_ips: [{"subnet": {get_param: int_subnet}, "ip_address": {get_param: static_ip}}]
+      security_groups: [ default, {get_param: allow_ssh}, {get_param: allow_webtraffic} ]
+
+#  floating_ip:
+#    type: OS::Neutron::FloatingIP
+#    properties:
+#      floating_network: "caf8de33-1059-4473-a2c1-2a62d12294fa"
+#      port_id: { get_resource: server_int_port }
+
+  cloud-init-config:
+   type: OS::Heat::CloudConfig
+   properties:
+     cloud_config:
+       manage_etc_hosts: template
+       users:
+         - name: syseleven
+           gecos: Syseleven user
+           sudo: ALL=(ALL) NOPASSWD:ALL
+           shell: /bin/bash
+           ssh-authorized-keys: { get_param: ssh_keys }
+       packages:
+         - iftop
+         - curl
+         - wget
+       runcmd:
+         - /home/syseleven/install_lampstack.sh
+       write_files:
+         - path: /home/syseleven/install_lampstack.sh
+           owner: "syseleven:syseleven"
+           permissions: '0755'
+           content: {get_file: scripts/install_lampstack.sh}
