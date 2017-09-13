@@ -29,7 +29,6 @@ resources:
   my_instance:
     type: OS::Nova::Server
     properties:
-      config_drive: true
       name: machine with volume
       user_data_format: RAW
       key_name: { get_param: key_name }
