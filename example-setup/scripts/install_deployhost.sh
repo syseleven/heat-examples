@@ -25,6 +25,7 @@ cat <<EOF> /etc/consul.d/consul.json
   "server": true,
   "ui": true,
   "bootstrap_expect": 3,
+  "enable_script_checks": true,
   "addresses" : {
     "http": "${internalIP}" 
   }
