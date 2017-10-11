@@ -1,0 +1,19 @@
+heat_template_version: 2014-10-16
+
+description: Associate a FIP to a server with Nova.
+
+parameters:
+  floating_ip:
+    type: string
+    default: 367e3d6d-9409-40c3-8b74-844aed5d25d6
+  server_id:
+    type: string
+
+
+resources:
+  loadbalancer_floating_ip_1_association:
+    type: OS::Nova::FloatingIPAssociation
+    properties:
+      floating_ip: { get_param: floating_ip }
+      server_id: { get_param: server_id }
+     
