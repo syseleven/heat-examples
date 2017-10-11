@@ -66,7 +66,7 @@ resources:
         properties:
           name: "App_Server_A"
           int_network: { get_resource: int_network }
-          flavor: "m1.medium"
+          flavor: "m1.small"
           image: "Ubuntu 16.04 sys11-cloudimg amd64"
           static_ip: "10.0.10.241"
           port_name: "PortAppA"
@@ -84,7 +84,7 @@ resources:
         properties:
           name: "App_Server_B"
           int_network: { get_resource: int_network }
-          flavor: "m1.medium"
+          flavor: "m1.small"
           image: "Ubuntu 16.04 sys11-cloudimg amd64"
           static_ip: "10.0.10.242"
           port_name: "PortAppB"
@@ -102,7 +102,7 @@ resources:
         properties:
           name: "LB_Server_A"
           int_network: { get_resource: int_network }
-          flavor: "m1.medium"
+          flavor: "m1.tiny"
           image: "Ubuntu 16.04 sys11-cloudimg amd64"
           static_ip: "10.0.10.251"
           port_name: "PortLbA"
@@ -120,7 +120,7 @@ resources:
         properties:
           name: "LB_Server_B"
           int_network: { get_resource: int_network }
-          flavor: "m1.medium"
+          flavor: "m1.tiny"
           image: "Ubuntu 16.04 sys11-cloudimg amd64"
           static_ip: "10.0.10.252"
           port_name: "PortLbB"

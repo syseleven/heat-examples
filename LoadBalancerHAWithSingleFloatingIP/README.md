@@ -69,3 +69,4 @@ When executing the script manuylly the stack is beeing updated without any error
 ## Usability
 * The stack name for the IP association can be defined via a variable in the shell script. Yet to be implemented.
 * Maybe it is possible to somehow retrieve a usable instance IDs while running the setup, so no configuration has to be done manually after the installation.
+* Init Stack create FIP association within LB hosts master script
