@@ -1,0 +1,12 @@
+heat_template_version: 2016-04-08
+description: substack2
+resources:
+  fip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network: "caf8de33-1059-4473-a2c1-2a62d12294fa"
+
+outputs:
+  fip1:
+    description: Floating IP address
+    value: { get_attr: [ fip, floating_ip_address ] }
