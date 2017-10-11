@@ -1,11 +1,13 @@
 heat_template_version: 2014-10-16
-
 #
-# you can deploy this template using the following command:
+# You can deploy this template using the following command:
 # 'openstack stack create -t clustersetup.yaml -e clustersetup-env.yaml <stack_name>'
 #
-# after successful stack creation you can login with 
-# ssh -A -l <yourUser> <servicehostIP> 
+# If you prefer to just start a small testing stack, you can change the *-env.yaml file
+# to 'openstack stack create -t clustersetup.yaml -e clustersetup-env-testing-small.yaml <stack_name>'
+#
+# After successful stack creation you can login with 
+# 'openstack server ssh --option "ForwardAgent=yes" -l syseleven servicehost0'
 # From there you can jump to any of your nodes. An example:
 # 'ssh lb0.node.consul'
 #

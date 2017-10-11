@@ -14,23 +14,24 @@ apt-get install -q -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="-
 adduser --quiet --shell /bin/sh --no-create-home --disabled-password --disabled-login --home /var/lib/misc --gecos "Consul system user" consul
 
 # install consul
-wget https://releases.hashicorp.com/consul/0.7.1/consul_0.7.1_linux_amd64.zip 
-wget https://releases.hashicorp.com/consul-template/0.16.0/consul-template_0.16.0_linux_amd64.zip 
-unzip consul_0.7.1_linux_amd64.zip
+wget https://releases.hashicorp.com/consul/0.9.3/consul_0.9.3_linux_amd64.zip
+wget https://releases.hashicorp.com/consul-template/0.19.3/consul-template_0.19.3_linux_amd64.zip
+unzip consul_0.9.3_linux_amd64.zip
 mv consul /usr/local/sbin/
-rm consul_0.7.1_linux_amd64.zip
+rm consul_0.9.3_linux_amd64.zip
 mkdir -p /etc/consul.d
 
-unzip consul-template_0.16.0_linux_amd64.zip
+unzip consul-template_0.19.3_linux_amd64.zip
 mv consul-template /usr/local/sbin/
-rm consul-template_0.16.0_linux_amd64.zip
+rm consul-template_0.19.3_linux_amd64.zip
 
 cat <<EOF> /etc/consul.d/consul.json
 {
   "datacenter": "cbk1",
   "data_dir": "/tmp/consul",
   "bootstrap_expect": 3,
-  "server": true
+  "server": true,
+  "enable_script_checks": true
 }
 EOF
 
