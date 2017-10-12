@@ -1,0 +1,41 @@
+heat_template_version: 2016-04-08
+# This template shows how to launch substacks from within a master stack.
+# Substacks can be updated seperately as long as the required information is provided to the substacks as well.
+
+resources:
+  substack1:
+    type: OS::Heat::Stack
+    properties:
+      context:
+        region_name: cbk
+      parameters:
+      template: {get_file: substack1.yaml}
+  substack2:
+    type: OS::Heat::Stack
+    # Wait until the first substack was build
+    depends_on: substack1
+    properties:
+      context:
+        region_name: cbk
+      parameters:
+      # Load the substack file and launch it
+      template: {get_file: substack2.yaml}
+  substack3:
+    type: OS::Heat::Stack
+    # Wait until the second substack was build
+    depends_on: substack2
+    properties:
+      context:
+        region_name: cbk
+      parameters:
+      # Load the substack file and launch it
+      template: {get_file: substack3.yaml}
+
+outputs:
+# Show the names of the substacks in the output
+  stackname1:
+    value: { get_attr: [substack1, stack_name] }
+  stackname2:
+    value: { get_attr: [substack2, stack_name] }
+  stackname3:
+    value: { get_attr: [substack3, stack_name] }
