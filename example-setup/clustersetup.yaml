@@ -141,3 +141,7 @@ resources:
           image: { get_param: image }
           syseleven_net: { get_resource: syseleven_net }
           ssh_keys: { get_param: ssh_keys }
+
+
+#output:
+
