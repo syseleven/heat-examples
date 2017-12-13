@@ -8,22 +8,22 @@ until ping -c 1 syseleven.de; do sleep 5; done
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
-apt-get install -q -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" curl haveged unzip wget jq git dnsmasq
+apt-get install -q -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" curl haveged unzip wget jq git dnsmasq dnsutils
 
 # add a user for consul
 adduser --quiet --shell /bin/sh --no-create-home --disabled-password --disabled-login --home /var/lib/misc --gecos "Consul system user" consul
 
 # install consul
-wget https://releases.hashicorp.com/consul/0.9.3/consul_0.9.3_linux_amd64.zip
-wget https://releases.hashicorp.com/consul-template/0.19.3/consul-template_0.19.3_linux_amd64.zip
-unzip consul_0.9.3_linux_amd64.zip
+wget https://releases.hashicorp.com/consul/1.0.1/consul_1.0.1_linux_amd64.zip
+wget https://releases.hashicorp.com/consul-template/0.19.4/consul-template_0.19.4_linux_amd64.zip
+unzip consul_1.0.1_linux_amd64.zip
 mv consul /usr/local/sbin/
-rm consul_0.9.3_linux_amd64.zip
+rm consul_1.0.1_linux_amd64.zip
 mkdir -p /etc/consul.d
 
-unzip consul-template_0.19.3_linux_amd64.zip
+unzip consul-template_0.19.4_linux_amd64.zip
 mv consul-template /usr/local/sbin/
-rm consul-template_0.19.3_linux_amd64.zip
+rm consul-template_0.19.4_linux_amd64.zip
 
 cat <<EOF> /etc/consul.d/consul.json
 {
@@ -34,6 +34,7 @@ cat <<EOF> /etc/consul.d/consul.json
   "enable_script_checks": true
 }
 EOF
+
 
 
 cat <<EOF> /etc/systemd/system/consul.service
