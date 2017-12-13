@@ -31,7 +31,18 @@ cat <<EOF> /etc/consul.d/consul.json
   "data_dir": "/tmp/consul",
   "bootstrap_expect": 3,
   "server": true,
-  "enable_script_checks": true
+  "enable_script_checks": true,
+  "disable_remote_exec": true
+}
+EOF
+
+cat <<EOF> /etc/consul.d/acl.json
+{
+  "acl_datacenter": "cbk1",
+  "acl_default_policy": "allow",
+  "acl_down_policy": "allow",
+  "acl_master_token": "A8EABABC-EAEA-49B2-AE5F-CB7D297570EE",
+  "acl_agent_token": "A9C3CED2-B14C-4923-8572-1272685E8125"
 }
 EOF
 

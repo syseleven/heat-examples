@@ -11,7 +11,7 @@ PATH=$PATH:/usr/local/bin/
 until ping -c 1 syseleven.de; do sleep 5; done
 
 # ssh key for lsyncd - to be implemented
-ssh-keygen -f ~/.ssh/id_rsa -t rsa -N ''
+#ssh-keygen -f ~/.ssh/id_rsa -t rsa -N ''
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -27,6 +27,7 @@ cat <<EOF> /etc/consul.d/consul.json
   "ui": true,
   "bootstrap_expect": 3,
   "enable_script_checks": true,
+  "disable_remote_exec": true,
   "addresses" : {
     "http": "${internalIP} 127.0.0.1" 
   }
