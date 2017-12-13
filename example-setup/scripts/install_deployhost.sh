@@ -10,6 +10,7 @@ PATH=$PATH:/usr/local/bin/
 # wait for a valid network configuration
 until ping -c 1 syseleven.de; do sleep 5; done
 
+# ssh key for lsyncd - to be implemented
 ssh-keygen -f ~/.ssh/id_rsa -t rsa -N ''
 
 export DEBIAN_FRONTEND=noninteractive
@@ -27,7 +28,7 @@ cat <<EOF> /etc/consul.d/consul.json
   "bootstrap_expect": 3,
   "enable_script_checks": true,
   "addresses" : {
-    "http": "${internalIP}" 
+    "http": "${internalIP} 127.0.0.1" 
   }
 }
 EOF
