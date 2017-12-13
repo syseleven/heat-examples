@@ -32,7 +32,34 @@ cat <<EOF> /etc/consul.d/consul.json
   "bootstrap_expect": 3,
   "server": true,
   "enable_script_checks": true,
-  "start_join": "192.168.2.11 192.168.2.12 192.168.2.13"
+  "start_join": "192.168.2.11" "192.168.2.12" "192.168.2.13"
+}
+EOF
+
+mkdir /tmp/consul/aclmaster.json
+chmod 0755 /tmp/consul
+
+cat <<EOF> /tmp/consul/aclmaster.json
+{
+  "acl_datacenter": "cbk1",
+  "acl_default_policy": "allow",
+  "acl_down_policy": "allow",
+  "acl_master_token": "45410f6f-9b54-4d62-a033-e3597d6bc8d3"
+}
+EOF
+
+cat <<EOF> /tmp/consul/aclrules.json
+key "" {
+  policy = "read"
+}
+key "lock/" {
+  policy = "write"
+}
+key "cronsul/" {
+  policy = "write"
+}
+service "" {
+  policy = "write"
 }
 EOF
 
