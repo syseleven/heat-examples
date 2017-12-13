@@ -27,7 +27,6 @@ cat <<EOF> /etc/consul.d/consul.json
   "ui": true,
   "bootstrap_expect": 3,
   "enable_script_checks": true,
-  "disable_remote_exec": true,
   "addresses" : {
     "http": "${internalIP} 127.0.0.1" 
   }
