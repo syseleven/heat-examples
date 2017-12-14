@@ -4,13 +4,6 @@
 
 # some generic stuff that is the same on any cluster member
 MASTERTOKEN=$1
-echo ##########################################
-echo ##########################################
-echo ##########################################
-echo Mastertoken: $MASTERTOKEN
-echo ##########################################
-echo ##########################################
-echo ##########################################
 
 # wait for a valid network configuration
 until ping -c 1 syseleven.de; do sleep 5; done
