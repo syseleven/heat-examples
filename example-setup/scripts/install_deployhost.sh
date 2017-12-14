@@ -1,5 +1,6 @@
 #!/bin/bash
 # 2016 j.peschke@syseleven.de
+# 2017 d.schwabe@syseleven.de
 
 # this script relies on a working consul cluster service.
 # information from this cluster service is used to create/update

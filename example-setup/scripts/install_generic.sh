@@ -1,5 +1,6 @@
 #!/bin/bash
 # 2016 j.peschke@syseleven.de
+# 2017 d.schwabe@syseleven.de
 
 # some generic stuff that is the same on any cluster member
 
@@ -45,11 +46,7 @@ cat <<EOF> /etc/consul.d/aclmaster.json
 }
 EOF
 
-mkdir /tmp/consul/
-chmod 0777 /tmp/consul/
-
 # ACL Example that can be set via API/Webinterface if required
-# cat <<EOF> /tmp/consul/aclrules.json
 # key "" {
 #   policy = "read"
 # }
@@ -62,7 +59,6 @@ chmod 0777 /tmp/consul/
 # service "" {
 #   policy = "write"
 # }
-# EOF
 
 cat <<EOF> /etc/systemd/system/consul.service
 [Unit]
