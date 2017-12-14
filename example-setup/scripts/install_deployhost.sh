@@ -33,6 +33,9 @@ cat <<EOF> /etc/consul.d/consul.json
 }
 EOF
 
+# Fix Script field
+# 2017/12/14 12:16:59 [WARN] agent: check "service:consul-ui" has the 'script' field, which has been deprecated and replaced with the 'args' field. See https://www.consul.io/docs/agent/checks.html
+
 cat <<EOF> /etc/consul.d/consul-ui.json
 {
   "service": {

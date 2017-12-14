@@ -32,12 +32,12 @@ cat <<EOF> /etc/consul.d/consul.json
   "bootstrap_expect": 3,
   "server": true,
   "enable_script_checks": true,
-  "start_join": "192.168.2.11" "192.168.2.12" "192.168.2.13"
+  "start_join": ["192.168.2.11", "192.168.2.12", "192.168.2.13"]
 }
 EOF
 
-mkdir /tmp/consul/aclmaster.json
-chmod 0755 /tmp/consul
+mkdir /tmp/consul/
+chmod 0777 /tmp/consul/
 
 cat <<EOF> /tmp/consul/aclmaster.json
 {
