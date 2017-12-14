@@ -36,10 +36,7 @@ cat <<EOF> /etc/consul.d/consul.json
 }
 EOF
 
-mkdir /tmp/consul/
-chmod 0777 /tmp/consul/
-
-cat <<EOF> /tmp/consul/aclmaster.json
+cat <<EOF> /etc/consul.d/aclmaster.json
 {
   "acl_datacenter": "cbk1",
   "acl_default_policy": "allow",
@@ -48,20 +45,24 @@ cat <<EOF> /tmp/consul/aclmaster.json
 }
 EOF
 
-cat <<EOF> /tmp/consul/aclrules.json
-key "" {
-  policy = "read"
-}
-key "lock/" {
-  policy = "write"
-}
-key "cronsul/" {
-  policy = "write"
-}
-service "" {
-  policy = "write"
-}
-EOF
+mkdir /tmp/consul/
+chmod 0777 /tmp/consul/
+
+# ACL Example that can be set via API/Webinterface if required
+# cat <<EOF> /tmp/consul/aclrules.json
+# key "" {
+#   policy = "read"
+# }
+# key "lock/" {
+#   policy = "write"
+# }
+# key "cronsul/" {
+#   policy = "write"
+# }
+# service "" {
+#   policy = "write"
+# }
+# EOF
 
 cat <<EOF> /etc/systemd/system/consul.service
 [Unit]
