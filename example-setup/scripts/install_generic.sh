@@ -3,6 +3,14 @@
 # 2017 d.schwabe@syseleven.de
 
 # some generic stuff that is the same on any cluster member
+MASTERTOKEN=$1
+echo ##########################################
+echo ##########################################
+echo ##########################################
+echo Mastertoken: $MASTERTOKEN
+echo ##########################################
+echo ##########################################
+echo ##########################################
 
 # wait for a valid network configuration
 until ping -c 1 syseleven.de; do sleep 5; done
@@ -42,7 +50,7 @@ cat <<EOF> /etc/consul.d/aclmaster.json
   "acl_datacenter": "cbk1",
   "acl_default_policy": "allow",
   "acl_down_policy": "allow",
-  "acl_master_token": "45410f6f-9b54-4d62-a033-e3597d6bc8d3"
+  "acl_master_token": "$MASTERTOKEN"
 }
 EOF
 
