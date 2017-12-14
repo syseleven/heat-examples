@@ -14,11 +14,10 @@
 
 These servers are provisioned only with cloud-init/ shell scripts. For service discovery we use consul.
 
-Any node installs consul via cloud-init/ a simple shell script.
-Any node joins a cluster with the first three nodes  
- in the internal network range. 
+Any node installs consul via cloud-init/ a simple shell script.  
+Any node joins a cluster with the first three nodes in the internal network range.
  
-Any node has service checks, that announce it's services to the whole cluster.
+Any node has service checks, that announce it's services to the whole cluster.  
 The loadbalancer for example distributes requests across all application servers, if their checks are green.
 
 If the bastion host (called "servicehost") and the loadbalancer as proxy are completely deployed you can gain an overview of your setup using the consul webui. The webui is reachable via http://\<loadbalancerIP\>:8080

@@ -5,11 +5,11 @@ parameters:
   image: Ubuntu 16.04 sys11-cloudimg amd64 
 
   # Used resources can be configures with the following parameters
-  number_appservers: 3
-  number_dbservers: 2
+  number_appservers: 4
+  number_dbservers: 3
   number_servicehosts: 1 
   flavor_lb: m1.tiny
-  flavor_appserver: m1.tiny
+  flavor_appserver: m1.small
   flavor_dbserver: m1.medium
   flavor_servicehost: m1.small
   # Please exchange the ssh public keys below with yours 

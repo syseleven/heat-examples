@@ -1,4 +1,4 @@
-heat_template_version: 2014-10-16
+heat_template_version: 2016-04-08
 #
 # You can deploy this template using the following command:
 # 'openstack stack create -t clustersetup.yaml -e clustersetup-env.yaml <stack_name>'
