@@ -42,7 +42,7 @@ parameters:
     type: string
   mastertokenlengths:
     type: number
-    default: 26
+    default: 30
   ssh_keys:
     type: comma_delimited_list
 

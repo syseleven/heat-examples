@@ -34,6 +34,7 @@ cat <<EOF> /etc/consul.d/consul.json
   "bootstrap_expect": 3,
   "server": true,
   "enable_script_checks": true,
+  "disable_remote_exec": true,
   "start_join": ["192.168.2.11", "192.168.2.12", "192.168.2.13"]
 }
 EOF
