@@ -60,6 +60,7 @@ EOF
 #   policy = "write"
 # }
 
+
 cat <<EOF> /etc/systemd/system/consul.service
 [Unit]
 Description=consul agent
