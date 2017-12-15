@@ -45,8 +45,8 @@ resources:
    properties:
      cloud_config:
        runcmd:
-         - [ /root/install_generic.sh, { get_param: consul_mastertoken } ]
-         - [ /root/install_deployhost.sh ]
+         - /root/install_generic.sh
+         - [ /root/install_deployhost.sh, { get_param: consul_mastertoken } ]
        write_files:
          -  content: { get_file: scripts/install_generic.sh }
             permissions: 0700

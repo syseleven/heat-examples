@@ -20,7 +20,7 @@ These servers are provisioned only with cloud-init/ shell scripts. For service d
 The master token can be found in the stack metadata:
 
 ```
-openstack stack show <stack_name> value -c outputs
+openstack stack show <stack_name> -f value -c outputs
 ```
 
 Any node has service checks, that announce it's services to the whole cluster.  
