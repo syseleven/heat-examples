@@ -27,6 +27,8 @@ unzip consul-template_0.19.4_linux_amd64.zip
 mv consul-template /usr/local/sbin/
 rm consul-template_0.19.4_linux_amd64.zip
 
+# select three defined nodes as server, any other host will be in consul agent mode
+if [ "$(hostname -s)" == "db0" ] || [ "$(hostname -s)" == "lb0" ] || [ "$(hostname -s)" == "servicehost0" ]; then 
 cat <<EOF> /etc/consul.d/consul.json
 {
   "datacenter": "cbk1",
@@ -38,6 +40,20 @@ cat <<EOF> /etc/consul.d/consul.json
   "start_join": ["192.168.2.11", "192.168.2.12", "192.168.2.13"]
 }
 EOF
+
+else 
+cat <<EOF> /etc/consul.d/consul.json
+{
+  "datacenter": "cbk1",
+  "data_dir": "/tmp/consul",
+  "server": false,
+  "enable_script_checks": true,
+  "disable_remote_exec": true,
+  "start_join": ["192.168.2.11", "192.168.2.12", "192.168.2.13"]
+}
+EOF
+
+fi
 
 cat <<EOF> /etc/consul.d/aclmaster.json
 {
@@ -90,4 +106,5 @@ echo "server=/consul./127.0.0.1#8600" > /etc/dnsmasq.d/10-consul
 systemctl restart dnsmasq
 
 echo "finished generic core setup"
+
 
