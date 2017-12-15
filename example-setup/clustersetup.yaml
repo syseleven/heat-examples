@@ -100,7 +100,6 @@ resources:
           flavor: { get_param: flavor_lb }
           syseleven_net: { get_resource: syseleven_net }
           public_network_id: { get_param: public_network_id }
-          consul_mastertoken: {get_attr: [consul_mastertoken, value]} 
           ssh_keys: { get_param: ssh_keys }
 
   ### Appserver nodes as resource group ###
@@ -117,7 +116,6 @@ resources:
           flavor: { get_param: flavor_appserver }
           image: { get_param: image }
           syseleven_net: { get_resource: syseleven_net }
-          consul_mastertoken: {get_attr: [consul_mastertoken, value]} 
           ssh_keys: { get_param: ssh_keys }
 
   ### Service node as resource group ###
@@ -152,7 +150,6 @@ resources:
           flavor: { get_param: flavor_dbserver }
           image: { get_param: image }
           syseleven_net: { get_resource: syseleven_net }
-          consul_mastertoken: {get_attr: [consul_mastertoken, value]} 
           ssh_keys: { get_param: ssh_keys }
 
 
