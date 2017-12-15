@@ -89,7 +89,7 @@ resources:
   #######################
   lb_group:
     type: OS::Heat::ResourceGroup
-    depends_on: [ router_subnet_connect ]
+    depends_on: [ router_subnet_connect, consul_mastertoken ]
     properties:
       count: 1 
       resource_def: 
@@ -107,7 +107,7 @@ resources:
   #######################
   appserver_group:
     type: OS::Heat::ResourceGroup
-    depends_on: [ router_subnet_connect ]
+    depends_on: [ router_subnet_connect, consul_mastertoken ]
     properties:
       count: { get_param: number_appservers } 
       resource_def: 
@@ -124,7 +124,7 @@ resources:
   #######################
   servicehost_group:
     type: OS::Heat::ResourceGroup
-    depends_on: [ router_subnet_connect ]
+    depends_on: [ router_subnet_connect, consul_mastertoken ]
     properties:
       count: { get_param: number_servicehosts } 
       resource_def: 
@@ -142,7 +142,7 @@ resources:
   #######################
   dbserver_group:
     type: OS::Heat::ResourceGroup
-    depends_on: [ router_subnet_connect ]
+    depends_on: [ router_subnet_connect, consul_mastertoken ]
     properties:
       count: { get_param: number_dbservers } 
       resource_def: 
