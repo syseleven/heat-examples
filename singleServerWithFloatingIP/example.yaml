@@ -49,7 +49,7 @@ resources:
     properties:
       name: examplae_subnet
       dns_nameservers:
-        - 37.123.105.117
+        - 8.8.4.4
       network: {get_resource: network}
       ip_version: 4
       cidr: 10.0.0.0/24
