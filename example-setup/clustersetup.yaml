@@ -48,7 +48,7 @@ parameters:
 
 resources:
 
-  mastertoken:
+  consul_mastertoken:
     type: OS::Heat::RandomString
     properties:
       length: {get_param: [consul_mastertoken_length]}
@@ -100,7 +100,7 @@ resources:
           flavor: { get_param: flavor_lb }
           syseleven_net: { get_resource: syseleven_net }
           public_network_id: { get_param: public_network_id }
-          mastertoken: {get_attr: [mastertoken, value]} 
+          consul_mastertoken: {get_attr: [consul_mastertoken, value]} 
           ssh_keys: { get_param: ssh_keys }
 
   ### Appserver nodes as resource group ###
@@ -117,7 +117,7 @@ resources:
           flavor: { get_param: flavor_appserver }
           image: { get_param: image }
           syseleven_net: { get_resource: syseleven_net }
-          mastertoken: {get_attr: [mastertoken, value]} 
+          consul_mastertoken: {get_attr: [consul_mastertoken, value]} 
           ssh_keys: { get_param: ssh_keys }
 
   ### Service node as resource group ###
@@ -135,7 +135,7 @@ resources:
           image: { get_param: image }
           syseleven_net: { get_resource: syseleven_net }
           public_network_id: { get_param: public_network_id }
-          mastertoken: {get_attr: [mastertoken, value]} 
+          consul_mastertoken: {get_attr: [consul_mastertoken, value]} 
           ssh_keys: { get_param: ssh_keys }
 
   ### DBserver Nodes as resource group ###
@@ -152,10 +152,10 @@ resources:
           flavor: { get_param: flavor_dbserver }
           image: { get_param: image }
           syseleven_net: { get_resource: syseleven_net }
-          mastertoken: {get_attr: [mastertoken, value]} 
+          consul_mastertoken: {get_attr: [consul_mastertoken, value]} 
           ssh_keys: { get_param: ssh_keys }
 
 
 outputs:
   consul_master_token:
-    value: {get_attr: [mastertoken, value]} 
+    value: {get_attr: [consul_mastertoken, value]} 
