@@ -1,5 +1,6 @@
 #!/bin/bash
 # 2016 j.peschke@syseleven.de
+# 2017 d.schwabe@syseleven.de
 
 # this script relies on a working consul cluster service.
 # information from this cluster service is used to create/update
@@ -27,11 +28,16 @@ cat <<EOF> /etc/consul.d/consul.json
   "ui": true,
   "bootstrap_expect": 3,
   "enable_script_checks": true,
+  "disable_remote_exec": true,
+  "start_join": ["192.168.2.11", "192.168.2.12", "192.168.2.13"],
   "addresses" : {
     "http": "${internalIP} 127.0.0.1" 
   }
 }
 EOF
+
+# Fix Script field
+# 2017/12/14 12:16:59 [WARN] agent: check "service:consul-ui" has the 'script' field, which has been deprecated and replaced with the 'args' field. See https://www.consul.io/docs/agent/checks.html
 
 cat <<EOF> /etc/consul.d/consul-ui.json
 {

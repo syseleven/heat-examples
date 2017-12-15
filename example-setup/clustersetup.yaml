@@ -1,4 +1,4 @@
-heat_template_version: 2014-10-16
+heat_template_version: 2016-04-08
 #
 # You can deploy this template using the following command:
 # 'openstack stack create -t clustersetup.yaml -e clustersetup-env.yaml <stack_name>'
@@ -40,10 +40,19 @@ parameters:
     default: m1.micro
   image: 
     type: string
+  consul_mastertoken_length:
+    type: number
+    default: 30
   ssh_keys:
     type: comma_delimited_list
 
 resources:
+
+  consul_mastertoken:
+    type: OS::Heat::RandomString
+    properties:
+      length: {get_param: [consul_mastertoken_length]}
+
   syseleven_net:
     type: OS::Neutron::Net
     properties: 
@@ -80,7 +89,7 @@ resources:
   #######################
   lb_group:
     type: OS::Heat::ResourceGroup
-    depends_on: [ router_subnet_connect ]
+    depends_on: [ router_subnet_connect, consul_mastertoken ]
     properties:
       count: 1 
       resource_def: 
@@ -91,13 +100,14 @@ resources:
           flavor: { get_param: flavor_lb }
           syseleven_net: { get_resource: syseleven_net }
           public_network_id: { get_param: public_network_id }
+          consul_mastertoken: {get_attr: [consul_mastertoken, value]} 
           ssh_keys: { get_param: ssh_keys }
 
   ### Appserver nodes as resource group ###
   #######################
   appserver_group:
     type: OS::Heat::ResourceGroup
-    depends_on: [ router_subnet_connect ]
+    depends_on: [ router_subnet_connect, consul_mastertoken ]
     properties:
       count: { get_param: number_appservers } 
       resource_def: 
@@ -107,13 +117,14 @@ resources:
           flavor: { get_param: flavor_appserver }
           image: { get_param: image }
           syseleven_net: { get_resource: syseleven_net }
+          consul_mastertoken: {get_attr: [consul_mastertoken, value]} 
           ssh_keys: { get_param: ssh_keys }
 
   ### Service node as resource group ###
   #######################
   servicehost_group:
     type: OS::Heat::ResourceGroup
-    depends_on: [ router_subnet_connect ]
+    depends_on: [ router_subnet_connect, consul_mastertoken ]
     properties:
       count: { get_param: number_servicehosts } 
       resource_def: 
@@ -124,13 +135,14 @@ resources:
           image: { get_param: image }
           syseleven_net: { get_resource: syseleven_net }
           public_network_id: { get_param: public_network_id }
+          consul_mastertoken: {get_attr: [consul_mastertoken, value]} 
           ssh_keys: { get_param: ssh_keys }
 
   ### DBserver Nodes as resource group ###
   #######################
   dbserver_group:
     type: OS::Heat::ResourceGroup
-    depends_on: [ router_subnet_connect ]
+    depends_on: [ router_subnet_connect, consul_mastertoken ]
     properties:
       count: { get_param: number_dbservers } 
       resource_def: 
@@ -140,4 +152,10 @@ resources:
           flavor: { get_param: flavor_dbserver }
           image: { get_param: image }
           syseleven_net: { get_resource: syseleven_net }
+          consul_mastertoken: {get_attr: [consul_mastertoken, value]} 
           ssh_keys: { get_param: ssh_keys }
+
+
+outputs:
+  consul_master_token:
+    value: {get_attr: [consul_mastertoken, value]} 

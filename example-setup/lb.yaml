@@ -1,4 +1,4 @@
-heat_template_version: 2014-10-16
+heat_template_version: 2016-04-08
 
 parameters:
   syseleven_net:
@@ -11,6 +11,8 @@ parameters:
   flavor:
     type: string
   public_network_id:
+    type: string
+  consul_mastertoken:
     type: string
   ssh_keys:
     type: comma_delimited_list
@@ -45,7 +47,7 @@ resources:
    properties:
      cloud_config:
        runcmd:
-         - /root/install_generic.sh
+         - [ /root/install_generic.sh, { get_param: consul_mastertoken } ]
          - /root/install_lb.sh
        write_files:
          -  content: { get_file: scripts/install_generic.sh }

@@ -1,17 +1,19 @@
 #!/bin/bash
 # 2016 j.peschke@syseleven.de
+# 2017 d.schwabe@syseleven.de
 
 # some generic stuff that is the same on any cluster member
+MASTERTOKEN=$1
 
 # wait for a valid network configuration
 until ping -c 1 syseleven.de; do sleep 5; done
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
-apt-get install -q -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" curl haveged unzip wget jq git dnsmasq dnsutils
+apt-get install -q -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" curl haveged unzip wget jq git dnsmasq dnsutils uuid-runtime
 
 # add a user for consul
-adduser --quiet --shell /bin/sh --no-create-home --disabled-password --disabled-login --home /var/lib/misc --gecos "Consul system user" consul
+adduser --quiet --shell /bin/sh --no-create-home --disabled-password --disabled-login --home /var/lib/misc --gecos "Consul system user" consul 
 
 # install consul
 wget https://releases.hashicorp.com/consul/1.0.1/consul_1.0.1_linux_amd64.zip
@@ -31,10 +33,34 @@ cat <<EOF> /etc/consul.d/consul.json
   "data_dir": "/tmp/consul",
   "bootstrap_expect": 3,
   "server": true,
-  "enable_script_checks": true
+  "enable_script_checks": true,
+  "disable_remote_exec": true,
+  "start_join": ["192.168.2.11", "192.168.2.12", "192.168.2.13"]
 }
 EOF
 
+cat <<EOF> /etc/consul.d/aclmaster.json
+{
+  "acl_datacenter": "cbk1",
+  "acl_default_policy": "allow",
+  "acl_down_policy": "allow",
+  "acl_master_token": "$MASTERTOKEN"
+}
+EOF
+
+# ACL Example that can be set via API/Webinterface if required
+# key "" {
+#   policy = "read"
+# }
+# key "lock/" {
+#   policy = "write"
+# }
+# key "cronsul/" {
+#   policy = "write"
+# }
+# service "" {
+#   policy = "write"
+# }
 
 
 cat <<EOF> /etc/systemd/system/consul.service
@@ -58,8 +84,6 @@ EOF
 
 systemctl enable consul
 systemctl restart consul
-
-until consul join 192.168.2.11 192.168.2.12 192.168.2.13; do sleep 2; done
 
 # setup dnsmasq to communicate via consul
 echo "server=/consul./127.0.0.1#8600" > /etc/dnsmasq.d/10-consul

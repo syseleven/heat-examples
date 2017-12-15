@@ -26,7 +26,7 @@ cat <<EOF> /etc/apache2/sites-enabled/000-default.conf
 EOF
 
 a2enmod rewrite
-service apache2 restart
+systemctl restart apache2
 
 # implement consul health check
 cat <<EOF> /etc/consul.d/appserver_health.json

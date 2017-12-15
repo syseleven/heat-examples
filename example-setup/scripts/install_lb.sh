@@ -123,7 +123,7 @@ EOF
 # set memcache to listen global and act as a session store
 sed -i s'/127.0.0.1/0.0.0.0/'g /etc/memcached.conf
 
-service memcached restart
-service nginx restart
+systemctl restart memcached
+systemctl restart nginx
 
 
