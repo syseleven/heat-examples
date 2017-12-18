@@ -9,12 +9,15 @@ parameters:
     type: string
   flavor: 
     type: string
-  public_network:
-    type: string
   consul_mastertoken:
+    type: string
+  consul_agenttoken:
     type: string
   ssh_keys:
     type: comma_delimited_list
+  public_network:
+    type: string
+
 
 resources:
 
@@ -46,8 +49,8 @@ resources:
    properties:
      cloud_config:
        runcmd:
-         - [ /root/install_generic.sh, { get_param: consul_mastertoken } ]
-         - /root/install_deployhost.sh
+         - [ /root/install_generic.sh, { get_param: consul_mastertoken }, { get_param: consul_agenttoken } ]
+         - [ /root/install_deployhost.sh, { get_param: consul_mastertoken }, { get_param: consul_agenttoken } ]
        write_files:
          -  content: { get_file: scripts/install_generic.sh }
             permissions: 0700

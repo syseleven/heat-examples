@@ -2,8 +2,10 @@
 # 2015 j.peschke@syseleven.de
 
 # wait for a valid network configuration
+echo "# Waiting for valid network configuration"
 until ping -c 1 syseleven.de; do sleep 1; done
 
+echo "# Install dependencies"
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get install -q -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" nginx memcached
@@ -125,5 +127,9 @@ sed -i s'/127.0.0.1/0.0.0.0/'g /etc/memcached.conf
 
 systemctl restart memcached
 systemctl restart nginx
+
+logger "# Finished lbserver installation"
+echo "# Finished lbserver installation"
+
 
 
