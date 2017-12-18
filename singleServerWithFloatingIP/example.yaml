@@ -49,6 +49,7 @@ resources:
     properties:
       name: examplae_subnet
       dns_nameservers:
+        - 8.8.8.8
         - 8.8.4.4
       network: {get_resource: network}
       ip_version: 4
