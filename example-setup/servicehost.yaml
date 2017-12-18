@@ -9,7 +9,7 @@ parameters:
     type: string
   flavor: 
     type: string
-  public_network_id:
+  public_network:
     type: string
   consul_mastertoken:
     type: string
@@ -30,6 +30,7 @@ resources:
 
   server:
     type: OS::Nova::Server
+    depends_on: [ server_port, cloud-init-config ]
     properties:
       name: { get_param: name }
       image: { get_param: image } 
@@ -64,6 +65,7 @@ resources:
 
   server_port:
     type: OS::Neutron::Port
+    depends_on: [ allow_ssh ]
     properties:
       name: servicehost port
       network: { get_param: syseleven_net}
@@ -73,7 +75,8 @@ resources:
 
   servicehost_floating_ip:
     type: OS::Neutron::FloatingIP
+    depends_on: [ server_port ]
     properties:
-      floating_network: { get_param: public_network_id }
+      floating_network: { get_param: public_network }
       port_id: { get_resource: server_port }
 

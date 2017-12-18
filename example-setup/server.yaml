@@ -18,6 +18,7 @@ resources:
 
   server:
     type: OS::Nova::Server
+    depends_on: [ server_port, cloud-init-config ]
     properties:
       name: { get_param: name }
       image: { get_param: image } 
