@@ -1,7 +1,7 @@
 # This parameter file is configured to be used with a 30 Core / 120 GB RAM quota provided by SysEleven GmbH.
 parameters:
   # The following public network ID belongs to the SysEleven Stack region 'cbk' and should be changed if using other regions.
-  public_network_id: caf8de33-1059-4473-a2c1-2a62d12294fa
+  public_network: ext-net
   image: Ubuntu 16.04 sys11-cloudimg amd64 
 
   # Used resources can be configures with the following parameters
