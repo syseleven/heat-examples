@@ -24,7 +24,7 @@ parameters:
   number_servicehosts: 
     type: string
     default: 1
-  public_network:
+  public_network_id:
     type: string
   flavor_lb:
     type: string
@@ -76,7 +76,7 @@ resources:
     type: OS::Neutron::Router
     depends_on: [ syseleven_subnet ]
     properties:
-      external_gateway_info: {"network": { get_param: public_network }}
+      external_gateway_info: {"network": { get_param: public_network_id }}
 
   router_subnet_connect:
     type: OS::Neutron::RouterInterface
@@ -99,8 +99,7 @@ resources:
           image: { get_param: image }
           flavor: { get_param: flavor_lb }
           syseleven_net: { get_resource: syseleven_net }
-          public_network: { get_param: public_network }
-          consul_mastertoken: {get_attr: [consul_mastertoken, value]} 
+          public_network_id: { get_param: public_network_id }
           ssh_keys: { get_param: ssh_keys }
 
   ### Appserver nodes as resource group ###
@@ -133,7 +132,7 @@ resources:
           flavor: { get_param: flavor_servicehost }
           image: { get_param: image }
           syseleven_net: { get_resource: syseleven_net }
-          public_network: { get_param: public_network }
+          public_network_id: { get_param: public_network_id }
           consul_mastertoken: {get_attr: [consul_mastertoken, value]} 
           ssh_keys: { get_param: ssh_keys }
 
