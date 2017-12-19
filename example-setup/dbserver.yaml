@@ -19,7 +19,6 @@ resources:
 
   dbserver:
     type: OS::Nova::Server
-    depends_on: [ dbserver_port, cloud-init-config ]
     properties:
       name: { get_param: name }
       user_data_format: RAW
