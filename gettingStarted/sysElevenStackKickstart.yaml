@@ -1,4 +1,4 @@
-heat_template_version: 2014-10-16
+heat_template_version: 2016-04-08
 #
 # you can deploy this template using the following command:
 # 'openstack stack create -t sysElevenStackKickstart.yaml --parameter key_name=<publicKeyName> <stackName>'
@@ -6,7 +6,7 @@ heat_template_version: 2014-10-16
 # or you can just paste it into the web-ui under "orchestration" >> "launch stack"
 #
 # after successful stack creation you can login with 
-# ssh -l syseleven <externalIP> 
+# ssh -l syseleven <externalIP> -A
 # 
 
 description: Simple template to deploy a single compute instance
@@ -101,7 +101,7 @@ resources:
          - content: |
               #!/usr/bin/env bash
               until id syseleven > /dev/null; do sleep 2; done
-              url="https://releases.hashicorp.com/terraform/0.10.2/terraform_0.10.2_linux_amd64.zip"
+              url="https://releases.hashicorp.com/terraform/0.11.1/terraform_0.11.1_linux_amd64.zip"
               bin="/home/syseleven/bin"
               tmp="/tmp/terraform.zip"
               /bin/mkdir -p $bin
@@ -133,6 +133,7 @@ resources:
              
   port:
     type: OS::Neutron::Port
+    depends_on: [ net ]
     properties:
       network: { get_resource: net}
       security_groups: [ get_resource: allow_ssh ]
@@ -144,12 +145,13 @@ resources:
 
   subnet:
     type: OS::Neutron::Subnet
+    depends_on: [ net ]
     properties:
       name: kickstart-subnet
       dns_nameservers:
         - 8.8.8.8
         - 8.8.4.4
-      network: {get_resource: net}
+      network: { get_resource: net }
       ip_version: 4
       cidr: 10.0.0.0/24
       allocation_pools:
@@ -163,13 +165,14 @@ resources:
 
   router_subnet_bridge:
     type: OS::Neutron::RouterInterface
-    depends_on: subnet
+    depends_on: [ subnet, router ]
     properties:
       router: { get_resource: router }
       subnet: { get_resource: subnet }
 
   floating_ip:
     type: OS::Neutron::FloatingIP
+    depends_on: [ port ]
     properties:
       floating_network: { get_param: public_network }
       port_id: { get_resource: port }
