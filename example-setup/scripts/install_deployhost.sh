@@ -7,7 +7,6 @@
 # our inventory file and trigger install events.
 
 PATH=$PATH:/usr/local/bin/
-MASTERTOKEN=$1
 
 # wait for a valid network configuration
 until ping -c 1 syseleven.de; do sleep 5; done

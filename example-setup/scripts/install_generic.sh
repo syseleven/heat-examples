@@ -3,6 +3,7 @@
 # 2017 d.schwabe@syseleven.de
 
 # some generic stuff that is the same on any cluster member
+MASTERTOKEN=$1
 
 # wait for a valid network configuration
 until ping -c 1 syseleven.de; do sleep 5; done
