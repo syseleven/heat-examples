@@ -74,13 +74,12 @@ resources:
 
   syseleven_router:
     type: OS::Neutron::Router
-    depends_on: [ syseleven_subnet ]
     properties:
       external_gateway_info: {"network": { get_param: public_network }}
 
   router_subnet_connect:
     type: OS::Neutron::RouterInterface
-    depends_on: [ syseleven_router ]
+    depends_on: [ syseleven_router, syseleven_subnet ]
     properties:
       router: { get_resource: syseleven_router }
       subnet: { get_resource: syseleven_subnet }
