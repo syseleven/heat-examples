@@ -31,7 +31,7 @@ which allows you to work with openstack endpoints. The required values can be fo
 Open it with a text editor of your choice.
 
 ```bash
-syseleven@kickstart:~$ nano openrc
+syseleven@kickstart:~$ vim openrc
 ```
 
 You just need to adjust `OS_TENANT_NAME`, `OS_USERNAME` and `OS_PASSWORD` to the actual values.
