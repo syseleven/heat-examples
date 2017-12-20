@@ -15,16 +15,20 @@ apt-get install -q -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="-
 adduser --quiet --shell /bin/sh --no-create-home --disabled-password --disabled-login --home /var/lib/misc --gecos "Consul system user" consul 
 
 # install consul
-wget https://releases.hashicorp.com/consul/1.0.1/consul_1.0.1_linux_amd64.zip
-wget https://releases.hashicorp.com/consul-template/0.19.4/consul-template_0.19.4_linux_amd64.zip
-unzip consul_1.0.1_linux_amd64.zip
+consulversion=1.0.2
+consultemplateversion=0.19.4
+
+wget https://releases.hashicorp.com/consul/$consulversion/consul_$consulversion_linux_amd64.zip
+unzip consul_$consulversion_linux_amd64.zip
 mv consul /usr/local/sbin/
-rm consul_1.0.1_linux_amd64.zip
+rm consul_$consulversion_linux_amd64.zip
 mkdir -p /etc/consul.d
 
-unzip consul-template_0.19.4_linux_amd64.zip
+# install consul template
+wget https://releases.hashicorp.com/consul-template/$consultemplateversion/consul-template_$consultemplateversion_linux_amd64.zip
+unzip consul-template_$consultemplateversion_linux_amd64.zip
 mv consul-template /usr/local/sbin/
-rm consul-template_0.19.4_linux_amd64.zip
+rm consul-template_$consultemplateversion_linux_amd64.zip
 
 # select three defined nodes as server, any other host will be in consul agent mode
 if [ "$(hostname -s)" == "db0" ] || [ "$(hostname -s)" == "lb0" ] || [ "$(hostname -s)" == "servicehost0" ]; then 
