@@ -69,7 +69,7 @@ cat <<EOF> /etc/consul.d/aclmaster.json
 {
   "acl_datacenter": "cbk1",
   "acl_default_policy": "allow",
-  "acl_down_policy": "allow",
+  "acl_down_policy": "allow"
 }
 EOF
 
