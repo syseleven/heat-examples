@@ -3,18 +3,18 @@ heat_template_version: 2014-10-16
 description: reserve one IP for later use
 
 parameters:
-  public_network_id:
+  public_network:
     type: string
-    default: caf8de33-1059-4473-a2c1-2a62d12294fa 
+    default: ext-net 
 
 resources:
   syseleven_floating_ip_1:
     type: OS::Neutron::FloatingIP
     properties:
-      floating_network: { get_param: public_network_id }
+      floating_network: { get_param: public_network }
 
 # You can add as many IPs as your quota allows.
 #  syseleven_floating_ip_2:
 #    type: OS::Neutron::FloatingIP
 #    properties:
-#      floating_network: { get_param: public_network_id }
+#      floating_network: { get_param: public_network }

@@ -4,7 +4,7 @@ resources:
   fip:
     type: OS::Neutron::FloatingIP
     properties:
-      floating_network: "caf8de33-1059-4473-a2c1-2a62d12294fa"
+      floating_network: "ext-net"
 
 outputs:
   fip1:
