@@ -7,7 +7,7 @@ parameters:
     type: string
   syseleven_net:
     type: string
-  public_network_id:
+  public_network:
     type: string
   volume_id:
     type: string
@@ -40,7 +40,7 @@ resources:
   syseleven_floating_ip:
     type: OS::Neutron::FloatingIP
     properties:
-      floating_network: { get_param: public_network_id }
+      floating_network: { get_param: public_network }
       port_id: { get_resource: syseleven_port }
 
 # attach existingvolume to a server

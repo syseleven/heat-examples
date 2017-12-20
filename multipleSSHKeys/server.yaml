@@ -12,9 +12,9 @@ description: Simple template for demo server with multiple ssh keys.
 parameters:
   ssh_keys:
     type: comma_delimited_list
-  public_network_id:
+  public_network:
     type: string
-    default: caf8de33-1059-4473-a2c1-2a62d12294fa
+    default: ext-net
 
 resources:
   allow_ssh:
@@ -77,7 +77,7 @@ resources:
   router:
     type: OS::Neutron::Router
     properties:
-      external_gateway_info: {"network": { get_param: public_network_id }}
+      external_gateway_info: {"network": { get_param: public_network }}
       name: demo-router
 
   router_subnet_bridge:
@@ -90,5 +90,5 @@ resources:
   floating_ip:
     type: OS::Neutron::FloatingIP
     properties:
-      floating_network: { get_param: public_network_id }
+      floating_network: { get_param: public_network }
       port_id: { get_resource: port }
