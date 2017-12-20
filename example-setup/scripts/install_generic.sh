@@ -109,6 +109,9 @@ EOF
 systemctl enable consul
 systemctl restart consul
 
+# join configured in consul.json
+until consul join 192.168.2.11 192.168.2.12 192.168.2.13; do sleep 2; done
+
 # setup dnsmasq to communicate via consul
 echo "server=/consul./127.0.0.1#8600" > /etc/dnsmasq.d/10-consul
 systemctl restart dnsmasq
