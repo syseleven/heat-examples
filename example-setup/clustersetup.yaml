@@ -118,8 +118,9 @@ resources:
           flavor: { get_param: flavor_lb }
           syseleven_net: { get_resource: syseleven_net }
           public_network: { get_param: public_network }
+          consul_mastertoken: {get_attr: [consul_mastertoken, value]} 
           ssh_keys: { get_param: ssh_keys }
-          
+
   ### DBserver Nodes as resource group ###
   #######################
   dbserver_group:
@@ -134,13 +135,14 @@ resources:
           flavor: { get_param: flavor_dbserver }
           image: { get_param: image }
           syseleven_net: { get_resource: syseleven_net }
+          consul_mastertoken: {get_attr: [consul_mastertoken, value]} 
           ssh_keys: { get_param: ssh_keys }
 
   ### Appserver nodes as resource group ###
   #######################
   appserver_group:
     type: OS::Heat::ResourceGroup
-    depends_on: [ router_subnet_connect, consul_mastertoken ]
+    depends_on: [ router_subnet_connect ]
     properties:
       count: { get_param: number_appservers } 
       resource_def: 
