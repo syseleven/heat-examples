@@ -74,49 +74,15 @@ resources:
 
   syseleven_router:
     type: OS::Neutron::Router
-    depends_on: [ syseleven_subnet ]
     properties:
       external_gateway_info: {"network": { get_param: public_network }}
 
   router_subnet_connect:
     type: OS::Neutron::RouterInterface
-    depends_on: [ syseleven_router ]
+    depends_on: [ syseleven_router, syseleven_subnet ]
     properties:
       router: { get_resource: syseleven_router }
       subnet: { get_resource: syseleven_subnet }
-
-  ### LB Node as resource group ###
-  #######################
-  lb_group:
-    type: OS::Heat::ResourceGroup
-    depends_on: [ router_subnet_connect, consul_mastertoken ]
-    properties:
-      count: 1 
-      resource_def: 
-        type: lb.yaml
-        properties:
-          name: lb%index%
-          image: { get_param: image }
-          flavor: { get_param: flavor_lb }
-          syseleven_net: { get_resource: syseleven_net }
-          public_network: { get_param: public_network }
-          ssh_keys: { get_param: ssh_keys }
-
-  ### Appserver nodes as resource group ###
-  #######################
-  appserver_group:
-    type: OS::Heat::ResourceGroup
-    depends_on: [ router_subnet_connect, consul_mastertoken ]
-    properties:
-      count: { get_param: number_appservers } 
-      resource_def: 
-        type: server.yaml
-        properties:
-          name: app%index%
-          flavor: { get_param: flavor_appserver }
-          image: { get_param: image }
-          syseleven_net: { get_resource: syseleven_net }
-          ssh_keys: { get_param: ssh_keys }
 
   ### Service node as resource group ###
   #######################
@@ -136,6 +102,24 @@ resources:
           consul_mastertoken: {get_attr: [consul_mastertoken, value]} 
           ssh_keys: { get_param: ssh_keys }
 
+  ### LB Node as resource group ###
+  #######################
+  lb_group:
+    type: OS::Heat::ResourceGroup
+    depends_on: [ router_subnet_connect, consul_mastertoken ]
+    properties:
+      count: 1 
+      resource_def: 
+        type: lb.yaml
+        properties:
+          name: lb%index%
+          image: { get_param: image }
+          flavor: { get_param: flavor_lb }
+          syseleven_net: { get_resource: syseleven_net }
+          public_network: { get_param: public_network }
+          consul_mastertoken: {get_attr: [consul_mastertoken, value]} 
+          ssh_keys: { get_param: ssh_keys }
+
   ### DBserver Nodes as resource group ###
   #######################
   dbserver_group:
@@ -150,8 +134,24 @@ resources:
           flavor: { get_param: flavor_dbserver }
           image: { get_param: image }
           syseleven_net: { get_resource: syseleven_net }
+          consul_mastertoken: {get_attr: [consul_mastertoken, value]} 
           ssh_keys: { get_param: ssh_keys }
 
+  ### Appserver nodes as resource group ###
+  #######################
+  appserver_group:
+    type: OS::Heat::ResourceGroup
+    depends_on: [ router_subnet_connect ]
+    properties:
+      count: { get_param: number_appservers } 
+      resource_def: 
+        type: server.yaml
+        properties:
+          name: app%index%
+          flavor: { get_param: flavor_appserver }
+          image: { get_param: image }
+          syseleven_net: { get_resource: syseleven_net }
+          ssh_keys: { get_param: ssh_keys }
 
 outputs:
   consul_master_token:

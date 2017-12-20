@@ -12,6 +12,8 @@ parameters:
     type: string
   public_network:
     type: string
+  consul_mastertoken:
+    type: string
   ssh_keys:
     type: comma_delimited_list
 
@@ -30,6 +32,7 @@ resources:
 
   lbserver:
     type: OS::Nova::Server
+    depends_on: [ lb_port, cloud-init-config ]
     properties:
       name: { get_param: name }
       flavor: { get_param: flavor }
@@ -45,7 +48,7 @@ resources:
    properties:
      cloud_config:
        runcmd:
-         - /root/install_generic.sh
+         - [ /root/install_generic.sh, { get_param: consul_mastertoken } ]
          - /root/install_lb.sh
        write_files:
          -  content: { get_file: scripts/install_generic.sh }
@@ -63,6 +66,7 @@ resources:
 
   lb_port:
     type: OS::Neutron::Port
+    depends_on: [ allow_webtraffic ]
     properties:
       name: lb port
       network: { get_param: syseleven_net}
@@ -72,6 +76,7 @@ resources:
 
   lb_floating_ip:
     type: OS::Neutron::FloatingIP
+    depends_on: [ lb_port ]
     properties:
       floating_network: { get_param: public_network }
       port_id: { get_resource: lb_port }

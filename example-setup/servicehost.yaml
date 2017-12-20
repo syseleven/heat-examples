@@ -30,6 +30,7 @@ resources:
 
   server:
     type: OS::Nova::Server
+    depends_on: [ server_port, cloud-init-config ]
     properties:
       name: { get_param: name }
       image: { get_param: image } 
@@ -45,8 +46,8 @@ resources:
    properties:
      cloud_config:
        runcmd:
-         - /root/install_generic.sh
-         - [ /root/install_deployhost.sh, { get_param: consul_mastertoken } ]
+         - [ /root/install_generic.sh, { get_param: consul_mastertoken } ]
+         - /root/install_deployhost.sh
        write_files:
          -  content: { get_file: scripts/install_generic.sh }
             permissions: 0700
@@ -64,6 +65,7 @@ resources:
 
   server_port:
     type: OS::Neutron::Port
+    depends_on: [ allow_ssh ]
     properties:
       name: servicehost port
       network: { get_param: syseleven_net}
@@ -73,6 +75,7 @@ resources:
 
   servicehost_floating_ip:
     type: OS::Neutron::FloatingIP
+    depends_on: [ server_port ]
     properties:
       floating_network: { get_param: public_network }
       port_id: { get_resource: server_port }
