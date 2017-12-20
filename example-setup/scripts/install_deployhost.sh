@@ -56,4 +56,7 @@ EOF
 # we changed consul http listen address; so a restart is needed
 systemctl restart consul
 
+# join configured in consul.json
+until consul join 192.168.2.11 192.168.2.12 192.168.2.13; do sleep 2; done
+
 echo "finished deployment host setup"
