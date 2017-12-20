@@ -22,7 +22,7 @@ After a couple of seconds you should see a new machine spawning under --> "Compu
 Copy the IP address from "Floating IPs" and you should be ready to login via SSH.
 
 ```bash
-ssh syseleven@< Floating IP >
+ssh syseleven@< Floating IP > -A
 ```
 
 The home directory has a prepared ["openrc" file](https://doc.syselevenstack.com/en/tutorials/api-access/#setting-up-the-environment-variables), 

@@ -6,7 +6,7 @@ heat_template_version: 2014-10-16
 # or you can just paste it into the web-ui under "orchestration" >> "launch stack"
 #
 # after successful stack creation you can login with 
-# ssh -l syseleven <externalIP> 
+# ssh -l syseleven <externalIP> -A
 # 
 
 description: Simple template to deploy a single compute instance
