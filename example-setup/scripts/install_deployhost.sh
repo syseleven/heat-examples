@@ -37,16 +37,6 @@ cat <<EOF> /etc/consul.d/consul.json
 }
 EOF
 
-cat <<EOF> /etc/consul.d/aclmaster.json
-{
-  "acl_datacenter": "cbk1",
-  "acl_default_policy": "deny",
-  "acl_down_policy": "extend-cache",
-  "acl_master_token": "$MASTERTOKEN"
-}
-EOF
-
-
 # Fix Script field
 # 2017/12/14 12:16:59 [WARN] agent: check "service:consul-ui" has the 'script' field, which has been deprecated and replaced with the 'args' field. See https://www.consul.io/docs/agent/checks.html
 

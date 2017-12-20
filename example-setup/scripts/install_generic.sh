@@ -40,6 +40,15 @@ cat <<EOF> /etc/consul.d/consul.json
 }
 EOF
 
+cat <<EOF> /etc/consul.d/aclmaster.json
+{
+  "acl_datacenter": "cbk1",
+  "acl_default_policy": "allow",
+  "acl_down_policy": "allow",
+  "acl_master_token": "$MASTERTOKEN"
+}
+EOF
+
 else 
 cat <<EOF> /etc/consul.d/consul.json
 {
@@ -52,15 +61,16 @@ cat <<EOF> /etc/consul.d/consul.json
 }
 EOF
 
-fi
-
 cat <<EOF> /etc/consul.d/aclmaster.json
 {
   "acl_datacenter": "cbk1",
-  "acl_default_policy": "deny",
-  "acl_down_policy": "extend-cache"
+  "acl_default_policy": "allow",
+  "acl_down_policy": "allow",
 }
 EOF
+
+fi
+
 
 # ACL Example that can be set via API/Webinterface if required
 # key "" {
