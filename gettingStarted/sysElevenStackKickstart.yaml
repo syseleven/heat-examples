@@ -79,13 +79,16 @@ resources:
               export OS_PROJECT_ID="demo_project_id"
               export OS_PASSWORD="demo_password"
 
-              # the following lines don't need to be changed
+              # set other region in NAME and URL if required
+              # available regions: cbk, dbl
+              export OS_REGION_NAME="cbk"
               export OS_AUTH_URL=https://api.cbk.cloud.syseleven.net:5000/v3
+
+              # the following lines don't need to be changed
               export OS_IDENTITY_API_VERSION=3
               export OS_USER_DOMAIN_NAME="Default"
               export OS_INTERFACE=public
               export OS_ENDPOINT_TYPE=public
-              export OS_REGION_NAME="cbk"
 
               # Don't leave a blank variable, unset it if it was empty
               if [ -z "$OS_REGION_NAME" ]; then unset OS_REGION_NAME; fi
