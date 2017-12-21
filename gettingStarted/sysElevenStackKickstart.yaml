@@ -16,27 +16,30 @@ description: Simple template to deploy a single compute instance
 
 parameters:
  key_name:
-  type: string
-  default: 
+   type: string
+   default: id_rsa_pub_dschwabe
  username:
-  type: string
-  default: syseleven
+   type: string
+   default: dschwabe
  image:
-  type: string
-  default: Ubuntu Server 16.04 LTS
+   type: string
+   default: Ubuntu Server 16.04 LTS
  instance_name:
-  type: string
-  default: kickstart
+   type: string
+   default: kickstart
+ flavor:
+   type: string
+   default: m1.micro
  public_network:
-  type: string
-  default: ext-net
+   type: string
+   default: ext-net
 
 resources:
   allow_ssh:
     type: OS::Neutron::SecurityGroup
     properties:
       description: allow incoming SSH and ICMP traffic from anywhere.
-      name: allow incoming traffic, tcp port 22 and icmp
+      name: "{ get_param: instance_name }_allow incoming traffic, tcp port 22 and icmp"
       rules: 
         - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 22, port_range_max: 22, protocol: tcp } 
         - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, protocol: icmp } 
@@ -49,7 +52,7 @@ resources:
       user_data: { get_resource: cloud-init-config }    
       image: { get_param: image }
       key_name: { get_param: key_name }
-      flavor: m1.micro
+      flavor: { get_param: flavor }
       networks:
         - port: { get_resource: port }
 
@@ -61,7 +64,7 @@ resources:
        manage_etc_hosts: true
        users:
            - name: { get_param: username }
-             gecos: [ { get_param: username }, Stack user]
+             gecos: [ { get_param: username }, "Stack user"]
              sudo: ALL=(ALL) NOPASSWD:ALL
              shell: /bin/bash
        write_files:
@@ -72,10 +75,11 @@ resources:
               until ping -c 1 syseleven.de > /dev/null; do sleep 2; done
               # wait for a valid user
               until id ${USERNAME} > /dev/null; do sleep 2; done
+              echo "Found id: ${USERNAME}"
               mkdir /home/${USERNAME}/.ssh
               # create empty file for next command not to run into an error
               touch /home/${USERNAME}/.ssh/authorized_keys
-              #curl -s http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key >> /home/${USERNAME}/.ssh/authorized_keys
+              curl -s http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key >> /home/${USERNAME}/.ssh/authorized_keys
               chown -R ${USERNAME}: /home/${USERNAME}
               # disable ubuntu landscape scripts
               curl "https://raw.githubusercontent.com/syseleven/heattemplates-examples/master/gettingStarted/motd.txt" > /etc/motd 
