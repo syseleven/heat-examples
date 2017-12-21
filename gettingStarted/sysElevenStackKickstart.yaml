@@ -16,17 +16,25 @@ description: Simple template to deploy a single compute instance
 
 parameters:
  key_name:
-  type: string
+   type: string
+ image:
+   type: string
+   default: Ubuntu Server 16.04 LTS
+ flavor:
+   type: string
+   default: m1.micro
  public_network:
-  type: string
-  default: ext-net 
+   type: string
+   default: ext-net
 
 resources:
+
   allow_ssh:
     type: OS::Neutron::SecurityGroup
     properties:
       description: allow incoming SSH and ICMP traffic from anywhere.
-      name: allow incoming traffic, tcp port 22 and icmp
+      name: 
+        list_join: [ '-', [ { get_param: "OS::stack_name" }, 'kickstart', 'allow incoming traffic, tcp port 22 and icmp']]
       rules: 
         - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 22, port_range_max: 22, protocol: tcp } 
         - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, protocol: icmp } 
@@ -34,12 +42,13 @@ resources:
   host:
     type: OS::Nova::Server
     properties:
-      name: kickstart
+      name: 
+        list_join: [ '-', [ { get_param: "OS::stack_name" }, 'kickstart']]
       user_data_format: RAW
       user_data: { get_resource: cloud-init-config }    
-      image: Ubuntu Server 16.04 LTS 
-      key_name: {get_param: key_name}
-      flavor: m1.micro
+      image: { get_param: image }
+      key_name: { get_param: key_name }
+      flavor: { get_param: flavor }
       networks:
         - port: { get_resource: port }
 
@@ -51,27 +60,27 @@ resources:
        manage_etc_hosts: true
        users:
            - name: syseleven
-             gecos: SysEleven Stack user
+             gecos: Syseleven Stack user
              sudo: ALL=(ALL) NOPASSWD:ALL
              shell: /bin/bash
        write_files:
          -  content: |
               #!/usr/bin/env bash
+              echo "# Started SSH key injection and motd setup"
               # wait for valid network
               until ping -c 1 syseleven.de > /dev/null; do sleep 2; done
               # wait for a valid user
               until id syseleven > /dev/null; do sleep 2; done
+              echo "Found id: syseleven"
               mkdir /home/syseleven/.ssh
-              curl -s http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key > /home/syseleven/.ssh/authorized_keys
-              cat <<EOF> /home/syseleven/.ssh/config
-              Host 185.56.* 
-               UserKnownHostsFile=/dev/null
-               StrictHostKeyChecking=no
-              EOF
+              # create empty file for next command not to run into an error
+              touch /home/syseleven/.ssh/authorized_keys
+              curl -s http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key >> /home/syseleven/.ssh/authorized_keys
               chown -R syseleven: /home/syseleven
               # disable ubuntu landscape scripts
               curl "https://raw.githubusercontent.com/syseleven/heattemplates-examples/master/gettingStarted/motd.txt" > /etc/motd 
               chmod 400 /etc/update-motd.d/*
+              echo "# Finished SSH key injection and motd setup"
             path: /root/inject_userkey
             permissions: 0700
          # don't replace content in this hot template, only write your credentials inside the newly generated vm!
@@ -82,13 +91,16 @@ resources:
               export OS_PROJECT_ID="demo_project_id"
               export OS_PASSWORD="demo_password"
 
-              # the following lines don't need to be changed
+              # set other region in NAME and URL if required
+              # available regions: cbk
+              export OS_REGION_NAME="cbk"
               export OS_AUTH_URL=https://api.cbk.cloud.syseleven.net:5000/v3
+
+              # the following lines don't need to be changed
               export OS_IDENTITY_API_VERSION=3
               export OS_USER_DOMAIN_NAME="Default"
               export OS_INTERFACE=public
               export OS_ENDPOINT_TYPE=public
-              export OS_REGION_NAME="cbk"
 
               # Don't leave a blank variable, unset it if it was empty
               if [ -z "$OS_REGION_NAME" ]; then unset OS_REGION_NAME; fi
@@ -100,8 +112,10 @@ resources:
             permissions: 0600
          - content: |
               #!/usr/bin/env bash
+              echo "# Started terraform setup"
+              terraformversion=0.11.1
               until id syseleven > /dev/null; do sleep 2; done
-              url="https://releases.hashicorp.com/terraform/0.11.1/terraform_0.11.1_linux_amd64.zip"
+              url="https://releases.hashicorp.com/terraform/${terraformversion}/terraform_${terraformversion}_linux_amd64.zip"
               bin="/home/syseleven/bin"
               tmp="/tmp/terraform.zip"
               /bin/mkdir -p $bin
@@ -110,7 +124,7 @@ resources:
               /bin/chown syseleven:syseleven $bin/terraform
               /bin/chown -R syseleven:syseleven $bin/
               if [ -f $tmp ]; then rm $tmp; fi
-              if [ -x $bin/terraform ]; then exit 0; else (echo "Error while installing terraform"; exit 99); fi
+              if [ -x $bin/terraform ]; then exit 0 && echo "# Finished terraform setup"; else (echo "Error while installing terraform"; exit 99); fi
            path: /root/terra-install.sh
            owner: root
            permissions: 0700
@@ -141,13 +155,15 @@ resources:
   net:
     type: OS::Neutron::Net
     properties: 
-      name: kickstart-net
+      name: 
+        list_join: [ '-', [ { get_param: "OS::stack_name" }, 'kickstart', 'net']]
 
   subnet:
     type: OS::Neutron::Subnet
     depends_on: [ net ]
     properties:
-      name: kickstart-subnet
+      name: 
+        list_join: [ '-', [ { get_param: "OS::stack_name" }, 'kickstart', 'subnet']]
       dns_nameservers:
         - 8.8.8.8
         - 8.8.4.4
@@ -161,7 +177,8 @@ resources:
     type: OS::Neutron::Router
     properties:
       external_gateway_info: {"network": { get_param: public_network }}
-      name: kickstart-router
+      name: 
+        list_join: [ '-', [ { get_param: "OS::stack_name" }, 'kickstart', 'router']]
 
   router_subnet_bridge:
     type: OS::Neutron::RouterInterface
