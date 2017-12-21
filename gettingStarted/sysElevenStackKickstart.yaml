@@ -71,6 +71,7 @@ resources:
          -  content: |
               #!/usr/bin/env bash
               USERNAME=$1
+              echo "# Started SSH key incejtion and motd setup"
               # wait for valid network
               until ping -c 1 syseleven.de > /dev/null; do sleep 2; done
               # wait for a valid user
@@ -84,6 +85,7 @@ resources:
               # disable ubuntu landscape scripts
               curl "https://raw.githubusercontent.com/syseleven/heattemplates-examples/master/gettingStarted/motd.txt" > /etc/motd 
               chmod 400 /etc/update-motd.d/*
+              echo "# Finished SSH key incejtion and motd setup"
             path: /root/inject_userkey
             permissions: 0700
          # don't replace content in this hot template, only write your credentials inside the newly generated vm!
@@ -116,6 +118,7 @@ resources:
          - content: |
               #!/usr/bin/env bash
               USERNAME=$1
+              echo "# Started terraform setup"
               terraformversion=0.11.1
               until id ${USERNAME} > /dev/null; do sleep 2; done
               url="https://releases.hashicorp.com/terraform/${terraformversion}/terraform_${terraformversion}_linux_amd64.zip"
@@ -127,7 +130,7 @@ resources:
               /bin/chown ${USERNAME}:${USERNAME} $bin/terraform
               /bin/chown -R ${USERNAME}:${USERNAME} $bin/
               if [ -f $tmp ]; then rm $tmp; fi
-              if [ -x $bin/terraform ]; then exit 0; else (echo "Error while installing terraform"; exit 99); fi
+              if [ -x $bin/terraform ]; then exit 0 && echo "# Finished terraform setup"; else (echo "Error while installing terraform"; exit 99); fi
            path: /root/terra-install.sh
            owner: root
            permissions: 0700
