@@ -17,7 +17,6 @@ description: Simple template to deploy a single compute instance
 parameters:
  key_name:
    type: string
-   default: 
  username:
    type: string
    default: syseleven
