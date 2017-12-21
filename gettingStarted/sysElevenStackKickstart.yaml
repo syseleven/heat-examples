@@ -34,12 +34,13 @@ parameters:
    default: ext-net
 
 resources:
+
   allow_ssh:
     type: OS::Neutron::SecurityGroup
     properties:
       description: allow incoming SSH and ICMP traffic from anywhere.
       name: 
-        list_join: [ '-', [ { get_param: instance_name }, 'allow incoming traffic, tcp port 22 and icmp']]
+        list_join: [ '-', [ { get_param: "OS::stack_name" }, { get_param: instance_name }, 'allow incoming traffic, tcp port 22 and icmp']]
       rules: 
         - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 22, port_range_max: 22, protocol: tcp } 
         - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, protocol: icmp } 
@@ -47,7 +48,8 @@ resources:
   host:
     type: OS::Nova::Server
     properties:
-      name: {get_param: instance_name }
+      name: 
+        list_join: [ '-', [ { get_param: "OS::stack_name" }, { get_param: instance_name }]]
       user_data_format: RAW
       user_data: { get_resource: cloud-init-config }    
       image: { get_param: image }
@@ -64,7 +66,7 @@ resources:
        manage_etc_hosts: true
        users:
            - name: { get_param: username }
-             gecos: [ { get_param: username }, "Stack user"]
+             gecos: [ { get_param: username }, "Stack user" ]
              sudo: ALL=(ALL) NOPASSWD:ALL
              shell: /bin/bash
        write_files:
@@ -162,14 +164,14 @@ resources:
     type: OS::Neutron::Net
     properties: 
       name: 
-        list_join: [ '-', [ { get_param: instance_name }, 'net']]
+        list_join: [ '-', [ { get_param: "OS::stack_name" }, { get_param: instance_name }, 'net']]
 
   subnet:
     type: OS::Neutron::Subnet
     depends_on: [ net ]
     properties:
       name: 
-        list_join: [ '-', [ { get_param: instance_name }, 'subnet']]
+        list_join: [ '-', [ { get_param: "OS::stack_name" }, { get_param: instance_name }, 'subnet']]
       dns_nameservers:
         - 8.8.8.8
         - 8.8.4.4
@@ -184,7 +186,7 @@ resources:
     properties:
       external_gateway_info: {"network": { get_param: public_network }}
       name: 
-        list_join: [ '-', [ { get_param: instance_name }, 'router']]
+        list_join: [ '-', [ { get_param: "OS::stack_name" }, { get_param: instance_name }, 'router']]
 
   router_subnet_bridge:
     type: OS::Neutron::RouterInterface
