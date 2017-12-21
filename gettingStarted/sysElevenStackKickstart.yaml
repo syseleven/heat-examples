@@ -97,7 +97,7 @@ resources:
               export OS_PASSWORD="demo_password"
 
               # set other region in NAME and URL if required
-              # available regions: cbk, dbl
+              # available regions: cbk
               export OS_REGION_NAME="cbk"
               export OS_AUTH_URL=https://api.cbk.cloud.syseleven.net:5000/v3
 
