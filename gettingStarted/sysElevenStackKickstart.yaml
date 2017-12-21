@@ -17,9 +17,19 @@ description: Simple template to deploy a single compute instance
 parameters:
  key_name:
   type: string
+  default: 
+ username:
+  type: string
+  default: syseleven
+ image:
+  type: string
+  default: Ubuntu Server 16.04 LTS
+ instance_name:
+  type: string
+  default: kickstart
  public_network:
   type: string
-  default: ext-net 
+  default: ext-net
 
 resources:
   allow_ssh:
@@ -34,11 +44,11 @@ resources:
   host:
     type: OS::Nova::Server
     properties:
-      name: kickstart
+      name: {get_param: instance_name }
       user_data_format: RAW
       user_data: { get_resource: cloud-init-config }    
-      image: Ubuntu Server 16.04 LTS 
-      key_name: {get_param: key_name}
+      image: { get_param: image }
+      key_name: { get_param: key_name }
       flavor: m1.micro
       networks:
         - port: { get_resource: port }
@@ -50,22 +60,23 @@ resources:
      cloud_config:
        manage_etc_hosts: true
        users:
-           - name: syseleven
-             gecos: SysEleven Stack user
+           - name: { get_param: username }
+             gecos: [ { get_param: username }, Stack user]
              sudo: ALL=(ALL) NOPASSWD:ALL
              shell: /bin/bash
        write_files:
          -  content: |
               #!/usr/bin/env bash
+              USERNAME=$1
               # wait for valid network
               until ping -c 1 syseleven.de > /dev/null; do sleep 2; done
               # wait for a valid user
-              until id syseleven > /dev/null; do sleep 2; done
-              mkdir /home/syseleven/.ssh
+              until id ${USERNAME} > /dev/null; do sleep 2; done
+              mkdir /home/${USERNAME}/.ssh
               # create empty file for next command not to run into an error
-              touch /home/syseleven/.ssh/authorized_keys
-              curl -s http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key >> /home/syseleven/.ssh/authorized_keys
-              chown -R syseleven: /home/syseleven
+              touch /home/${USERNAME}/.ssh/authorized_keys
+              #curl -s http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key >> /home/${USERNAME}/.ssh/authorized_keys
+              chown -R ${USERNAME}: /home/${USERNAME}
               # disable ubuntu landscape scripts
               curl "https://raw.githubusercontent.com/syseleven/heattemplates-examples/master/gettingStarted/motd.txt" > /etc/motd 
               chmod 400 /etc/update-motd.d/*
@@ -100,15 +111,17 @@ resources:
             permissions: 0600
          - content: |
               #!/usr/bin/env bash
-              until id syseleven > /dev/null; do sleep 2; done
-              url="https://releases.hashicorp.com/terraform/0.11.1/terraform_0.11.1_linux_amd64.zip"
-              bin="/home/syseleven/bin"
+              USERNAME=$1
+              terraformversion=0.11.1
+              until id ${USERNAME} > /dev/null; do sleep 2; done
+              url="https://releases.hashicorp.com/terraform/${terraformversion}/terraform_${terraformversion}_linux_amd64.zip"
+              bin="/home/${USERNAME}/bin"
               tmp="/tmp/terraform.zip"
               /bin/mkdir -p $bin
               /usr/bin/curl -s -o $tmp $url
               /usr/bin/unzip -q $tmp -d $bin
-              /bin/chown syseleven:syseleven $bin/terraform
-              /bin/chown -R syseleven:syseleven $bin/
+              /bin/chown ${USERNAME}:${USERNAME} $bin/terraform
+              /bin/chown -R ${USERNAME}:${USERNAME} $bin/
               if [ -f $tmp ]; then rm $tmp; fi
               if [ -x $bin/terraform ]; then exit 0; else (echo "Error while installing terraform"; exit 99); fi
            path: /root/terra-install.sh
@@ -116,8 +129,8 @@ resources:
            permissions: 0700
 
        runcmd:
-         - /root/inject_userkey
-         - /root/terra-install.sh
+         - [ /root/inject_userkey, { get_param: username }]
+         - [ /root/terra-install.sh, { get_param: username }]
        packages:
          - git
          - wget
