@@ -62,14 +62,9 @@ resources:
               # wait for a valid user
               until id syseleven > /dev/null; do sleep 2; done
               mkdir /home/syseleven/.ssh
-              # create 
+              # create empty file for next command not to run into an error
               touch /home/syseleven/.ssh/authorized_keys
               curl -s http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key >> /home/syseleven/.ssh/authorized_keys
-              cat <<EOF> /home/syseleven/.ssh/config
-              Host 185.56.* 
-               UserKnownHostsFile=/dev/null
-               StrictHostKeyChecking=no
-              EOF
               chown -R syseleven: /home/syseleven
               # disable ubuntu landscape scripts
               curl "https://raw.githubusercontent.com/syseleven/heattemplates-examples/master/gettingStarted/motd.txt" > /etc/motd 
