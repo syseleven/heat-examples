@@ -15,8 +15,6 @@ parameters:
     type: string
   ssh_keys:
     type: comma_delimited_list
-#  volume: 
-#    type: string
 
 resources:
 
@@ -31,14 +29,6 @@ resources:
       flavor: { get_param: flavor }
       networks:
         - port: { get_resource: dbserver_port }
-
-#  # attach volume to a server
-#  db_volume_attach:
-#    depends_on: dbserver
-#    type: OS::Cinder::VolumeAttachment
-#    properties:
-#      instance_uuid: { get_resource: dbserver }
-#      volume_id: { get_param: volume }
 
   cloud-init-config:
    # cloud init demo resource
@@ -68,10 +58,6 @@ resources:
              source: "deb http://repo.percona.com/apt xenial main"
              keyid: 8507EFA5 
              filename: xtradb.list
-
-
-## deb http://repo.percona.com/apt xenial main
-## deb-src http://repo.percona.com/apt xenial main
 
   dbserver_port:
     type: OS::Neutron::Port
