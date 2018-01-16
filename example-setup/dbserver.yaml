@@ -3,16 +3,15 @@ heat_template_version: 2016-04-08
 parameters:
   name:
     type: string
-    default: dbserver
   syseleven_net:
     type: string
   image:
     type: string
   flavor:
     type: string
-#  volume: 
-#    type: string
   consul_mastertoken:
+    type: string
+  consul_agenttoken:
     type: string
   ssh_keys:
     type: comma_delimited_list
@@ -31,21 +30,13 @@ resources:
       networks:
         - port: { get_resource: dbserver_port }
 
-#  # attach volume to a server
-#  db_volume_attach:
-#    depends_on: dbserver
-#    type: OS::Cinder::VolumeAttachment
-#    properties:
-#      instance_uuid: { get_resource: dbserver }
-#      volume_id: { get_param: volume }
-
   cloud-init-config:
    # cloud init demo resource
    type: OS::Heat::CloudConfig
    properties:
      cloud_config:
        runcmd:
-         - [ /root/install_generic.sh, { get_param: consul_mastertoken } ]
+         - [ /root/install_generic.sh, { get_param: consul_mastertoken }, { get_param: consul_agenttoken } ]
          - /root/install_dbserver.sh
        write_files:
          -  content: { get_file: scripts/install_generic.sh }
@@ -67,10 +58,6 @@ resources:
              source: "deb http://repo.percona.com/apt xenial main"
              keyid: 8507EFA5 
              filename: xtradb.list
-
-
-## deb http://repo.percona.com/apt xenial main
-## deb-src http://repo.percona.com/apt xenial main
 
   dbserver_port:
     type: OS::Neutron::Port

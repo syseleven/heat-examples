@@ -1,21 +1,22 @@
 heat_template_version: 2016-04-08
 
 parameters:
-  syseleven_net:
-    type: string
   name:
     type: string
-    default: lbserver
+  syseleven_net:
+    type: string
   image:
     type: string
   flavor:
     type: string
-  public_network:
-    type: string
   consul_mastertoken:
+    type: string
+  consul_agenttoken:
     type: string
   ssh_keys:
     type: comma_delimited_list
+  public_network:
+    type: string
 
 resources:
   allow_webtraffic:
@@ -48,7 +49,7 @@ resources:
    properties:
      cloud_config:
        runcmd:
-         - [ /root/install_generic.sh, { get_param: consul_mastertoken } ]
+         - [ /root/install_generic.sh, { get_param: consul_mastertoken }, { get_param: consul_agenttoken } ]
          - /root/install_lb.sh
        write_files:
          -  content: { get_file: scripts/install_generic.sh }
