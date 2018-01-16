@@ -1,0 +1,94 @@
+heat_template_version: 2016-04-08
+
+parameters:
+  name:
+    type: string
+  syseleven_net:
+    type: string
+  image: 
+    type: string
+  flavor: 
+    type: string
+<<<<<<< HEAD
+=======
+  public_network:
+    type: string
+>>>>>>> master
+  consul_mastertoken:
+    type: string
+  consul_agenttoken:
+    type: string
+  ssh_keys:
+    type: comma_delimited_list
+  public_network:
+    type: string
+
+resources:
+
+  allow_ssh:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: allow incoming traffic from anywhere.
+      name: allow incoming traffic, tcp
+      rules: 
+        - {direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 22, port_range_max: 22, protocol: tcp}
+        - direction: ingress
+          protocol: icmp
+
+  server:
+    type: OS::Nova::Server
+    depends_on: [ server_port, cloud-init-config ]
+    properties:
+      name: { get_param: name }
+      image: { get_param: image } 
+      flavor: { get_param: flavor }
+      user_data_format: RAW
+      user_data: { get_resource: cloud-init-config }    
+      networks:
+        - port: { get_resource: server_port }
+
+  cloud-init-config:
+   # cloud init demo resource
+   type: OS::Heat::CloudConfig
+   properties:
+     cloud_config:
+       runcmd:
+<<<<<<< HEAD
+         - [ /root/install_generic.sh, { get_param: consul_mastertoken }, { get_param: consul_agenttoken } ]
+         - [ /root/install_deployhost.sh, { get_param: consul_mastertoken }, { get_param: consul_agenttoken } ]
+=======
+         - [ /root/install_generic.sh, { get_param: consul_mastertoken } ]
+         - /root/install_deployhost.sh
+>>>>>>> master
+       write_files:
+         -  content: { get_file: scripts/install_generic.sh }
+            permissions: 0700
+            path: /root/install_generic.sh
+         -  content: { get_file: scripts/install_deployhost.sh }
+            permissions: 0700
+            path: /root/install_deployhost.sh
+       users:
+           - name: syseleven
+             gecos:  Service user
+             lock-passwd: false
+             sudo: ALL=(ALL) NOPASSWD:ALL
+             shell: /bin/bash
+             ssh-authorized-keys: { get_param: ssh_keys }
+
+  server_port:
+    type: OS::Neutron::Port
+    depends_on: [ allow_ssh ]
+    properties:
+      name: servicehost port
+      network: { get_param: syseleven_net}
+      security_groups: 
+        - { get_resource: allow_ssh } 
+        - default
+
+  servicehost_floating_ip:
+    type: OS::Neutron::FloatingIP
+    depends_on: [ server_port ]
+    properties:
+      floating_network: { get_param: public_network }
+      port_id: { get_resource: server_port }
+

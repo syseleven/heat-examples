@@ -1,0 +1,95 @@
+heat_template_version: 2016-04-08
+
+parameters:
+  name:
+    type: string
+  syseleven_net:
+    type: string
+  image:
+    type: string
+  flavor:
+    type: string
+<<<<<<< HEAD
+  consul_mastertoken:
+    type: string
+  consul_agenttoken:
+=======
+  public_network:
+    type: string
+  consul_mastertoken:
+>>>>>>> master
+    type: string
+  ssh_keys:
+    type: comma_delimited_list
+  public_network:
+    type: string
+
+resources:
+  
+  allow_webtraffic:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: allow incoming web traffic from anywhere.
+      name: allow incoming web traffic
+      rules: 
+        - {direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 80, port_range_max: 80, protocol: tcp}
+        - {direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 443, port_range_max: 443, protocol: tcp}
+        - {direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 8080, port_range_max: 8080, protocol: tcp}
+        - direction: ingress
+          protocol: icmp
+
+  lbserver:
+    type: OS::Nova::Server
+    depends_on: [ lb_port, cloud-init-config ]
+    properties:
+      name: { get_param: name }
+      flavor: { get_param: flavor }
+      image: { get_param: image }
+      user_data_format: RAW
+      user_data: { get_resource: cloud-init-config }    
+      networks:
+        - port: { get_resource: lb_port }
+
+  cloud-init-config:
+   # cloud init resource
+   type: OS::Heat::CloudConfig
+   properties:
+     cloud_config:
+       runcmd:
+<<<<<<< HEAD
+         - [ /root/install_generic.sh, { get_param: consul_mastertoken }, { get_param: consul_agenttoken } ]
+=======
+         - [ /root/install_generic.sh, { get_param: consul_mastertoken } ]
+>>>>>>> master
+         - /root/install_lb.sh
+       write_files:
+         -  content: { get_file: scripts/install_generic.sh }
+            permissions: 0700
+            path: /root/install_generic.sh
+         -  content: { get_file: scripts/install_lb.sh }
+            permissions: 0700
+            path: /root/install_lb.sh
+       users:
+           - name: syseleven
+             gecos:  Workshop user
+             sudo: ALL=(ALL) NOPASSWD:ALL
+             shell: /bin/bash
+             ssh-authorized-keys: { get_param: ssh_keys }
+
+  lb_port:
+    type: OS::Neutron::Port
+    depends_on: [ allow_webtraffic ]
+    properties:
+      name: lb port
+      network: { get_param: syseleven_net}
+      security_groups: 
+        - { get_resource: allow_webtraffic }
+        - default
+
+  lb_floating_ip:
+    type: OS::Neutron::FloatingIP
+    depends_on: [ lb_port ]
+    properties:
+      floating_network: { get_param: public_network }
+      port_id: { get_resource: lb_port }
+
