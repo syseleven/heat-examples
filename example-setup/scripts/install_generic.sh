@@ -4,28 +4,48 @@
 
 # some generic stuff that is the same on any cluster member
 MASTERTOKEN=$1
+<<<<<<< HEAD
+AGENTTOKEN=$2
+=======
+>>>>>>> master
 
 # wait for a valid network configuration
+echo "# Waiting for valid network configuration"
 until ping -c 1 syseleven.de; do sleep 5; done
 
+echo "# Install dependencies"
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get install -q -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" curl haveged unzip wget jq git dnsmasq dnsutils uuid-runtime
 
 # add a user for consul
+echo "# Add consul user"
 adduser --quiet --shell /bin/sh --no-create-home --disabled-password --disabled-login --home /var/lib/misc --gecos "Consul system user" consul 
 
-# install consul
+# consul software version
 consulversion=1.0.2
 consultemplateversion=0.19.4
 
+# install consul
+<<<<<<< HEAD
+echo "# Download and install consul"
+=======
+consulversion=1.0.2
+consultemplateversion=0.19.4
+
+>>>>>>> master
 wget https://releases.hashicorp.com/consul/${consulversion}/consul_${consulversion}_linux_amd64.zip
 unzip consul_${consulversion}_linux_amd64.zip
 mv consul /usr/local/sbin/
 rm consul_${consulversion}_linux_amd64.zip
 mkdir -p /etc/consul.d
 
+<<<<<<< HEAD
+# install consul-template
+echo "# Download and install consul-template"
+=======
 # install consul template
+>>>>>>> master
 wget https://releases.hashicorp.com/consul-template/${consultemplateversion}/consul-template_${consultemplateversion}_linux_amd64.zip
 unzip consul-template_${consultemplateversion}_linux_amd64.zip
 mv consul-template /usr/local/sbin/
@@ -48,13 +68,22 @@ EOF
 cat <<EOF> /etc/consul.d/aclmaster.json
 {
   "acl_datacenter": "cbk1",
+<<<<<<< HEAD
+  "acl_default_policy": "deny",
+  "acl_down_policy": "extend-cache",
+  "acl_master_token": "$MASTERTOKEN",
+  "acl_agent_token": "$AGENTTOKEN",
+  "acl_token": "$AGENTTOKEN"
+=======
   "acl_default_policy": "allow",
   "acl_down_policy": "allow",
   "acl_master_token": "$MASTERTOKEN"
+>>>>>>> master
 }
 EOF
 
 else 
+
 cat <<EOF> /etc/consul.d/consul.json
 {
   "datacenter": "cbk1",
@@ -69,12 +98,20 @@ EOF
 cat <<EOF> /etc/consul.d/aclmaster.json
 {
   "acl_datacenter": "cbk1",
+<<<<<<< HEAD
+  "acl_down_policy": "extend-cache",
+  "acl_agent_token": "$AGENTTOKEN",
+  "acl_token": "$AGENTTOKEN"
+=======
   "acl_default_policy": "allow",
   "acl_down_policy": "allow"
+>>>>>>> master
 }
 EOF
 
 fi
+<<<<<<< HEAD
+=======
 
 
 # ACL Example that can be set via API/Webinterface if required
@@ -91,6 +128,7 @@ fi
 #   policy = "write"
 # }
 
+>>>>>>> master
 
 cat <<EOF> /etc/systemd/system/consul.service
 [Unit]
@@ -103,6 +141,8 @@ User=consul
 EnvironmentFile=-/etc/default/consul
 Environment=GOMAXPROCS=2
 Restart=on-failure
+RestartSec=5
+StartLimitInterval=0
 ExecStart=/usr/local/sbin/consul agent \$OPTIONS -config-dir=/etc/consul.d
 ExecReload=/bin/kill -HUP \$MAINPID
 KillSignal=SIGINT
@@ -121,6 +161,9 @@ until consul join 192.168.2.11 192.168.2.12 192.168.2.13; do sleep 2; done
 echo "server=/consul./127.0.0.1#8600" > /etc/dnsmasq.d/10-consul
 systemctl restart dnsmasq
 
-echo "finished generic core setup"
+logger "# Finished generic core setup"
+echo "# Finished generic core setup"
+
+
 
 

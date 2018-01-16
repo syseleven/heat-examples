@@ -43,6 +43,9 @@ parameters:
   consul_mastertoken_length:
     type: number
     default: 30
+  consul_agenttoken_length:
+    type: number
+    default: 30
   ssh_keys:
     type: comma_delimited_list
 
@@ -52,6 +55,11 @@ resources:
     type: OS::Heat::RandomString
     properties:
       length: {get_param: [consul_mastertoken_length]}
+
+  consul_agenttoken:
+    type: OS::Heat::RandomString
+    properties:
+      length: {get_param: [consul_agenttoken_length]}
 
   syseleven_net:
     type: OS::Neutron::Net
@@ -88,7 +96,7 @@ resources:
   #######################
   servicehost_group:
     type: OS::Heat::ResourceGroup
-    depends_on: [ router_subnet_connect, consul_mastertoken ]
+    depends_on: [ router_subnet_connect, consul_mastertoken, consul_agenttoken ]
     properties:
       count: { get_param: number_servicehosts } 
       resource_def: 
@@ -100,13 +108,17 @@ resources:
           syseleven_net: { get_resource: syseleven_net }
           public_network: { get_param: public_network }
           consul_mastertoken: {get_attr: [consul_mastertoken, value]} 
+<<<<<<< HEAD
+          consul_agenttoken: {get_attr: [consul_agenttoken, value]}
+=======
+>>>>>>> master
           ssh_keys: { get_param: ssh_keys }
 
   ### LB Node as resource group ###
   #######################
   lb_group:
     type: OS::Heat::ResourceGroup
-    depends_on: [ router_subnet_connect, consul_mastertoken ]
+    depends_on: [ router_subnet_connect, consul_mastertoken, consul_agenttoken ]
     properties:
       count: 1 
       resource_def: 
@@ -116,15 +128,20 @@ resources:
           image: { get_param: image }
           flavor: { get_param: flavor_lb }
           syseleven_net: { get_resource: syseleven_net }
+<<<<<<< HEAD
+          consul_mastertoken: {get_attr: [consul_mastertoken, value]}
+          consul_agenttoken: {get_attr: [consul_agenttoken, value]}
+=======
           public_network: { get_param: public_network }
           consul_mastertoken: {get_attr: [consul_mastertoken, value]} 
+>>>>>>> master
           ssh_keys: { get_param: ssh_keys }
 
   ### DBserver Nodes as resource group ###
   #######################
   dbserver_group:
     type: OS::Heat::ResourceGroup
-    depends_on: [ router_subnet_connect, consul_mastertoken ]
+    depends_on: [ router_subnet_connect, consul_mastertoken, consul_agenttoken ]
     properties:
       count: { get_param: number_dbservers } 
       resource_def: 
@@ -134,14 +151,24 @@ resources:
           flavor: { get_param: flavor_dbserver }
           image: { get_param: image }
           syseleven_net: { get_resource: syseleven_net }
+<<<<<<< HEAD
+          public_network: { get_param: public_network }
+          consul_mastertoken: {get_attr: [consul_mastertoken, value]}
+          consul_agenttoken: {get_attr: [consul_agenttoken, value]}
+=======
           consul_mastertoken: {get_attr: [consul_mastertoken, value]} 
+>>>>>>> master
           ssh_keys: { get_param: ssh_keys }
 
   ### Appserver nodes as resource group ###
   #######################
   appserver_group:
     type: OS::Heat::ResourceGroup
+<<<<<<< HEAD
+    depends_on: [ router_subnet_connect, consul_mastertoken, consul_agenttoken ]
+=======
     depends_on: [ router_subnet_connect ]
+>>>>>>> master
     properties:
       count: { get_param: number_appservers } 
       resource_def: 
@@ -151,8 +178,12 @@ resources:
           flavor: { get_param: flavor_appserver }
           image: { get_param: image }
           syseleven_net: { get_resource: syseleven_net }
+          consul_mastertoken: {get_attr: [consul_mastertoken, value]}
+          consul_agenttoken: {get_attr: [consul_agenttoken, value]} 
           ssh_keys: { get_param: ssh_keys }
 
 outputs:
   consul_master_token:
     value: {get_attr: [consul_mastertoken, value]} 
+  consul_agenttoken:
+    value: {get_attr: [consul_agenttoken, value]} 

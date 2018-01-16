@@ -37,6 +37,14 @@ If the bastion host (called "servicehost") and the loadbalancer as proxy are com
 openstack stack create -t clustersetup.yaml -e clustersetup-env.yaml <stack_name>
 ```
 
+## After successful stack creation you can login with
+```
+openstack server ssh --option "ForwardAgent=yes" -l syseleven servicehost0
+```
 
+From there you can jump to any of your nodes. An example:
+```
+ssh lb0.node.consul
+```
 
 

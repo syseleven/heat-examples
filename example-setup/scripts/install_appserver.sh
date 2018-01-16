@@ -2,8 +2,10 @@
 # 2016 j.peschke@syseleven.de
 
 # wait for a valid network configuration
+echo "# Waiting for valid network configuration"
 until ping -c 1 syseleven.de; do sleep 1; done
 
+echo "# Install dependencies"
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get install -y language-pack-en-base libapache2-mod-php7.0 php7.0 php7.0-mysql mysql-client php7.0-gd php7.0-curl apache2 php-memcached php-memcache php7.0-xml php7.0-mbstring php-apcu php7.0-zip
@@ -45,5 +47,5 @@ EOF
 
 systemctl restart consul 
 
-logger "finished appserver installation"
-
+logger "# Finished appserver installation"
+echo "# Finished deployment host setup"
