@@ -4,7 +4,10 @@ This template can be used to deploy a single server with every CLI-Clients you n
 your local machine, which is documented [here](https://doc.syselevenstack.com/en/tutorials/openstack-cli/).
 
 Prerequisites:  
-- You need to import a valid SSH public key as described [here](https://doc.syselevenstack.com/en/tutorials/firststeps/)
+- You need a valid SSH public key that you can:  
+  - Import as described [here](https://doc.syselevenstack.com/en/tutorials/firststeps/)  
+  or  
+  - That you paste into a specific field during the setup
 
 
 ### Launch the heat template
@@ -15,9 +18,9 @@ Prerequisites:
   `https://raw.githubusercontent.com/syseleven/heattemplates-examples/master/gettingStarted/sysElevenStackKickstart.yaml`
 - Don't change the field Environment Source and click "Next".
 - Write "kickstart" into the field "Stackname".
-- SSH:  
-  Either write the name of the public SSH-Key as parameter "key_name"  
-  Or paste the public SSH-Key directly as parameter "ssh_keys", seperate them with commas (,)
+- SSH key(s):  
+  - **Either** write the name of the public SSH-Key as parameter "key_name"  
+  - **Or** paste the public SSH-Key directly as parameter "ssh_keys", seperate them with commas (,)
 - Afterwards we click Launch.
 
 After a couple of seconds you should see a new machine spawning under --> "Compute" --> "Instances".  
