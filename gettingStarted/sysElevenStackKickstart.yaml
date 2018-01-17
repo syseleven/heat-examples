@@ -1,13 +1,18 @@
 heat_template_version: 2016-04-08
 #
-# you can deploy this template using the following command:
+# You can deploy this template using one of the following commands:
+# 
+# SSH public Key file uploaded to Dashboard (Horizon) - RSA only
 # 'openstack stack create -t sysElevenStackKickstart.yaml --parameter key_name=<publicKeyName> <stackName>'
 # 
+# SSH public Key available locally
+# openstack stack create -t sysElevenStackKickstart.yaml --parameter ssh_keys="ssh-ed25519 <public ssh key> user@host, ecdsa-sha2-nistp256 <public ssh key> user@host, ssh-rsa <public ssh key> user@host"
+#
 # or you can just paste it into the web-ui under "orchestration" >> "launch stack"
 #
 # after successful stack creation you can login with 
 # ssh -l syseleven <externalIP> -A
-# 
+#
 
 description: Simple template to deploy a single compute instance
   with external network (login will be possible through vnc console and via SSH).
@@ -17,6 +22,10 @@ description: Simple template to deploy a single compute instance
 parameters:
  key_name:
    type: string
+   default: ""
+ ssh_keys:
+   type: comma_delimited_list
+   default: ""
  image:
    type: string
    default: Ubuntu Server 16.04 LTS
@@ -63,6 +72,8 @@ resources:
              gecos: Syseleven Stack user
              sudo: ALL=(ALL) NOPASSWD:ALL
              shell: /bin/bash
+             lock-passwd: false
+             ssh-authorized-keys: { get_param: ssh_keys }
        write_files:
          -  content: |
               #!/usr/bin/env bash
