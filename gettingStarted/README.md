@@ -15,13 +15,15 @@ Prerequisites:
 - Navigate to Orchestration --> Stacks --> Launch Stack to start a template.
 - Select "URL" in the Template Source select box.
 - Paste the URL of the template into Template URL:  
-  `https://raw.githubusercontent.com/syseleven/heattemplates-examples/master/gettingStarted/sysElevenStackKickstart.yaml`
-- Don't change the field Environment Source and click "Next".
+  ```text
+  https://raw.githubusercontent.com/syseleven/heattemplates-examples/master/gettingStarted/sysElevenStackKickstart.yaml
+  ```
+- Don't change the field "Environment Source" and click "Next".
 - Write "kickstart" into the field "Stackname".
 - SSH key(s):  
   - **Either** write the name of the public SSH-Key as parameter "key_name"  
   - **Or** paste the public SSH-Key directly as parameter "ssh_keys", seperate them with commas (,)
-- Afterwards we click Launch.
+- Now click "Launch".
 
 After a couple of seconds you should see a new machine spawning under --> "Compute" --> "Instances".  
 Copy the IP address from "Floating IPs" and you should be ready to login via SSH.
@@ -54,7 +56,7 @@ syselevenstack@kickstart:~$ openstack server list
 +--------------------------------------+-----------+--------+--------------------------------------------+
 | ID                                   | Name      | Status | Networks                                   |
 +--------------------------------------+-----------+--------+--------------------------------------------+
-| a54d0883-988b-4730-a533-2c91fc66c518 | kickstart | ACTIVE | kickstart-net=10.0.0.10, 185.56.135.235    |
+| a54d0883-988b-4730-a533-2c91fc66c518 | kickstart | ACTIVE | kickstart-net=10.0.0.10, < Floating IP >   |
 +--------------------------------------+-----------+--------+--------------------------------------------+
 ```
 
