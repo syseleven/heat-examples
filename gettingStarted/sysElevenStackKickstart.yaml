@@ -171,6 +171,7 @@ resources:
        packages:
          - git
          - wget
+         - curl
          - unzip
          - screen
          - python-cinderclient
