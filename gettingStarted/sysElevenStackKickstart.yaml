@@ -95,7 +95,7 @@ resources:
               touch /home/syseleven/.ssh/authorized_keys
               fi
               # pull openssh key if exists
-              if [ $(curl -sL -w "%{http_code}" "http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key" -o http_code) -eq 200 ]; then
+              if [ $(curl -sL -w "%{http_code}" "http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key" -o /dev/null) -eq 200 ]; then
               curl -s "http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key" >> /home/syseleven/.ssh/authorized_keys
               echo "# Open SSH key file provided via OpenStack API, injecting"
               logger "# Open SSH key file provided via OpenStack API, injecting"
@@ -106,7 +106,7 @@ resources:
               # correct permissions   
               chown -R syseleven: /home/syseleven
               # disable ubuntu landscape scripts
-              if [ $(curl -sL -w "%{http_code}" "https://raw.githubusercontent.com/syseleven/heattemplates-examples/master/gettingStarted/motd.txt" -o http_code) -eq 200 ]; then
+              if [ $(curl -sL -w "%{http_code}" "https://raw.githubusercontent.com/syseleven/heattemplates-examples/master/gettingStarted/motd.txt" -o /dev/null) -eq 200 ]; then
               echo "# S11 motd content found, writing"
               logger "# S11 motd content found, writing"
               curl -s "https://raw.githubusercontent.com/syseleven/heattemplates-examples/master/gettingStarted/motd.txt" > /etc/motd
