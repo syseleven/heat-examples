@@ -41,7 +41,7 @@ Open it with a text editor of your choice.
 syseleven@kickstart:~$ vim openrc
 ```
 
-You just need to adjust `OS_TENANT_NAME`, `OS_USERNAME` and `OS_PASSWORD` to the actual values.
+You just need to adjust `OS_PROJECT_ID`, `OS_USERNAME` and `OS_PASSWORD` to the actual values.
 To be able to use the command line tools just source the environment variables:
 
 ```bash
