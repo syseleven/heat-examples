@@ -11,7 +11,7 @@ This template can be used to logically seperate and deploy distributed services 
 ## How to start this setup
 
 * Download this template. e.g.: `git clone https://github.com/syseleven/heattemplates-examples.git`
-* `$ cd /heatteampltes-examples/nested stacks/`
+* `$ cd /heatteampltes-examples/substacks/`
 * Start the setup:
 
 ```
