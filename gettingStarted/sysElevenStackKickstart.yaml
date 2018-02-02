@@ -67,6 +67,7 @@ resources:
    properties:
      cloud_config:
        manage_etc_hosts: true
+       package_upgrade: true
        users:
            - name: syseleven
              gecos: Syseleven Stack user
@@ -156,27 +157,32 @@ resources:
               /bin/chown syseleven:syseleven $bin/terraform
               /bin/chown -R syseleven:syseleven $bin/
               if [ -f $tmp ]; then rm $tmp; fi
-              if [ -x $bin/terraform ]; then exit 0 && echo "# Finished terraform setup"; else (echo "Error while installing terraform"; exit 99); fi
+              if [ -x $bin/terraform ]; then (echo "# Finished terraform setup"; exit 0) else (echo "# Error while installing terraform"; exit 99); fi
            path: /root/terra-install.sh
            owner: root
            permissions: 0700
-
+         - content: |
+              #!/usr/bin/env bash
+              echo "# Started openstack client setup"
+              until id syseleven > /dev/null; do sleep 2; done
+              apt install python3-pip -y
+              pip install --upgrade pip
+              echo "## Installing openstack client and plugins"
+              for plugin in openstack cinder glance heat neutron nova keystone ; do pip3 install python-"$plugin"client ; done
+              if which openstack >/dev/null; then (echo "# Finished openstack client setup"; exit 0) else (echo "# Error while installing openstack client"; exit 99); fi
+           path: /root/openstackclient-install.sh
+           owner: root
+           permissions: 0700
        runcmd:
          - /root/inject_userkey
          - /root/terra-install.sh
+         - /root/openstackclient-install.sh
        packages:
          - git
          - wget
          - curl
          - unzip
          - screen
-         - python-cinderclient
-         - python-glanceclient
-         - python-novaclient
-         - python-keystoneclient
-         - python-neutronclient
-         - python-heatclient
-         - python-openstackclient
              
   port:
     type: OS::Neutron::Port
