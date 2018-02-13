@@ -1,6 +1,8 @@
 heat_template_version: 2016-04-08
 # This template shows how to launch substacks from within a master stack.
 # Substacks can be updated seperately as long as the required information is provided to the substacks as well.
+# When launching substacks the region_name can be set for each substack individually.
+# Currently available regions are 'cbk' and 'dbl'.
 
 resources:
   substack1:
@@ -16,7 +18,7 @@ resources:
     depends_on: substack1
     properties:
       context:
-        region_name: cbk
+        region_name: dbl
       parameters:
       # Load the substack file and launch it
       template: {get_file: substack2.yaml}
