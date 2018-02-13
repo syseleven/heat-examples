@@ -124,8 +124,8 @@ resources:
               export OS_PROJECT_ID="demo_project_id"
               export OS_PASSWORD="demo_password"
 
-              # set other region in NAME and URL if required
-              # available regions: cbk
+              # set default region in NAME and URL if required
+              # available regions: cbk, dbl
               export OS_REGION_NAME="cbk"
               export OS_AUTH_URL=https://api.cbk.cloud.syseleven.net:5000/v3
 
