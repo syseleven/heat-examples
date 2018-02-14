@@ -127,7 +127,7 @@ resources:
               # set default region in NAME and URL if required
               # available regions: cbk, dbl
               export OS_REGION_NAME="cbk"
-              export OS_AUTH_URL=https://api.cbk.cloud.syseleven.net:5000/v3
+              export OS_AUTH_URL=https://keystone.cloud.syseleven.net:5000/v3
 
               # the following lines don't need to be changed
               export OS_IDENTITY_API_VERSION=3
