@@ -31,7 +31,7 @@ parameters:
    default: Ubuntu Server 16.04 LTS
  flavor:
    type: string
-   default: m1.micro
+   default: m1.tiny
  public_network:
    type: string
    default: ext-net
