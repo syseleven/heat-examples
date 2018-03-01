@@ -1,0 +1,96 @@
+heat_template_version: 2016-04-08
+
+description: A Group of upstream servers to be used behind a laodbalancer.
+
+parameters:
+
+  key_name:
+    type: string
+  flavor:
+    type: string
+    description: Flavor used for servers
+    default: m1.micro
+    constraints:
+    - custom_constraint: nova.flavor
+  image:
+    type: string
+    description: Image used for servers
+    default: Ubuntu Server 16.04 LTS 
+    constraints:
+    - custom_constraint: glance.image
+  pool:
+    type: string
+  upstream_port: 
+    type: string
+    default: 80
+  name:
+    type: string
+  net:
+    type: string
+  subnet:
+    type: string
+  sec_group:
+    type: string
+
+resources:
+
+  upstreamserver:
+    type: OS::Nova::Server
+    depends_on: [ server_port ]
+    properties:
+      name: { get_param: name }
+      image: { get_param: image }
+      key_name: { get_param: key_name }
+      flavor: { get_param: flavor }
+      networks:
+        - port: { get_resource: server_port }
+      user_data_format: RAW
+      user_data: { get_resource: cloud-init-config }
+
+  cloud-init-config:
+    # cloud init resource
+    type: OS::Heat::CloudConfig
+    properties:
+      cloud_config:
+          manage_etc_hosts: true
+          hostname: 
+            list_join: [ '.', [ { get_param: name }, '.nova.local']]
+          users:
+              - name: syseleven
+                gecos: syseleven Stack user
+                sudo: ALL=(ALL) NOPASSWD:ALL
+                shell: /bin/bash
+                lock-passwd: false
+          write_files:
+              - content: { get_file: ../sourcen/AnyApp/index.php }
+                permissions: 0700
+                path: /var/www/html/index.php
+                owner: "www-data:www-data"
+          packages:
+                - wget
+                - curl
+                - apache2
+                - "php7.0-fpm"
+                - "libapache2-mod-php7.0"
+          runcmd:
+           - 'systemctl status apache2'
+           - 'systemctl status php7.0-fpm'
+
+  server_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: net}
+      security_groups: 
+        - { get_param: sec_group } 
+        - default
+
+  pool_member:
+    type: OS::Neutron::LBaaS::PoolMember
+    properties:
+      pool: { get_param: pool }
+      address: { get_attr: [ upstreamserver, first_address ]}
+      protocol_port: { get_param: upstream_port }
+      subnet: { get_param: subnet }
+
+
+
