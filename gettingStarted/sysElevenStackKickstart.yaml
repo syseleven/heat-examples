@@ -168,7 +168,7 @@ resources:
               apt install python3-pip -y
               pip install --upgrade pip
               echo "## Installing openstack client and plugins"
-              for plugin in openstack cinder glance heat neutron nova keystone ; do pip3 install python-"$plugin"client ; done
+              for plugin in openstack cinder glance heat neutron nova keystone octavia; do pip3 install python-"$plugin"client ; done
               if which openstack >/dev/null; then (echo "# Finished openstack client setup"; exit 0) else (echo "# Error while installing openstack client"; exit 99); fi
            path: /root/openstackclient-install.sh
            owner: root
