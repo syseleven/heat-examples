@@ -1,6 +1,6 @@
 heat_template_version: 2016-04-08
 
-description: A Group of upstream servers to be used behind a laodbalancer.
+description: A group of upstream servers to be used behind a load balancer.
 
 parameters:
 
