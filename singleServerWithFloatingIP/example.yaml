@@ -10,7 +10,7 @@ parameters:
     default: ext-net 
   image:
     type: string
-    default: Ubuntu 16.04 sys11-cloudimg amd64 
+    default: Ubuntu Server 16.04 LTS 
   flavor:
     type: string
     default: m1.small
