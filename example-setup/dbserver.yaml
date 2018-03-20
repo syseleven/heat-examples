@@ -9,12 +9,10 @@ parameters:
     type: string
   flavor:
     type: string
-  consul_mastertoken:
-    type: string
-  consul_agenttoken:
-    type: string
   ssh_keys:
     type: comma_delimited_list
+  metadata:
+    type: json
 
 resources:
 
@@ -24,7 +22,8 @@ resources:
     properties:
       name: { get_param: name }
       user_data_format: RAW
-      user_data: { get_resource: cloud-init-config }    
+      user_data: { get_resource: cloud-init-config }
+      metadata: { get_param: metadata }    
       image: { get_param: image }
       flavor: { get_param: flavor }
       networks:
@@ -36,8 +35,8 @@ resources:
    properties:
      cloud_config:
        runcmd:
-         - [ /root/install_generic.sh, { get_param: consul_mastertoken }, { get_param: consul_agenttoken } ]
-         - /root/install_dbserver.sh
+         - [ /root/install_generic.sh ]
+         - [ /root/install_dbserver.sh ]
        write_files:
          -  content: { get_file: scripts/install_generic.sh }
             permissions: 0700
@@ -64,3 +63,8 @@ resources:
     properties:
       name: dbserver port
       network: { get_param: syseleven_net }
+
+outputs:
+  instance_ip:
+    description: IP address of the deployed compute instance
+    value: { get_attr: [dbserver, first_address] }

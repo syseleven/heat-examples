@@ -2,10 +2,6 @@
 # 2016 j.peschke@syseleven.de
 # 2017 d.schwabe@syseleven.de
 
-# some generic stuff that is the same on any cluster member
-MASTERTOKEN=$1
-AGENTTOKEN=$2
-
 # wait for a valid network configuration
 echo "# Waiting for valid network configuration"
 until ping -c 1 syseleven.de; do sleep 5; done
@@ -18,6 +14,14 @@ apt-get install -q -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="-
 # add a user for consul
 echo "# Add consul user"
 adduser --quiet --shell /bin/sh --no-create-home --disabled-password --disabled-login --home /var/lib/misc --gecos "Consul system user" consul 
+
+# read metadata for consul configuration
+echo "# Waiting for metadata"
+until meta_data_json=$(curl http://169.254.169.254/openstack/latest/meta_data.json) && [ -n "$meta_data_json" ] && [ "$meta_data_json" != \"\" ]; do sleep 3; done
+# split metadata
+consul_main=$(echo $meta_data_json | jq -r .meta.consul_main | tr ',' ' ')
+consul_mastertoken=$(echo $meta_data_json | jq -r .meta.consul_mastertoken)
+consul_agenttoken=$(echo $meta_data_json | jq -r .meta.consul_agenttoken)
 
 # consul software version
 consulversion=1.0.2
@@ -48,18 +52,18 @@ cat <<EOF> /etc/consul.d/consul.json
   "server": true,
   "enable_script_checks": true,
   "disable_remote_exec": true,
-  "start_join": ["192.168.2.11", "192.168.2.12", "192.168.2.13"]
+  "retry_join": ["$consul_main"]
 }
 EOF
 
-cat <<EOF> /etc/consul.d/aclmaster.json
+cat <<EOF> /etc/consul.d/aclserver.json
 {
   "acl_datacenter": "cbk1",
   "acl_default_policy": "deny",
   "acl_down_policy": "extend-cache",
-  "acl_master_token": "$MASTERTOKEN",
-  "acl_agent_token": "$AGENTTOKEN",
-  "acl_token": "$AGENTTOKEN"
+  "acl_master_token": "$consul_mastertoken",
+  "acl_agent_token": "$consul_agenttoken",
+  "acl_token": "$consul_agenttoken"
 }
 EOF
 
@@ -72,16 +76,16 @@ cat <<EOF> /etc/consul.d/consul.json
   "server": false,
   "enable_script_checks": true,
   "disable_remote_exec": true,
-  "start_join": ["192.168.2.11", "192.168.2.12", "192.168.2.13"]
+  "retry_join": ["$consul_main"]
 }
 EOF
 
-cat <<EOF> /etc/consul.d/aclmaster.json
+cat <<EOF> /etc/consul.d/aclclient.json
 {
   "acl_datacenter": "cbk1",
   "acl_down_policy": "extend-cache",
-  "acl_agent_token": "$AGENTTOKEN",
-  "acl_token": "$AGENTTOKEN"
+  "acl_agent_token": "$consul_agenttoken",
+  "acl_token": "$consul_agenttoken"
 }
 EOF
 

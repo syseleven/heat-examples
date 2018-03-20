@@ -7,8 +7,6 @@
 # our inventory file and trigger install events.
 
 PATH=$PATH:/usr/local/bin/
-MASTERTOKEN=$1
-AGENTTOKEN=$2
 
 # wait for a valid network configuration
 echo "# Waiting for valid network configuration"
@@ -22,6 +20,14 @@ export DEBIAN_FRONTEND=noninteractive
 # get internal ipv4 ip
 internalIP=$(curl -s 169.254.169.254/latest/meta-data/local-ipv4)
 
+# read metadata for consul configuration
+echo "# Waiting for metadata"
+until meta_data_json=$(curl http://169.254.169.254/openstack/latest/meta_data.json) && [ -n "$meta_data_json" ] && [ "$meta_data_json" != \"\" ]; do sleep 3; done
+# split metadata
+consul_main=$(echo $meta_data_json | jq -r .meta.consul_main | tr ',' ' ')
+consul_mastertoken=$(echo $meta_data_json | jq -r .meta.consul_mastertoken)
+consul_agenttoken=$(echo $meta_data_json | jq -r .meta.consul_agenttoken)
+
 # configure consul to serve a fancy ui on internal network
 cat <<EOF> /etc/consul.d/consul.json
 {
@@ -32,7 +38,7 @@ cat <<EOF> /etc/consul.d/consul.json
   "bootstrap_expect": 3,
   "enable_script_checks": true,
   "disable_remote_exec": true,
-  "start_join": ["192.168.2.11", "192.168.2.12", "192.168.2.13"],
+  "retry_join": ["$consul_main"],
   "addresses" : {
     "http": "${internalIP} 127.0.0.1" 
   }
@@ -68,7 +74,7 @@ echo "# Allow anonymous consul node read"
 curl \
     -s \
     --request PUT \
-    --header "X-Consul-Token: $MASTERTOKEN" \
+    --header "X-Consul-Token: $consul_mastertoken" \
     --data \
 '{
   "ID": "anonymous",
@@ -81,10 +87,10 @@ echo "# Create agent token"
 curl \
     -s \
     --request PUT \
-    --header "X-Consul-Token: $MASTERTOKEN" \
+    --header "X-Consul-Token: $consul_mastertoken" \
     --data \
 '{
-  "ID": "'${AGENTTOKEN}'",
+  "ID": "'${consul_agenttoken}'",
   "Name": "Agent Token",
   "Type": "client",
   "Rules": "node \"\" { policy = \"write\" } service \"\" { policy = \"write\" }"
@@ -99,7 +105,7 @@ curl \
 # curl \
 #     -s \
 #     --request PUT \
-#     --header "X-Consul-Token: $MASTERTOKEN" \
+#     --header "X-Consul-Token: $consul_mastertoken" \
 #     --data \
 # '{
 #   "Name": "my-keyvs-token",
@@ -112,7 +118,7 @@ curl \
 # curl \
 #     -s \
 #     --request PUT \
-#     --header "X-Consul-Token: $MASTERTOKEN" \
+#     --header "X-Consul-Token: $consul_mastertoken" \
 #     --data \
 # '{
 #   "Name": "services-token",
