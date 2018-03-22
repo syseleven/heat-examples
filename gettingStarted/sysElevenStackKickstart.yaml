@@ -28,7 +28,7 @@ parameters:
    default: ""
  image:
    type: string
-   default: Ubuntu Server 16.04 LTS
+   default: "Ubuntu 16.04 LTS sys11 optimized 2018.03.21"
  flavor:
    type: string
    default: m1.tiny
