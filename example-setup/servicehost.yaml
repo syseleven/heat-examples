@@ -9,15 +9,12 @@ parameters:
     type: string
   flavor: 
     type: string
-  consul_mastertoken:
-    type: string
-  consul_agenttoken:
-    type: string
   ssh_keys:
     type: comma_delimited_list
   public_network:
     type: string
-
+  metadata:
+    type: json
 
 resources:
 
@@ -39,7 +36,8 @@ resources:
       image: { get_param: image } 
       flavor: { get_param: flavor }
       user_data_format: RAW
-      user_data: { get_resource: cloud-init-config }    
+      user_data: { get_resource: cloud-init-config }
+      metadata: { get_param: metadata }    
       networks:
         - port: { get_resource: server_port }
 
@@ -49,8 +47,8 @@ resources:
    properties:
      cloud_config:
        runcmd:
-         - [ /root/install_generic.sh, { get_param: consul_mastertoken }, { get_param: consul_agenttoken } ]
-         - [ /root/install_deployhost.sh, { get_param: consul_mastertoken }, { get_param: consul_agenttoken } ]
+         - [ /root/install_generic.sh ]
+         - [ /root/install_deployhost.sh ]
        write_files:
          -  content: { get_file: scripts/install_generic.sh }
             permissions: 0700
@@ -82,4 +80,9 @@ resources:
     properties:
       floating_network: { get_param: public_network }
       port_id: { get_resource: server_port }
+
+outputs:
+  instance_ip:
+    description: IP address of the deployed compute instance
+    value: { get_attr: [server, first_address] }
 

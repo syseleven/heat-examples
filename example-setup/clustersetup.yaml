@@ -102,13 +102,15 @@ resources:
       resource_def: 
         type: servicehost.yaml
         properties:
+          metadata:
+            consul_main: 127.0.0.1
+            consul_mastertoken: {get_attr: [consul_mastertoken, value]}
+            consul_agenttoken: {get_attr: [consul_agenttoken, value]}
           name: servicehost%index%
           flavor: { get_param: flavor_servicehost }
           image: { get_param: image }
           syseleven_net: { get_resource: syseleven_net }
           public_network: { get_param: public_network }
-          consul_mastertoken: {get_attr: [consul_mastertoken, value]} 
-          consul_agenttoken: {get_attr: [consul_agenttoken, value]}
           ssh_keys: { get_param: ssh_keys }
 
   ### LB Node as resource group ###
@@ -121,13 +123,15 @@ resources:
       resource_def: 
         type: lb.yaml
         properties:
+          metadata:
+            consul_main: { list_join: [',', { get_attr: [servicehost_group, instance_ip] }] }
+            consul_mastertoken: {get_attr: [consul_mastertoken, value]}
+            consul_agenttoken: {get_attr: [consul_agenttoken, value]}
           name: lb%index%
           image: { get_param: image }
           flavor: { get_param: flavor_lb }
           syseleven_net: { get_resource: syseleven_net }
           public_network: { get_param: public_network }
-          consul_mastertoken: {get_attr: [consul_mastertoken, value]}
-          consul_agenttoken: {get_attr: [consul_agenttoken, value]}
           ssh_keys: { get_param: ssh_keys }
 
   ### DBserver Nodes as resource group ###
@@ -140,12 +144,14 @@ resources:
       resource_def: 
         type: dbserver.yaml
         properties:
+          metadata:
+            consul_main: { list_join: [',', { get_attr: [servicehost_group, instance_ip] }] }
+            consul_mastertoken: {get_attr: [consul_mastertoken, value]}
+            consul_agenttoken: {get_attr: [consul_agenttoken, value]}
           name: db%index%
           flavor: { get_param: flavor_dbserver }
           image: { get_param: image }
           syseleven_net: { get_resource: syseleven_net }
-          consul_mastertoken: {get_attr: [consul_mastertoken, value]}
-          consul_agenttoken: {get_attr: [consul_agenttoken, value]}
           ssh_keys: { get_param: ssh_keys }
 
   ### Appserver nodes as resource group ###
@@ -158,12 +164,14 @@ resources:
       resource_def: 
         type: server.yaml
         properties:
+          metadata:
+            consul_main: { list_join: [',', { get_attr: [servicehost_group, instance_ip] }] }
+            consul_mastertoken: {get_attr: [consul_mastertoken, value]}
+            consul_agenttoken: {get_attr: [consul_agenttoken, value]}
           name: app%index%
           flavor: { get_param: flavor_appserver }
           image: { get_param: image }
           syseleven_net: { get_resource: syseleven_net }
-          consul_mastertoken: {get_attr: [consul_mastertoken, value]}
-          consul_agenttoken: {get_attr: [consul_agenttoken, value]} 
           ssh_keys: { get_param: ssh_keys }
 
 outputs:
