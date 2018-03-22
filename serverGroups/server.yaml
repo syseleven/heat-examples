@@ -13,7 +13,7 @@ resources:
     type: OS::Nova::Server
     properties:
       user_data_format: RAW
-      image: Ubuntu 16.04 sys11-cloudimg amd64
+      image: Ubuntu 16.04 LTS sys11 optimized 2018.03.21
       flavor: m1.small
       name: { get_param: server_name }
       networks:
