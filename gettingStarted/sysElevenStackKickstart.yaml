@@ -28,7 +28,7 @@ parameters:
    default: ""
  image:
    type: string
-   default: "Ubuntu 16.04 LTS sys11 optimized 2018.03.21"
+   default: Ubuntu 16.04 LTS sys11 optimized 2018.03.21
  flavor:
    type: string
    default: m1.tiny
@@ -166,7 +166,7 @@ resources:
               echo "# Started openstack client setup"
               until id syseleven > /dev/null; do sleep 2; done
               apt install python3-pip -y
-              pip install --upgrade pip
+              pip3 install --upgrade pip
               echo "## Installing openstack client and plugins"
               for plugin in openstack cinder glance heat neutron nova keystone ; do pip3 install python-"$plugin"client ; done
               if which openstack >/dev/null; then (echo "# Finished openstack client setup"; exit 0) else (echo "# Error while installing openstack client"; exit 99); fi
