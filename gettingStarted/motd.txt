@@ -15,5 +15,4 @@
    .'  \ \.'             For documentation please visit
    \   .                 https://doc.syselevenstack.com/en/
     \.'
-
 =========================================================================
