@@ -62,7 +62,7 @@ resources:
                 shell: /bin/bash
                 lock-passwd: false
           write_files:
-              - content: { get_file: ../sourcen/AnyApp/index.php }
+              - content: { get_file: ../sources/AnyApp/index.php }
                 permissions: 0700
                 path: /var/www/html/index.php
                 owner: "www-data:www-data"
