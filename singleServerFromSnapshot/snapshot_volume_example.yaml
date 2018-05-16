@@ -9,15 +9,17 @@ description: Simple template to deploy a single compute instance
   without external network (login will be possible through vnc console).
 
 parameters:
- public_network:
-   type: string
-   default: ext-net 
+  public_network:
+    type: string
+    default: ext-net
+  snapshot:
+    type: string
 
 resources:
   my_instance:
     type: OS::Nova::Server
     properties:
-      image: cirros 
+      image: { get_param: imageid }
       flavor: m1.small
       user_data_format: RAW
       networks:
