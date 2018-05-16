@@ -17,7 +17,7 @@ resources:
   my_instance:
     type: OS::Nova::Server
     properties:
-      image: cirros 
+      image: Ubuntu 16.04 LTS sys11 optimized 2018.03.21 
       flavor: m1.small
       user_data_format: RAW
       networks:
