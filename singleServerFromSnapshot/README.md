@@ -57,26 +57,38 @@ openstack volume snapshot list
 +--------------------------------------+------------------------+-------------+-----------+------+
 ````
 
+## Launch instance from snapshot
 This id can be inserted as a parameter to the main stack file.
+
+### Configure heat template (optional)
 To keep things comfortable, just put this id into the environment file:
 
+**Image snapshot**
 ````
-~/heat-examples/singleServerFromSnapshot$ cat example-env.yaml
+~/heat-examples/singleServerFromSnapshot$ cat snapshot_image_example.yaml
 parameters:
-  snapshotid: 09391788-1db2-4495-9c50-3ff0c363988b 
-  imageid: 
+  image: 21484215-7679-4673-9093-5d3a4f77a2ab
 ````
+**Volume snapshot**
+````
+~/heat-examples/singleServerFromSnapshot$ cat snapshot_volume_example.yaml
+parameters:
+  snapshot: a06bb744-3b2e-4700-aee7-6e7973d2ec53
+````
+
+### Create stack/instance
+You don't need to provide the snapshot id again if you configured the template file.
 
 With that done, you can start your template as usual:
 
 **Launch an instance based on an image snapshot:**
 ````
-openstack stack create -t snapshot_image_example.yaml --parameter key_name=<keyName> --parameter imageid=<Image ID> <stackName>
+openstack stack create -t snapshot_image_example.yaml --parameter key_name=<keyName> --parameter image=<Image ID> <stackName>
 ````
 
 **Launch an instance based on a volume snapshot:**
 ````
-openstack stack create -t snapshot_volume_example.yaml --parameter key_name=<keyName> --parameter snapshotid=<Snapshot ID> <stackName>
+openstack stack create -t snapshot_volume_example.yaml --parameter key_name=<keyName> --parameter snapshot=<Snapshot ID> <stackName>
 ````
 
 After successful stack creation you can login with

@@ -5,30 +5,53 @@ heat_template_version: 2014-10-16
 # 'openstack stack create -t example.yaml  <stackName>'
 #
 
-description: Simple template to deploy a single compute instance
-  without external network (login will be possible through vnc console).
+description: Simple template to deploy a single compute instance from an volume snapshot.
 
 parameters:
   public_network:
     type: string
     default: ext-net
+  key_name:
+    type: string
   snapshot:
     type: string
 
 resources:
+
+  allow_ssh:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: allow incoming SSH and ICMP traffic from anywhere.
+      name: allow incoming traffic, tcp port 22 and icmp
+      rules: 
+        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 22, port_range_max: 22, protocol: tcp } 
+        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, protocol: icmp } 
+
   my_instance:
     type: OS::Nova::Server
+    depends_on: [ example_port, boot-volume ]
     properties:
-      image: { get_param: imageid }
+      image: { get_param: image }
       flavor: m1.small
       user_data_format: RAW
+      block_device_mapping: 
+        - { device_name: "vda", snapshot_id : { get_param: snapshot }, delete_on_termination : "false" } 
       networks:
         - port: { get_resource: example_port }
 
   example_port:
     type: OS::Neutron::Port
+    depends_on: [ example_net, allow_ssh ]
     properties:
       network: { get_resource: example_net}
+      security_groups: [ get_resource: allow_ssh, default ]
+
+  floating_ip:
+    type: OS::Neutron::FloatingIP
+    depends_on: [ example_port ]
+    properties:
+      floating_network: { get_param: public_network }
+      port_id: { get_resource: example_port }
 
   example_net:
     type: OS::Neutron::Net
@@ -37,6 +60,7 @@ resources:
 
   example_subnet:
     type: OS::Neutron::Subnet
+    depends_on: [ example_net ]
     properties:
       name: example_subnet
       dns_nameservers:
