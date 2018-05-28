@@ -29,11 +29,11 @@ resources:
 
   my_instance:
     type: OS::Nova::Server
-    depends_on: [ example_port, boot-volume ]
+    depends_on: [ example_port ]
     properties:
-      image: { get_param: image }
       flavor: m1.small
       user_data_format: RAW
+      key_name: {get_param: key_name}
       block_device_mapping: 
         - { device_name: "vda", snapshot_id : { get_param: snapshot }, delete_on_termination : "false" } 
       networks:

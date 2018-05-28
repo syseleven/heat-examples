@@ -34,6 +34,7 @@ resources:
       image: { get_param: image }
       flavor: m1.small
       user_data_format: RAW
+      key_name: {get_param: key_name}
       networks:
         - port: { get_resource: example_port }
 

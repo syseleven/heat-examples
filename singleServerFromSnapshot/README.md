@@ -10,7 +10,30 @@ Create a reference snapshot.
 the running instance that you want to use as reference:
 
 ```
-openstack server image create --name <MyInstanceSnapshotName> jumphost-kickstart
+openstack server image create --name <MyInstanceSnapshotName> <MyInstanceName>
++------------------+-----------------------------------------------------------------------------------------------------------+
+| Field            | Value                                                                                                                       
++------------------+-----------------------------------------------------------------------------------------------------------+
+| checksum         | None                                                                                                      |
+| container_format | None                                                                                                      |                                                                                                                                                                                                                    
+| created_at       | 2018-05-28T13:00:55Z                                                                                      |                                                                                                                                                                                                                    
+| disk_format      | None                                                                                                      |                                                                                                                                                                                                                     
+| file             | /v2/images/21484215-7679-4673-9093-5d3a4f77a2ab/file                                                      |                                                                                                                                                                                                                     
+| id               | 21484215-7679-4673-9093-5d3a4f77a2ab                                                                      |                                                                                                                                                                                                                     
+| min_disk         | 50                                                                                                        |                                                                                                                                                                                                                     
+| min_ram          | 0                                                                                                         |                                                                                                                                                                                                                     
+| name             | jumphostsnapshot                                                                                          |                                                                                                                                                                                                                     
+| owner            | xxxxxxxx931c4gggggf946yyyyy                                                                                |                                                                                                                                                                                                                     
+| properties       | base_image_ref='34faf858-f2e9-4656-93ac-fcc8371a9877', basename='Ubuntu 16.04 LTS sys11 optimized ...... '|
+| protected        | False                                                                                                     |                                                                                                                                                                                                                     
+| schema           | /v2/schemas/image                                                                                         |                                                                                                                                                                                                                     
+| size             | None                                                                                                      |                                                                                                                                                                                                                     
+| status           | queued                                                                                                    |                                                                                                                                                                                                                     
+| tags             |                                                                                                           |                                                                                                                                                                                                                     
+| updated_at       | 2018-05-28T13:00:55Z                                                                                      |                                                                                                                                                                                                                     
+| virtual_size     | None                                                                                                      |                                                                                                                                                                                                                     
+| visibility       | private                                                                                                   |                                                                                                                                                                                                                     
++------------------+-----------------------------------------------------------------------------------------------------------+
 ```
 
 ### Volume Snapshots
@@ -18,7 +41,7 @@ or a snapshot of the reference volume if you used a volume as root disk for an i
 **To create proper volume snapshots the instance should be to be shut off.**
 
 ```
-openstack volume snapshot create --name <MyVolumeSnapshotName> jumphost-kickstart
+openstack volume snapshot create --volume <MyVolumeName> <MyVolumeSnapshotName>
 +-------------+--------------------------------------+
 | Field       | Value                                |
 +-------------+--------------------------------------+
@@ -61,7 +84,7 @@ openstack volume snapshot list
 This id can be inserted as a parameter to the main stack file.
 
 ### Configure heat template (optional)
-To keep things comfortable, just put this id into the environment file:
+To keep things comfortable, just put this ID into the environment file:
 
 **Image snapshot**
 ````
@@ -77,7 +100,7 @@ parameters:
 ````
 
 ### Create stack/instance
-You don't need to provide the snapshot id again if you configured the template file.
+You don't need to provide the snapshot ID again if you configured the template file.
 
 With that done, you can start your template as usual:
 
@@ -91,7 +114,7 @@ openstack stack create -t snapshot_image_example.yaml --parameter key_name=<keyN
 openstack stack create -t snapshot_volume_example.yaml --parameter key_name=<keyName> --parameter snapshot=<Snapshot ID> <stackName>
 ````
 
-After successful stack creation you can login with
+After successful stack creation you can login with (if you didn't configure any other username)
 ```
 ssh -l ubuntu <externalIP>
 ```
