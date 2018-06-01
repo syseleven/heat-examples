@@ -146,7 +146,7 @@ resources:
          - content: |
               #!/usr/bin/env bash
               echo "# Started terraform setup"
-              terraformversion=0.11.1
+              terraformversion=0.11.7
               until id syseleven > /dev/null; do sleep 2; done
               url="https://releases.hashicorp.com/terraform/${terraformversion}/terraform_${terraformversion}_linux_amd64.zip"
               bin="/home/syseleven/bin"
@@ -165,10 +165,17 @@ resources:
               #!/usr/bin/env bash
               echo "# Started openstack client setup"
               until id syseleven > /dev/null; do sleep 2; done
-              apt install python3-pip -y
-              pip3 install --upgrade pip
+              export DEBIAN_FRONTEND=noninteractive
+              echo "# Adding openstack package sources"
+              # Adding newest stable repo to receive newest stable client version
+              add-apt-repository --yes cloud-archive:queens
+              apt update
               echo "## Installing openstack client and plugins"
-              for plugin in openstack cinder glance heat neutron nova keystone ; do pip3 install python-"$plugin"client ; done
+              apt install -q -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" python-openstackclient
+              echo "## Upgrading system"
+              apt dist-upgrade -q -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold"
+              echo "## System cleanup"
+              apt autoremove -q -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold"
               if which openstack >/dev/null; then (echo "# Finished openstack client setup"; exit 0) else (echo "# Error while installing openstack client"; exit 99); fi
            path: /root/openstackclient-install.sh
            owner: root
