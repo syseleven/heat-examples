@@ -126,7 +126,7 @@ resources:
 
               # set default region in NAME and URL if required
               # available regions: cbk, dbl
-              export OS_REGION_NAME="cbk"
+              export OS_REGION_NAME="dbl"
               export OS_AUTH_URL=https://keystone.cloud.syseleven.net:5000/v3
 
               # the following lines don't need to be changed
@@ -164,18 +164,13 @@ resources:
          - content: |
               #!/usr/bin/env bash
               echo "# Started openstack client setup"
-              until id syseleven > /dev/null; do sleep 2; done
               export DEBIAN_FRONTEND=noninteractive
-              echo "# Adding openstack package sources"
-              # Adding newest stable repo to receive newest stable client version
-              add-apt-repository --yes cloud-archive:queens
-              apt update
-              echo "## Installing openstack client and plugins"
-              apt install -q -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" python-openstackclient
               echo "## Upgrading system"
-              apt dist-upgrade -q -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold"
-              echo "## System cleanup"
-              apt autoremove -q -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold"
+              apt update
+              apt upgrade -q -y
+              echo "## Installing openstack client and plugins"
+              apt install -q -y python-minimal python-pip
+              pip install python-openstackclient python-heatclient
               if which openstack >/dev/null; then (echo "# Finished openstack client setup"; exit 0) else (echo "# Error while installing openstack client"; exit 99); fi
            path: /root/openstackclient-install.sh
            owner: root
