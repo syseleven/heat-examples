@@ -16,7 +16,7 @@ Prerequisites:
 - Select "URL" in the Template Source select box.
 - Paste the URL of the template into Template URL:  
   ```text
-  https://raw.githubusercontent.com/syseleven/heattemplates-examples/master/gettingStarted/sysElevenStackKickstart.yaml
+  https://raw.githubusercontent.com/syseleven/heat-examples/master/gettingStarted/sysElevenStackKickstart.yaml
   ```
 - Don't change the field "Environment Source" and click "Next".
 - Write "kickstart" into the field "Stackname".
