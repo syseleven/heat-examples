@@ -1,0 +1,87 @@
+heat_template_version: 2016-04-08
+
+description: Create two networks, subnets and a router that connects both subnets and the public_network.
+
+parameters:
+  public_network:
+    type: string
+    default: ext-net 
+
+resources:
+
+  net_one:
+    type: OS::Neutron::Net
+    properties: 
+      name:
+         list_join: [ '-', [ { get_param: "OS::stack_name" },'net_one']]
+  
+  net_two:
+    type: OS::Neutron::Net
+    properties: 
+      name:
+         list_join: [ '-', [ { get_param: "OS::stack_name" },'net_two']]
+
+  subnet_one:
+    type: OS::Neutron::Subnet
+    depends_on: [ net_one ]
+    properties:
+      name:
+         list_join: [ '-', [ { get_param: "OS::stack_name" }, 'subnet_one']]
+      dns_nameservers:
+        - 8.8.8.8
+        - 8.8.4.4
+      network: { get_resource: net_one }
+      ip_version: 4
+      cidr: 10.0.0.0/24
+      allocation_pools:
+      - {start: 10.0.0.2, end: 10.0.0.250}
+
+  subnet_two:
+    type: OS::Neutron::Subnet
+    depends_on: [ net_two ]
+    properties:
+      name:
+         list_join: [ '-', [ { get_param: "OS::stack_name" }, 'subnet_two']]
+      dns_nameservers:
+        - 8.8.8.8
+        - 8.8.4.4
+      network: { get_resource: net_two }
+      ip_version: 4
+      cidr: 10.0.1.0/24
+      allocation_pools:
+      - {start: 10.0.1.2, end: 10.0.1.250}
+
+  router:
+    type: OS::Neutron::Router
+    properties:
+      external_gateway_info: {"network": { get_param: public_network }}
+      name: 
+        list_join: [ '-', [ { get_param: "OS::stack_name" }, 'router']]
+
+  router_subnet_one_bridge:
+    type: OS::Neutron::RouterInterface
+    depends_on: [ subnet_one, router ]
+    properties:
+      router: { get_resource: router }
+      subnet: { get_resource: subnet_one }
+
+  router_subnet_two_bridge:
+    type: OS::Neutron::RouterInterface
+    depends_on: [ subnet_two, router ]
+    properties:
+      router: { get_resource: router }
+      subnet: { get_resource: subnet_two }
+
+outputs:
+
+  networkinfo:
+    value:
+      str_replace:
+        template: |
+          Network_one_ID = NoneID 
+          Network_two_ID = NtwoID 
+        params:
+          NoneID: { get_resource: net_one }
+          NtwoID: { get_resource: net_two }
+    description: >
+      This network ID can be used to connect ports with this network.

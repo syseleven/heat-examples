@@ -1,0 +1,56 @@
+heat_template_version: 2016-04-08
+
+description: Create network, subnet and a router that connects subnet and the public_network.
+
+parameters:
+  public_network:
+    type: string
+    default: ext-net 
+
+resources:
+
+  net:
+    type: OS::Neutron::Net
+    properties: 
+      name:
+         list_join: [ '-', [ { get_param: "OS::stack_name" },'net']]
+
+  subnet:
+    type: OS::Neutron::Subnet
+    depends_on: [ net ]
+    properties:
+      name:
+         list_join: [ '-', [ { get_param: "OS::stack_name" }, 'subnet']]
+      dns_nameservers:
+        - 8.8.8.8
+        - 8.8.4.4
+      network: { get_resource: net }
+      ip_version: 4
+      cidr: 10.0.0.0/24
+      allocation_pools:
+      - {start: 10.0.0.2, end: 10.0.0.250}
+
+  router:
+    type: OS::Neutron::Router
+    properties:
+      external_gateway_info: {"network": { get_param: public_network }}
+      name: 
+        list_join: [ '-', [ { get_param: "OS::stack_name" }, 'router']]
+
+  router_subnet_bridge:
+    type: OS::Neutron::RouterInterface
+    depends_on: [ subnet, router ]
+    properties:
+      router: { get_resource: router }
+      subnet: { get_resource: subnet }
+
+outputs:
+
+  networkinfo:
+    value:
+      str_replace:
+        template: Network ID = NID 
+        params:
+          NID: { get_resource: net }
+    description: >
+      This network ID can be used to connect ports with this network.
