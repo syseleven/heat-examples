@@ -39,7 +39,7 @@ References the external network connected to the internet.
 **number_of_fips**  
 Defines number of fips to be created.
 
-## Outpus
+## Outputs
 
 **list_fips_via_cli**  
 Provides the command that can be used to show a list of all floating IPs within the current project.
