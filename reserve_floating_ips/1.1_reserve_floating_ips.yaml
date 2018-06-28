@@ -1,0 +1,31 @@
+heat_template_version: 2016-04-08
+
+description: Create network, subnet, router, ports and reserve IPs for later use
+
+parameters:
+  public_network:
+    type: string
+    default: ext-net 
+  number_of_fips: 
+    type: number
+    default: 4
+    description: Defines the number of reserved floating IPs.
+
+resources:
+  fips:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: { get_param: number_of_fips }
+      resource_def:
+        type: 1.2_reserve_fip.yaml
+        properties:
+          public_network: { get_param: public_network }
+
+outputs:
+  list_fips_via_cli:
+    description: 'This openstack client command can be used to retrieve the list of all floating IPs and their assignments within the current project.'
+    value: 'openstack floating ip list -c ID -c "Floating IP Address" -c "Fixed IP Address" -c Port -c Project -f table'
+  fips_info:
+    description: 'List of all floating ips reserved by this stack:'
+    value: { get_attr: [ fips, fipinfo ] }
+    
