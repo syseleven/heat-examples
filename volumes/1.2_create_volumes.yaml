@@ -1,0 +1,30 @@
+heat_template_version: 2016-04-08
+
+description: Create permanent volumes task template
+
+parameters:
+  volume_size:
+    type: string
+  volume_name:
+    type: string
+
+resources:
+  volume:
+    type: OS::Cinder::Volume
+    properties:
+      name: {get_param: volume_name}
+      size: {get_param: volume_size}
+
+
+outputs:
+  volumeinfo:
+    value:
+      str_replace:
+        template: Volume_ID = VID; Name = VOLUME_NAME; Status = VOLUME_STATUS; Size = VOLUME_SIZE; Attached_to = VOLUME_ATTACHMENT
+        params:
+          VID: { get_resource: volume }
+          VOLUME_NAME: { get_attr: [ volume,display_name ] }
+          VOLUME_STATUS: { get_attr: [ volume,status ] }
+          VOLUME_SIZE: { get_attr: [ volume,size ] }
+          VOLUME_ATTACHMENT: { get_attr: [ volume,attachments ] }
+    description: 'Infos about this volume.'

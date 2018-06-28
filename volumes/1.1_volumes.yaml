@@ -1,0 +1,37 @@
+heat_template_version: 2016-04-08
+
+description: Create permanent volumes main template
+
+resources:
+
+  volumes_app1:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: 2
+      resource_def: 
+        type: 1.2_create_volumes.yaml
+        properties:
+          volume_name: 
+            list_join: [ '-', [ { get_param: "OS::stack_name" },'app1','%index%']]
+          volume_size: 25
+
+  volumes_app2:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: 3
+      resource_def: 
+        type: 1.2_create_volumes.yaml
+        properties:
+          volume_name: 
+            list_join: [ '-', [ { get_param: "OS::stack_name" }, 'app2', '%index%']]
+          volume_size: 50
+
+
+outputs:
+  list_volumes_via_cli:
+    description: 'This openstack client command can be used to retrieve the list of all floating IPs and their assignments within the current project.'
+    value: 'openstack volume list'
+  volumes_app1_info:
+    value: { get_attr: [ volumes_app1, volumeinfo ] }
+  volumes_app2_info:
+    value: { get_attr: [ volumes_app2, volumeinfo ] }
