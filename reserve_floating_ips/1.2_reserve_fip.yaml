@@ -1,0 +1,25 @@
+heat_template_version: 2016-04-08
+
+description: Reserve permanent fip
+
+parameters:
+  public_network:
+    type: string
+
+resources:
+  fip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network: { get_param: public_network }
+
+outputs:
+  fipinfo:
+    value:
+      str_replace:
+        template: Floating_IP = FIP_IP; Fixed_IP = FIP_FIXEDIP; ID = FIP_ID; Port = FIP_PORTID
+        params:
+          FIP_ID: { get_resource: fip }
+          FIP_IP: { get_attr: [ fip,floating_ip_address ] }
+          FIP_FIXEDIP: { get_attr: [ fip,fixed_ip_address ] }
+          FIP_PORTID: { get_attr: [ fip,port_id ] }
+    description: 'Infos about this reserved floating ip.'
