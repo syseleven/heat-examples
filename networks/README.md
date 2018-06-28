@@ -4,6 +4,11 @@
 
 With this example we demonstrate how to create a single network as well as two networks with one stack.
 
+The separation of network and compute resources allows to create multiple stacks containing instances and 
+volumes that are all connected to the same network. This can be useful if one uses the same network(s) 
+for multiple groups of instances(servers) that need to run separately from other instance groups. 
+Of course the same rule applies for single instances too.
+
 ## single network
 
 - one network and subnet
