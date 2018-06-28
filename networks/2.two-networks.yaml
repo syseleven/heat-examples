@@ -78,10 +78,10 @@ outputs:
     value:
       str_replace:
         template: |
-          Network_one_ID = NoneID 
-          Network_two_ID = NtwoID 
+          NETWORK_ONE_ID = NET_ONE
+          NETWORK_TWO_ID = NET_TWO
         params:
-          NoneID: { get_resource: net_one }
-          NtwoID: { get_resource: net_two }
+          NET_ONE: { get_resource: net_one }
+          NET_TWO: { get_resource: net_two }
     description: >
       This network ID can be used to connect ports with this network.
