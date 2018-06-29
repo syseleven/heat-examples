@@ -74,14 +74,9 @@ resources:
 
 outputs:
 
-  networkinfo:
-    value:
-      str_replace:
-        template: |
-          NETWORK_ONE_ID = NET_ONE
-          NETWORK_TWO_ID = NET_TWO
-        params:
-          NET_ONE: { get_resource: net_one }
-          NET_TWO: { get_resource: net_two }
-    description: >
-      This network ID can be used to connect ports with this network.
+  network_one_id:
+    value: { get_resource: net_one }
+    description: This network ID can be used to connect ports with this network.
+  network_two_id:
+    value: { get_resource: net_two }
+    description: This network ID can be used to connect ports with this network.

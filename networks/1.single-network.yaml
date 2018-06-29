@@ -46,11 +46,7 @@ resources:
 
 outputs:
 
-  networkinfo:
-    value:
-      str_replace:
-        template: NETWORK_ID = NET_ID
-        params:
-          NET_ID: { get_resource: net }
+  network_id:
+    value: { get_resource: net }
     description: >
       This network ID can be used to connect ports with this network.
