@@ -47,20 +47,20 @@ After a successful launch you can see the network ID in the stack output section
 ### CLI
 You can get the the relevant output field including resource IDs using this command:
 ```
-openstack stack show <stackName> -f table -c outputs
+openstack stack show <stackName> -f value -c outputs
 ```
 **Output example**  
 ```
-+---------+--------------------------------------------------------------------------------+
-| Field   | Value                                                                          |
-+---------+--------------------------------------------------------------------------------+
-| outputs | - description: This network ID can be used to connect ports with this network. |
-|         |   output_key: networkinfo                                                      |
-|         |   output_value: 'NETWORK_ONE_ID = 050bfd92-ba76-4eb6-9d49-b890acbf2a43         |
-|         |                                                                                |
-|         |     NETWORK_TWO_ID = c0c8ae9f-65c1-4e16-85b9-180abf392676                      |
-|         |                                                                                |
-|         |     '                                                                          |
-|         |                                                                                |
-+---------+--------------------------------------------------------------------------------+
+[
+  {
+    "output_value": "edb0e670-8588-494a-b331-30c824c510c6",
+    "output_key": "network_one_id",
+    "description": "This network ID can be used to connect ports with this network."
+  },
+  {
+    "output_value": "dab4483c-c4fe-4186-992b-4a5a9e0def21",
+    "output_key": "network_two_id",
+    "description": "This network ID can be used to connect ports with this network."
+  }
+]
  ```
