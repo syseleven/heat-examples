@@ -1,6 +1,6 @@
 heat_template_version: 2016-04-08
 
-description: Create network, subnet, router, ports and reserve IPs for later use
+description: Reserve floating IPs
 
 parameters:
   public_network:
@@ -25,7 +25,10 @@ outputs:
   list_fips_via_cli:
     description: 'This openstack client command can be used to retrieve the list of all floating IPs and their assignments within the current project.'
     value: 'openstack floating ip list -c ID -c "Floating IP Address" -c "Fixed IP Address" -c Port -c Project -f table'
-  fips_info:
+  overview:
     description: 'List of all floating ips reserved by this stack:'
-    value: { get_attr: [ fips, fipinfo ] }
+    value: { get_attr: [ fips, fipoverview ] }
+  overview_json:
+    description: 'List of all floating ips reserved by this stack:'
+    value: { get_attr: [ fips, fipjson ] }
     

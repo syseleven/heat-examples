@@ -44,5 +44,8 @@ Defines number of fips to be created.
 **list_fips_via_cli**  
 Provides the command that can be used to show a list of all floating IPs within the current project.
 
-**fips_info**  
+**overview**  
 Shows a table containing all reserved FIPs and their current association status.
+
+**overview_json**  
+Shows json code containing all reserved FIPs and their current association status.

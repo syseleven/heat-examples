@@ -13,7 +13,14 @@ resources:
       floating_network: { get_param: public_network }
 
 outputs:
-  fipinfo:
+  fipjson:
+    value:
+      fip_id: { get_resource: fip }
+      fip_ip: { get_attr: [ fip,floating_ip_address ] }
+      fip_fixedip: { get_attr: [ fip,fixed_ip_address ] }
+      fip_portid: { get_attr: [ fip,port_id ] }
+    description: 'Infos about this reserved floating ip.'
+  fipoverview:
     value:
       str_replace:
         template: Floating_IP = FIP_IP; Fixed_IP = FIP_FIXEDIP; ID = FIP_ID; Port = FIP_PORTID
