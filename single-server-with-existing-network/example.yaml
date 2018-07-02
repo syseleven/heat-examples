@@ -1,0 +1,152 @@
+heat_template_version: 2016-04-08
+#
+# you can deploy this template using the following command:
+# 'openstack stack create -t backupserver.yaml -e backupserver-env <stackName>'
+# 
+# or you can just paste it into the web-ui under "orchestration" >> "launch stack"
+#
+# after successful stack creation you can login with 
+# ssh -l derdanilo <externalIP> 
+# 
+
+description: Stack that launches a single server
+
+parameters:
+ public_network:
+   type: string
+ net:
+   type: string
+ fip:
+   type: string
+ security_group:
+   type: string
+ ssh_keys:
+   type: comma_delimited_list
+ flavor:
+   type: string
+ image:
+   type: string
+ prefix_name:
+   type: string
+ hostname:
+   type: string
+ domain:
+   type: string
+
+resources:
+
+  host:
+    type: OS::Nova::Server
+    depends_on: [ port ]
+    properties:
+      name: 
+        list_join: [ '_', [{ get_param: prefix_name }, { get_param: hostname }]]
+      user_data_format: RAW
+      user_data: { get_resource: cloud-init-config }    
+      image: { get_param: image } 
+      flavor: { get_param: flavor } 
+      networks:
+        - port: { get_resource: port }
+
+  cloud-init-config:
+   # cloud init resource
+   type: OS::Heat::CloudConfig
+   properties:
+     cloud_config:
+       manage_etc_hosts: true
+       fqdn: 
+          list_join: [ '.', [ { get_param: hostname }, { get_param: domain }]]
+       hostname: { get_param: hostname } 
+       users:
+           - name: dschwabe
+             gecos: dschwabe Stack user
+             sudo: ALL=(ALL) NOPASSWD:ALL
+             shell: /bin/bash
+             ssh-authorized-keys: { get_param: ssh_keys } 
+       write_files:
+           - path: /root/initsetup.sh
+             owner: "dschwabe:dschwabe"
+             permissions: 0700
+             content: { get_file: initsetup }
+       bootcmd:
+           - '/sbin/modprobe zfs'
+           - 'mkswap /dev/vdb && swapon /dev/vdb'
+           - 'echo "vm.swappiness = 50" >> /etc/sysctl.conf && sysctl -p'
+       runcmd:
+           - /root/initsetup.sh
+       fs_setup:
+           - device: /dev/vdc
+             partition: none
+             label: db_volume
+             filesystem: ext4
+
+           - device: /dev/vdd
+             partition: none
+             label: opt_volume
+             filesystem: ext4
+       mounts:
+           - [ swap, none, swap, sw, 0, 0 ]
+           - [ "LABEL=db_volume", "/var/lib/mysql" ]
+           - [ "LABEL=opt_volume", "/opt" ]
+
+  volume_swap:
+    type: OS::Cinder::Volume
+    properties:
+      name: 
+        list_join: [ '_', [{ get_param: prefix_name }, { get_param: hostname }, 'swap']]
+      size: 8
+
+  volume_db:
+    type: OS::Cinder::Volume
+    properties:
+      name: 
+        list_join: [ '_', [{ get_param: prefix_name }, { get_param: hostname }, 'db']]
+      size: 20
+
+  volume_opt:
+    type: OS::Cinder::Volume
+    properties:
+      name: 
+        list_join: [ '_', [{ get_param: prefix_name }, { get_param: hostname }, 'opt']]
+      size: 100
+
+  volume_swap_attachment:
+    type: OS::Cinder::VolumeAttachment
+    depends_on: [ volume_swap, host ]
+    properties:
+      volume_id: { get_resource: volume_swap }
+      instance_uuid: { get_resource: host }
+
+  volume_db_attachment:
+    type: OS::Cinder::VolumeAttachment
+    depends_on: [ volume_db, host, volume_swap_attachment ]
+    properties:
+      volume_id: { get_resource: volume_db }
+      instance_uuid: { get_resource: host }
+
+  volume_opt_attachment:
+    type: OS::Cinder::VolumeAttachment
+    depends_on: [ volume_opt, host, volume_db_attachment ]
+    properties:
+      volume_id: { get_resource: volume_opt }
+      instance_uuid: { get_resource: host }
+
+  port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: net }
+      security_groups: [ get_param: security_group ]
+
+  floating_ip_association:
+    type: OS::Neutron::FloatingIPAssociation
+    depends_on: [ port, host ]
+    properties:
+      floatingip_id: { get_param: fip }
+      port_id: { get_resource: port }
+
+  # floating_ip:
+  #   type: OS::Neutron::FloatingIP
+  #   properties:
+  #     floating_network: { get_param: public_network }
+  #     port_id: { get_resource: port }
+      

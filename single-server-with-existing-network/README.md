@@ -1,30 +1,19 @@
-# single server with existing network
+# Reserve Floating IPs
 
 ## Overview
 
-Using this template you can reserve floating IPs that can be associated with ports later on. You only need to adjust the number of required floating IPs in the parameter
-section of the main template. The stack overview shows the current association(s) of its FIP(s) in the outputs section.
-
-![network topology](img/reservefipshorizonoutput.png)
+Using this template you launch an instance connecting it to an existing network. You only need to configure the ID of the existing network in the parameter 
+section of the main template.
 
 ## Usage
 
 ### Initial launch
 
-Set the number of required FIPs in the parameter.
+Configure the ID of the existing network in the parameter.
 
 Create a stack with this template
 ```
 $ openstack stack create -t 1.1_reserve_floating_ips.yaml <new stackName>
-```
-
-### Upgrade/Changes
-
-Adjust the number of required FIPs in the parameter.
-
-Update the existing stack with this template
-```
-$ openstack stack update -t 1.1_reserve_floating_ips.yaml <existing stackName>
 ```
 
 ## Code organisation
