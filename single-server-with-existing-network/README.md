@@ -43,10 +43,10 @@ References the external network connected to the internet.
 Defines ID of the network to connect the instance port to.
 
 **image**  
-Image to be used to build instance.
+Image to build the instance.
 
 **flavor**  
 Instance flavor to be used.
 
 **ssh-key**  
-SSH key to be injected into instance.
+SSH key to be injected into the instance.
