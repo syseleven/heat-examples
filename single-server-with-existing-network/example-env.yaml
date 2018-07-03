@@ -1,6 +1,6 @@
 parameters:
   public_network: ext-net
-  net: c98725f5-0e00-4851-9a55-f151de8b5cf0
+  net: ID_OF_NETWORK_GOES_HERE
   image: Ubuntu 16.04 LTS sys11 optimized 2018.03.21
   flavor: m1.micro
   ssh_keys:

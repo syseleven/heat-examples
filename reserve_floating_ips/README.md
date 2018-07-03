@@ -1,4 +1,4 @@
-# single server with existing network
+# Reserve floating IPs
 
 ## Overview
 

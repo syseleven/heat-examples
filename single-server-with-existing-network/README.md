@@ -31,7 +31,7 @@ Replace ID_OF_NETWORK_GOES_HERE with the network ID.
 ### Launch stack
 Create a stack with this template
 ```
-$ openstack stack create -t example.yaml -e example-env.yaml <new stackName>
+$ openstack stack create -t example.yaml -e example-env.yaml <Stack Name>
 ```
 
 ## Parameters
