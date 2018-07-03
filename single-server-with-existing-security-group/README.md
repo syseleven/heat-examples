@@ -7,7 +7,7 @@ You only need to configure the ID of the existing security group in the paramete
 
 ## Usage
 
-### Get ID of existing network
+### Get ID of existing security group
 ```
 $ openstack security group list -f table -c ID -c Name
 ```
@@ -23,9 +23,9 @@ Output example:
 ```
 
 ### Configure parameter
-Configure the ID of the existing network in `example-env.yaml`.
+Configure the ID of the existing security group in `example-env.yaml`.
 
-Replace ID_OF_SECURITY_GROUP_GOES_HERE with the network ID.
+Replace ID_OF_SECURITY_GROUP_GOES_HERE with the security group ID.
 
 
 ### Launch stack
