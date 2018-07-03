@@ -1,4 +1,4 @@
-# Reserve Floating IPs
+# Reserve floating IPs
 
 ## Overview
 
