@@ -40,7 +40,7 @@ $ openstack stack create -t example.yaml -e example-env.yaml <Stack Name>
 References the external network connected to the internet.
 
 **net**  
-Defines ID of the network to connect the instance port to.
+Defines the ID of the network to connect the instance port to.
 
 **image**  
 Image to build the instance.
