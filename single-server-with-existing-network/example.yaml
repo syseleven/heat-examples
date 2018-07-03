@@ -1,46 +1,34 @@
 heat_template_version: 2016-04-08
 #
 # you can deploy this template using the following command:
-# 'openstack stack create -t backupserver.yaml -e backupserver-env <stackName>'
+# 'openstack stack create -t example.yaml -e example-env.yaml <stackName>'
 # 
-# or you can just paste it into the web-ui under "orchestration" >> "launch stack"
-#
 # after successful stack creation you can login with 
-# ssh -l derdanilo <externalIP> 
+# ssh -l syseleven <externalIP> 
 # 
 
 description: Stack that launches a single server
 
 parameters:
- public_network:
-   type: string
- net:
-   type: string
- fip:
-   type: string
- security_group:
-   type: string
- ssh_keys:
-   type: comma_delimited_list
- flavor:
-   type: string
- image:
-   type: string
- prefix_name:
-   type: string
- hostname:
-   type: string
- domain:
-   type: string
+  public_network:
+    type: string
+  net:
+    type: string
+  image:
+    type: string
+  flavor:
+    type: string
+  ssh_keys:
+    type: comma_delimited_list
 
 resources:
 
   host:
     type: OS::Nova::Server
-    depends_on: [ port ]
+    depends_on: [ cloud-init-config, port ]
     properties:
       name: 
-        list_join: [ '_', [{ get_param: prefix_name }, { get_param: hostname }]]
+        list_join: [ '-', [ { get_param: "OS::stack_name" }, 'example-server' ]]
       user_data_format: RAW
       user_data: { get_resource: cloud-init-config }    
       image: { get_param: image } 
@@ -52,101 +40,37 @@ resources:
    # cloud init resource
    type: OS::Heat::CloudConfig
    properties:
-     cloud_config:
-       manage_etc_hosts: true
-       fqdn: 
-          list_join: [ '.', [ { get_param: hostname }, { get_param: domain }]]
-       hostname: { get_param: hostname } 
-       users:
-           - name: dschwabe
-             gecos: dschwabe Stack user
-             sudo: ALL=(ALL) NOPASSWD:ALL
-             shell: /bin/bash
-             ssh-authorized-keys: { get_param: ssh_keys } 
-       write_files:
-           - path: /root/initsetup.sh
-             owner: "dschwabe:dschwabe"
-             permissions: 0700
-             content: { get_file: initsetup }
-       bootcmd:
-           - '/sbin/modprobe zfs'
-           - 'mkswap /dev/vdb && swapon /dev/vdb'
-           - 'echo "vm.swappiness = 50" >> /etc/sysctl.conf && sysctl -p'
-       runcmd:
-           - /root/initsetup.sh
-       fs_setup:
-           - device: /dev/vdc
-             partition: none
-             label: db_volume
-             filesystem: ext4
+    cloud_config:
+      manage_etc_hosts: true
+      users:
+        - name: syseleven
+          gecos: syseleven Stack user
+          sudo: ALL=(ALL) NOPASSWD:ALL
+          shell: /bin/bash
+          lock-passwd: false
+          ssh-authorized-keys: { get_param: ssh_keys }  
 
-           - device: /dev/vdd
-             partition: none
-             label: opt_volume
-             filesystem: ext4
-       mounts:
-           - [ swap, none, swap, sw, 0, 0 ]
-           - [ "LABEL=db_volume", "/var/lib/mysql" ]
-           - [ "LABEL=opt_volume", "/opt" ]
-
-  volume_swap:
-    type: OS::Cinder::Volume
+  allow_ssh:
+    type: OS::Neutron::SecurityGroup
     properties:
+      description: allow incoming SSH and ICMP traffic from anywhere.
       name: 
-        list_join: [ '_', [{ get_param: prefix_name }, { get_param: hostname }, 'swap']]
-      size: 8
-
-  volume_db:
-    type: OS::Cinder::Volume
-    properties:
-      name: 
-        list_join: [ '_', [{ get_param: prefix_name }, { get_param: hostname }, 'db']]
-      size: 20
-
-  volume_opt:
-    type: OS::Cinder::Volume
-    properties:
-      name: 
-        list_join: [ '_', [{ get_param: prefix_name }, { get_param: hostname }, 'opt']]
-      size: 100
-
-  volume_swap_attachment:
-    type: OS::Cinder::VolumeAttachment
-    depends_on: [ volume_swap, host ]
-    properties:
-      volume_id: { get_resource: volume_swap }
-      instance_uuid: { get_resource: host }
-
-  volume_db_attachment:
-    type: OS::Cinder::VolumeAttachment
-    depends_on: [ volume_db, host, volume_swap_attachment ]
-    properties:
-      volume_id: { get_resource: volume_db }
-      instance_uuid: { get_resource: host }
-
-  volume_opt_attachment:
-    type: OS::Cinder::VolumeAttachment
-    depends_on: [ volume_opt, host, volume_db_attachment ]
-    properties:
-      volume_id: { get_resource: volume_opt }
-      instance_uuid: { get_resource: host }
+        list_join: [ '-', [ { get_param: "OS::stack_name" }, 'kickstart', 'allow incoming traffic, tcp port 22 and icmp']]
+      rules: 
+        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 22, port_range_max: 22, protocol: tcp } 
+        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, protocol: icmp } 
 
   port:
     type: OS::Neutron::Port
+    depends_on: [ allow_ssh ]
     properties:
       network: { get_param: net }
-      security_groups: [ get_param: security_group ]
+      security_groups: [ get_resource: allow_ssh ]
 
-  floating_ip_association:
-    type: OS::Neutron::FloatingIPAssociation
-    depends_on: [ port, host ]
+  floating_ip:
+    type: OS::Neutron::FloatingIP
+    depends_on: [ port ]
     properties:
-      floatingip_id: { get_param: fip }
+      floating_network: { get_param: public_network }
       port_id: { get_resource: port }
-
-  # floating_ip:
-  #   type: OS::Neutron::FloatingIP
-  #   properties:
-  #     floating_network: { get_param: public_network }
-  #     port_id: { get_resource: port }
       
