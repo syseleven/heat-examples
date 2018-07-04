@@ -12,14 +12,17 @@ description: Stack that launches a single server
 parameters:
   public_network:
     type: string
-  security_group:
-    type: string
   image:
     type: string
   flavor:
     type: string
   ssh_keys:
     type: comma_delimited_list
+  volume_size_db:
+    type: number
+  volume_size_www:
+    type: number
+  
 
 resources:
 
@@ -48,7 +51,63 @@ resources:
           sudo: ALL=(ALL) NOPASSWD:ALL
           shell: /bin/bash
           lock-passwd: false
-          ssh-authorized-keys: { get_param: ssh_keys }  
+          ssh-authorized-keys: { get_param: ssh_keys }
+      runcmd:
+        - 'sleep 5'
+        - 'mkfs.ext4 /dev/vdb -L volumedb '
+        - 'mkfs.ext4 /dev/vdc -L volumewww '
+        - 'mkdir -p /var/www'
+        - 'apt update; reboot now'
+      fs_setup:
+        - label: volumedb
+          filesystem: ext4
+          partition: none
+          device: /dev/vdb
+        - label: volumewww
+          filesystem: ext4
+          partition: none
+          device: /dev/vdc
+      mounts:
+        - [ "LABEL=volumedb", "/var/lib/mysql" ]
+        - [ "LABEL=volumewww", "/var/www" ]
+
+  volume_db:
+    type: OS::Cinder::Volume
+    properties:
+      name: 
+        list_join: [ '_', [{ get_attr: [host, name] }, 'db']]
+      size: { get_param: volume_size_db }
+
+  volume_www:
+    type: OS::Cinder::Volume
+    properties:
+      name: 
+        list_join: [ '_', [{ get_attr: [host, name] }, 'www']]
+      size: { get_param: volume_size_www }
+
+  volume_db_attachment:
+    type: OS::Cinder::VolumeAttachment
+    depends_on: [ volume_db, host ]
+    properties:
+      volume_id: { get_resource: volume_db }
+      instance_uuid: { get_resource: host }
+
+  volume_www_attachment:
+    type: OS::Cinder::VolumeAttachment
+    depends_on: [ volume_www, host, volume_db_attachment ]
+    properties:
+      volume_id: { get_resource: volume_www }
+      instance_uuid: { get_resource: host }
+
+  allow_ssh:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: allow incoming SSH and ICMP traffic from anywhere.
+      name: 
+        list_join: [ '-', [ { get_param: "OS::stack_name" }, 'kickstart', 'allow incoming traffic, tcp port 22 and icmp']]
+      rules: 
+        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 22, port_range_max: 22, protocol: tcp } 
+        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, protocol: icmp } 
 
   net:
     type: OS::Neutron::Net
@@ -90,7 +149,7 @@ resources:
     depends_on: [ net ]
     properties:
       network: { get_resource: net }
-      security_groups: [ get_param: security_group ]
+      security_groups: [ get_resource: allow_ssh ]
 
   floating_ip:
     type: OS::Neutron::FloatingIP

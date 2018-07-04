@@ -1,6 +1,7 @@
 parameters:
   public_network: ext-net
-  security_group: ID_OF_SECURITY_GROUP_GOES_HERE
+  volume_size_db: 30
+  volume_size_www: 50
   image: Ubuntu 16.04 LTS sys11 optimized 2018.03.21
   flavor: m1.tiny
   ssh_keys:
