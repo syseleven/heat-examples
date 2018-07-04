@@ -5,6 +5,11 @@
 Using this template you launch an instance using an existing floating IP. 
 You only need to configure the ID of the existing floating IP in the parameter section of the main template.
 
+## Known limitation
+Due to a bug [1] this template does only work in region DBL, where the bug was fixed already.
+
+[1] The heat resource type `OS::Neutron::FloatingIPAssociation` does not work properly in region CBK.
+
 ## Usage
 
 ### Get ID of existing floating IP

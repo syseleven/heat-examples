@@ -104,7 +104,7 @@ resources:
 
   floating_ip_association:
     type: OS::Neutron::FloatingIPAssociation
-    depends_on: [ port ]
+    depends_on: [ port, router_subnet_bridge ]
     properties:
       floatingip_id: { get_param: floating_ip }
       port_id: { get_resource: port }

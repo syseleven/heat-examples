@@ -1,6 +1,6 @@
 parameters:
   public_network: ext-net
-  floating_ip: 005fb469-0af4-4941-8555-a7be3c68dbd7
+  floating_ip: ID_OF_FLOATING_IP_GOES_HERE
   image: Ubuntu 16.04 LTS sys11 optimized 2018.03.21
   flavor: m1.micro
   ssh_keys:
