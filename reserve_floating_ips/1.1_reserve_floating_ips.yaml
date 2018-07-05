@@ -24,7 +24,7 @@ resources:
 outputs:
   list_fips_via_cli:
     description: 'This openstack client command can be used to retrieve the list of all floating IPs and their assignments within the current project.'
-    value: 'openstack floating ip list -c ID -c "Floating IP Address" -c "Fixed IP Address" -c Port -c Project -f table'
+    value: 'openstack floating ip list -c ID -c "Floating IP Address" -c "Fixed IP Address" -c Port -f table'
   overview:
     description: 'List of all floating ips reserved by this stack:'
     value: { get_attr: [ fips, fipoverview ] }
