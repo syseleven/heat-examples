@@ -1,4 +1,4 @@
-# single Server from Snapshot
+# Single server from snapshot
 
 This example shows how to launch a single server from an instance or volume snapshot that was created previously.
 
