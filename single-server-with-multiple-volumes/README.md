@@ -2,8 +2,8 @@
 
 ## Overview
 
-Using this template you launch an instance with multiple volumes.   
-This templates also shows how to enforce the attachment order for volumes to ensure correct mount points.
+Using this template you launch an instance with multiple volumes. A volume for mysql and another for the webroot.  
+This templates also shows how to enforce the attachment order for volumes to ensure correct mount points.  
 
 ## Usage
 
@@ -23,14 +23,17 @@ $ openstack stack create -t example.yaml -e example-env.yaml <Stack Name>
 **public_network**  
 References the external network connected to the internet.
 
-**security_group**  
-Defines the ID of the security group to be used for the instance port.
-
 **image**  
 Image to build the instance.
 
 **flavor**  
 Instance flavor to be used.
+
+**volume_size_db**  
+Size of volume for DB.
+
+**volume_size_www**  
+Size of volume for webroot.
 
 **ssh-key**  
 SSH key to be injected into the instance.

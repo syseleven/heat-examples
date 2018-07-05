@@ -1,38 +1,26 @@
-## Heat Templates
+# OpenStack Heat examples
 
-Heat is a service to orchestrate multiple composite cloud applications using templates
+## What is "Heat"?
+Heat is a service to orchestrate multiple composite cloud applications using templates.  
+Each template is launched into a so called 'heat stack'.
 
-This repository provides:
+## What are these examples for?
+These heat examples are meant to assist you while getting started with cloud computing.
 
-    Example templates from a single machine setup up to bigger 
-    distributed deployment scenarios.
-    Examples include usage of
+## Are these templates suitable for production?
+This library demonstrates certain aspects of deployment with heat but does not contain complete code that is suitable for production.
 
-    - Resource Groups
-	With resource groups you can start defined resources multiple times. 
-	For example to start <n> application server you would build them as
-	a resource group.
-
-    - Floating IPs
-	Floating IPs are public IPs you attach to a server or gateway to make 
-	your resource reachable outside of your private network space.
-
-    - Router and router interfaces
-	You need a router, if you don't want to waste public/ floating IPs for 
-	instances that do not need public interfaces. 
-
-    - Volumes as blockstorage
-	Volumes are a way to get data persistence even if you terminate your 
-	instance. Volumes are recommended if you work with databases or any
-	content you want to use longer than your VMs life cycle.
-
-The "example-project" combines theses examples in one setup. Here you can see that 
-resource dependencies play an important role.
-
-To work through these examples you need to install OpenStack command line clients as described here:
-
+## Getting Started
+To work through these examples you need to install OpenStack command line clients as described here:  
 http://docs.openstack.org/user-guide/content/install_clients.html
 
-Or you can build your own environment using the "gettingStarted" template. This template is prepared to 
-be used as a copy & paste file that you can use within the openstack dashboard. The only needed Parameter
-is "key_name", where you insert the name of your public SSH key.
+or 
+
+You can build your own environment using the [gettingStarted](gettingStarted/README.md) template.
+This template is prepared to be used as a copy & paste file that you can use within the openstack dashboard. The only needed parameter is either "key_name" where you insert the name of your public SSH key or "ssh-keys" where you insert your SSH key directly.
+
+## Support / Liability
+Even if SysEleven maintains this library we do not provide support for its content.
+
+## Contribution
+Everybody is welcome to contribute to this repository. Just commit your code and open a pull request.

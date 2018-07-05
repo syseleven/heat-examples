@@ -53,11 +53,9 @@ resources:
           lock-passwd: false
           ssh-authorized-keys: { get_param: ssh_keys }
       runcmd:
-        - 'sleep 5'
-        - 'mkfs.ext4 /dev/vdb -L volumedb '
-        - 'mkfs.ext4 /dev/vdc -L volumewww '
+        - 'mkdir -p /var/lib/mysql'
         - 'mkdir -p /var/www'
-        - 'apt update; reboot now'
+        - 'reboot now'
       fs_setup:
         - label: volumedb
           filesystem: ext4
@@ -70,6 +68,9 @@ resources:
       mounts:
         - [ "LABEL=volumedb", "/var/lib/mysql" ]
         - [ "LABEL=volumewww", "/var/www" ]
+      packages:
+        - nginx
+        - mariadb-server
 
   volume_db:
     type: OS::Cinder::Volume
