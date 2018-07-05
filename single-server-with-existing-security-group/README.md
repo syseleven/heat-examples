@@ -1,4 +1,4 @@
-# single server with existing security group
+# Single server with existing security group
 
 ## Overview
 
@@ -32,6 +32,11 @@ Replace ID_OF_SECURITY_GROUP_GOES_HERE with the security group ID.
 Create a stack with this template
 ```
 $ openstack stack create -t example.yaml -e example-env.yaml <Stack Name>
+```
+### SSH Login
+Login to the new instance
+```
+$ ssh syseleven@<instance IP>
 ```
 
 ## Parameters

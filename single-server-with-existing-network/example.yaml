@@ -3,7 +3,7 @@ heat_template_version: 2016-04-08
 # you can deploy this template using the following command:
 # 'openstack stack create -t example.yaml -e example-env.yaml <Stack Name>'
 # 
-# after successful stack creation you can login with 
+# after successful stack creation you can log in with 
 # ssh -l syseleven <externalIP> 
 # 
 

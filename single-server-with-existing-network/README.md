@@ -34,6 +34,12 @@ Create a stack with this template
 $ openstack stack create -t example.yaml -e example-env.yaml <Stack Name>
 ```
 
+### SSH Login
+Login to the new instance
+```
+$ ssh syseleven@<instance IP>
+```
+
 ## Parameters
 
 **public_network**  
