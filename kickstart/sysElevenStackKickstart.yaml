@@ -14,10 +14,8 @@ heat_template_version: 2016-04-08
 # ssh -l syseleven <externalIP> -A
 #
 
-description: Simple template to deploy a single compute instance
-  with external network (login will be possible through vnc console and via SSH).
-  It deploys a user named syseleven with sudo permissions and the openstack-CLI-tools.
-  This template is prepared to be used with https://dashboard.cloud.syseleven.net
+description: Simple template to deploy a single compute instance with a user named syseleven including the openstack-CLI-tools.
+  This template is prepared to be used with https://dashboard.cloud.syseleven.net.
 
 parameters:
  key_name:
