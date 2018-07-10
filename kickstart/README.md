@@ -4,20 +4,14 @@ This template can be used to deploy a single server with every CLI-Clients you n
 your local machine, which is documented [here](https://doc.syselevenstack.com/en/tutorials/openstack-cli/).
 
 Prerequisites:  
-- You need a valid SSH public key that you can:  
-  - Import as described [here](https://doc.syselevenstack.com/en/tutorials/firststeps/)  
-  or  
-  - That you paste into a specific field during the setup
+- You need a valid SSH public key that you can import as described [here](https://doc.syselevenstack.com/en/tutorials/ssh-keys/)  
 
 
 ### Launch the heat template
 
 - Navigate to Orchestration --> Stacks --> Launch Stack to start a template.
 - Select "URL" in the Template Source select box.
-- Paste the URL of the template into Template URL:  
-  ```text
-  https://raw.githubusercontent.com/syseleven/heat-examples/master/gettingStarted/kickstart.yaml
-  ```
+- Paste the URL of the template into Template URL: `https://raw.githubusercontent.com/syseleven/heat-examples/master/gettingStarted/kickstart.yaml`
 - Don't change the field "Environment Source" and click "Next".
 - Write "kickstart" into the field "Stackname".
 - Write the name of the public SSH-Key as parameter "key_name"  
