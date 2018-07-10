@@ -16,13 +16,11 @@ Prerequisites:
 - Select "URL" in the Template Source select box.
 - Paste the URL of the template into Template URL:  
   ```text
-  https://raw.githubusercontent.com/syseleven/heat-examples/master/gettingStarted/sysElevenStackKickstart.yaml
+  https://raw.githubusercontent.com/syseleven/heat-examples/master/gettingStarted/kickstart.yaml
   ```
 - Don't change the field "Environment Source" and click "Next".
 - Write "kickstart" into the field "Stackname".
-- SSH key(s):  
-  - **Either** write the name of the public SSH-Key as parameter "key_name"  
-  - **Or** paste the public SSH-Key directly as parameter "ssh_keys", seperate them with commas (,)
+- Write the name of the public SSH-Key as parameter "key_name"  
 - Now click "Launch".
 
 After a couple of seconds you should see a new machine spawning under --> "Compute" --> "Instances".  
