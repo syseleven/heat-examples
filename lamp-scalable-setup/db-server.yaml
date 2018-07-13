@@ -51,8 +51,8 @@ resources:
               until ping -c 1 syseleven.de > /dev/null; do sleep 2; done
               # wait for a valid user
               until id syseleven > /dev/null; do sleep 2; done
-              mkdir /home/syseleven/.ssh
-              curl -s http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key > /home/syseleven/.ssh/authorized_keys
+              mkdir -p /home/syseleven/.ssh
+              curl -s http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key >> /home/syseleven/.ssh/authorized_keys
               chown -R syseleven: /home/syseleven
               # get install script
               curl "https://raw.githubusercontent.com/syseleven/heat-examples/master/lamp-scalable-setup/scripts/install_lamp_db.sh" > /root/install_lamp_db.sh
@@ -63,4 +63,9 @@ resources:
           - /root/inject_userkey
           - /root/install_lamp_db.sh
         packages:
-           - curl
+          - curl
+
+outputs:
+  instance_ip:
+    description: IP address of the deployed compute instance
+    value: { get_attr: [db_server, first_address] }

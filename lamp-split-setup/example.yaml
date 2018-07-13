@@ -119,7 +119,7 @@ resources:
               until ping -c 1 syseleven.de > /dev/null; do sleep 2; done
               # wait for a valid user
               until id syseleven > /dev/null; do sleep 2; done
-              mkdir /home/syseleven/.ssh
+              mkdir -p /home/syseleven/.ssh
               curl -s http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key > /home/syseleven/.ssh/authorized_keys
               chown -R syseleven: /home/syseleven
               # get install script
@@ -161,7 +161,7 @@ resources:
               until ping -c 1 syseleven.de > /dev/null; do sleep 2; done
               # wait for a valid user
               until id syseleven > /dev/null; do sleep 2; done
-              mkdir /home/syseleven/.ssh
+              mkdir -p /home/syseleven/.ssh
               curl -s http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key > /home/syseleven/.ssh/authorized_keys
               chown -R syseleven: /home/syseleven
               # get install script

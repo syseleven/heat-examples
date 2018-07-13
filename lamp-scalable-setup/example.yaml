@@ -1,13 +1,14 @@
-heat_template_version: 2014-10-16
+heat_template_version: 2016-04-08
 #
 # you can deploy this template using the following command:
-# 'openstack stack create -t example.yaml --parameter key_name=<publicKeyName> <stackName>'
-# 
-# or you can just paste it into the web-ui under "orchestration" >> "launch stack"
+# 'openstack stack create -t example.yaml <stackName>'
 #
-# after successful stack creation you can login with 
-# ssh -l syseleven <externalIP> 
+# after successful stack creation you have to assign the security group
+# to the loadbalancer network port. - see OUTPUT section of stack.
 # 
+# If you need to login via SSH to any host create and associate a
+# floating IP via CLI or GUI and connect it to any of the APP server.
+# From the APP server jumping further to other hosts in the cluster is possible.
 
 description: Simple template to deploy a lamp stack with separate 
   DB server and scalable app server behind a LoadBalancer where 
@@ -125,7 +126,7 @@ resources:
     depends_on: [ router_subnet_bridge ]
     type: OS::Neutron::LBaaS::LoadBalancer
     properties:
-      vip_subnet: { get_resource: net }
+      vip_subnet: { get_resource: subnet }
 
   lb_floating_ip:
     type: OS::Neutron::FloatingIP
@@ -153,7 +154,7 @@ resources:
   ### APP server as resource group ###
   app_server_group:
     type: OS::Heat::ResourceGroup
-    depends_on: [ router_subnet_bridge, pool ]
+    depends_on: [ router_subnet_bridge, lb_pool ]
     properties:
       count: { get_param: number_app_servers } 
       resource_def: 
@@ -164,13 +165,15 @@ resources:
           image: { get_param: image }
           ssh_keys: { get_param: ssh_keys }
           net: { get_resource: net }
+          subnet: { get_resource: subnet }
           public_network: { get_param: public_network }
           lb_pool: { get_resource: lb_pool } 
-          allow_ssh: { get_resource: allow_ssh }      
+          allow_ssh: { get_resource: allow_ssh }    
+          allow_webtraffic: { get_resource: allow_webtraffic }      
 
 outputs:
 
-  lb_url:
+  LoadBalancer_URL:
     value:
       str_replace:
         template: http://IP_ADDRESS:PORT
@@ -180,7 +183,7 @@ outputs:
     description: >
       This URL is the "external" URL that can be used to access the load balancer.
 
-  sec_group_connection:
+  lb_sec_group_connection:
     value:
       str_replace:
         template: openstack port set --security-group SECGROUP LBPORT 
@@ -188,5 +191,8 @@ outputs:
           SECGROUP: { get_resource: allow_webtraffic }
           LBPORT: { get_attr: [lb_loadbalancer, vip_port_id ]}
     description: >
-      This command can be used to connect security groups to the 
-      load balancer port. After the LB is accessible from the outside.
+      This command can be used to connect the webtraffic security group to 
+      the load balancer port. After the LB is accessible from the outside.
+
+  ip_database_server:
+    value: { get_attr: [ db_server_group, instance_ip ] }
