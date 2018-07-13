@@ -40,17 +40,18 @@ resources:
       name: allow incoming traffic, tcp port 80
       rules: 
         - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 80, port_range_max: 80, protocol: tcp } 
+        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 443, port_range_max: 443, protocol: tcp } 
 
   net:
     type: OS::Neutron::Net
     properties: 
-      name: lampserver-net
+      name: lamp-split-net
 
   subnet:
     type: OS::Neutron::Subnet
     depends_on: [ net ]
     properties:
-      name: lampserver-subnet
+      name: lamp-split-subnet
       dns_nameservers:
         - 8.8.8.8
         - 8.8.4.4
@@ -64,7 +65,7 @@ resources:
     type: OS::Neutron::Router
     properties:
       external_gateway_info: {"network": { get_param: public_network }}
-      name: lampserver-router
+      name: lamp-split-router
 
   router_subnet_bridge:
     type: OS::Neutron::RouterInterface

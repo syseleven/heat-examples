@@ -9,17 +9,43 @@ heat_template_version: 2014-10-16
 # ssh -l syseleven <externalIP> 
 # 
 
-description: Simple template to deploy a lamp stack 
-  where you can deploy and run you PHP-Appliaction.
+description: Simple template to deploy a lamp stack with separate 
+  DB server and scalable app server where you can deploy and run 
+  you PHP-Application.
 
 parameters:
- key_name:
-  type: string
- public_network:
-  type: string
-  default: ext-net 
+  public_network:
+    type: string
+    default: ext-net 
+  ssh_keys:
+    type: comma_delimited_list
+    description: This parameter contains a comma separated list of ssh keys to be injected into all instances.
+    default: 
+      - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDN7WgiiXGQju8PlZ2IVoQygxeLzxvt2baZx9Q1JmfHed6Pxz+yiibbWiZIMDYiu76FSf6SENoUdSb56jcuFv4CCfu1lnLa3p/si/ic7BlDeIs6754cqdQTMlHShPw9z69cJKdd0qsA5KPBL7tEzCUWrRDidsiHza9cj/mlZ7w5X6+BUhXYa/0UK6cjkYD/T7qHhgYAGCalhwRIIPdoFhllkGaoO5r0gUgvkv1PFpK7psNfuxbuA4th0gU4Qhgj8hTpmcRFceneIwG9ZpEIbhbfyQcA3pPSZFDGsdcnDhHMHXHZsjGLca1lXDh7izn3t8fHLXAjwMnw5OdsNu6vARk+JZsZprrwSi++WWd43KUeGNdr5KLgHQDaNiLhgBKwZk+4ZpK1BAl4PZidX6P+idu4qWHNEv49yzxfI+puPbwhNBtWIrehZVKSah9/ALYtDyYBtMRyF9i9fW4O17Ov5dR10vrq4Mm6NlBJynCFjMY6z8hZFZCHc3QnPLCwfIeRH2PRMJonF5+wsyc4kxCwqK1HLsvwSFcAVdsEtFeppEEq5/WjDiv6sb62h+lckL/hXm+Y3rKULpEoHuVl/BX/rwCI1c6ES6asLQ3ZkEYo/0s3FnzZlu2qEYERddUAmzunAPx3fzcMjNUsEmpZS1uXUOFIenL+rj1kSmDfb90fQQRnnQ== dschwabe@dschwabe'
+  image:
+    type: string
+    default: "Ubuntu 16.04 LTS sys11 optimized 2018.03.21" 
+    description: This parameter defines the image for all instances.
+  number_db_servers:
+    type: number
+    default: 1
+    description: This parameter defines the number of db servers to launch, default is one.
+  number_app_servers:
+    type: number
+    default: 2
+    description: This parameter defines the number of app servers to launch.
+  flavor_db_server:
+    type: string
+    default: m1.small
+    description: This parameter defines the flavor for the app servers.
+  flavor_app_server:
+    type: string
+    default: m1.tiny
+    description: This parameter defines the flavor for the db servers.
+  
 
 resources:
+
   allow_ssh:
     type: OS::Neutron::SecurityGroup
     properties:
@@ -33,79 +59,21 @@ resources:
     type: OS::Neutron::SecurityGroup
     properties:
       description: allow incoming web traffic via http from anywhere. 
-      name: allow incoming traffic, tcp port 80
+      name: allow incoming traffic, tcp port 80 and 443
       rules: 
         - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 80, port_range_max: 80, protocol: tcp } 
-
-  host:
-    type: OS::Nova::Server
-    properties:
-      name: lampserver 
-      user_data_format: RAW
-      user_data: { get_resource: cloud-init-config }    
-      image: "Ubuntu 16.04 LTS sys11 optimized 2018.03.21" 
-      key_name: { get_param: key_name }
-      flavor: m1.tiny
-      networks:
-        - port: { get_resource: port }
-
-  cloud-init-config:
-   # cloud init resource
-   type: OS::Heat::CloudConfig
-   properties:
-     cloud_config:
-       manage_etc_hosts: true
-       users:
-           - name: syseleven
-             gecos: SysEleven Stack user
-             sudo: ALL=(ALL) NOPASSWD:ALL
-             shell: /bin/bash
-       write_files:
-         -  content: |
-              #!/usr/bin/env bash
-              # wait for valid network
-              until ping -c 1 syseleven.de > /dev/null; do sleep 2; done
-              # wait for a valid user
-              until id syseleven > /dev/null; do sleep 2; done
-              mkdir /home/syseleven/.ssh
-              curl -s http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key > /home/syseleven/.ssh/authorized_keys
-              chown -R syseleven: /home/syseleven
-              # get install script
-              curl "https://raw.githubusercontent.com/syseleven/heattemplates-examples/master/lampServer/scripts/install_lampstack.sh" > /root/install_lampstack.sh
-              chmod 700 /root/install_lampstack.sh
-            path: /root/inject_userkey
-            permissions: 0700
-         -  content: |
-              #!/usr/bin/env bash
-              # get AnyApp php
-              curl "https://raw.githubusercontent.com/syseleven/heat-examples/master/sources/AnyApp/index.php" > /var/www/html/index.php
-              chown www-data:www-data /var/www/html/index.php
-              rm -f /var/www/html/index.html
-            path: /root/inject_anyapp
-            permissions: 0700
-       runcmd:
-         - /root/inject_userkey
-         - /root/install_lampstack.sh
-         - /root/inject_anyapp
-       packages:
-         - curl
-
-             
-  port:
-    type: OS::Neutron::Port
-    properties:
-      network: { get_resource: net }
-      security_groups: [ get_resource: allow_ssh, get_resource: allow_webtraffic ]
+        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 443, port_range_max: 443, protocol: tcp } 
 
   net:
     type: OS::Neutron::Net
     properties: 
-      name: lampserver-net
+      name: lamp-scalable-net
 
   subnet:
     type: OS::Neutron::Subnet
+    depends_on: [ net ]
     properties:
-      name: lampserver-subnet
+      name: lamp-scalable-subnet
       dns_nameservers:
         - 8.8.8.8
         - 8.8.4.4
@@ -119,17 +87,46 @@ resources:
     type: OS::Neutron::Router
     properties:
       external_gateway_info: {"network": { get_param: public_network }}
-      name: lampserver-router
+      name: lamp-scalable-router
 
   router_subnet_bridge:
     type: OS::Neutron::RouterInterface
-    depends_on: subnet
+    depends_on: [ subnet ]
     properties:
       router: { get_resource: router }
       subnet: { get_resource: subnet }
 
-  floating_ip:
-    type: OS::Neutron::FloatingIP
+  ### DB server as resource group ###
+  db_server_group:
+    type: OS::Heat::ResourceGroup
+    depends_on: [ router_subnet_bridge ]
     properties:
-      floating_network: { get_param: public_network }
-      port_id: { get_resource: port }
+      count: { get_param: number_db_servers } 
+      resource_def: 
+        type: db-server.yaml
+        properties:
+          name: db%index%
+          flavor: { get_param: flavor_db_server }
+          image: { get_param: image }
+          ssh_keys: { get_param: ssh_keys }
+          net: { get_resource: net }
+          
+
+  ### APP server as resource group ###
+  app_server_group:
+    type: OS::Heat::ResourceGroup
+    depends_on: [ router_subnet_bridge ]
+    properties:
+      count: { get_param: number_app_servers } 
+      resource_def: 
+        type: app-server.yaml
+        properties:
+          name: app%index%
+          flavor: { get_param: flavor_app_server }
+          image: { get_param: image }
+          ssh_keys: { get_param: ssh_keys }
+          net: { get_resource: net }
+          public_network: { get_param: public_network }
+          allow_ssh: { get_resource: allow_ssh }
+          allow_webtraffic: { get_resource: allow_webtraffic }
+          
