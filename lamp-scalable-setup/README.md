@@ -1,5 +1,8 @@
 # LAMP Scalable Setup
 
+## Restriction
+This heat template can only be used in the SysEleven Stack Region 'dbl' since it requires LBaaS.
+
 ## Overview
 
 Using this simple template you launch an scalable LAMP setup on the SysEleven Stack where you can deploy and run you PHP-Application.
