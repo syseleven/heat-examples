@@ -39,7 +39,6 @@ resources:
       name: allow incoming traffic, tcp port 80
       rules: 
         - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 80, port_range_max: 80, protocol: tcp } 
-        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 443, port_range_max: 443, protocol: tcp } 
 
   host:
     type: OS::Nova::Server

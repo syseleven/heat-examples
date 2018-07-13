@@ -10,8 +10,8 @@ heat_template_version: 2014-10-16
 # 
 
 description: Simple template to deploy a lamp stack with separate 
-  DB server and scalable app server where you can deploy and run 
-  you PHP-Application.
+  DB server and scalable app server behind a LoadBalancer where 
+  you can deploy and run you PHP-Application.
 
 parameters:
   public_network:
@@ -42,7 +42,7 @@ parameters:
     type: string
     default: m1.tiny
     description: This parameter defines the flavor for the db servers.
-  
+ 
 
 resources:
 
@@ -59,10 +59,9 @@ resources:
     type: OS::Neutron::SecurityGroup
     properties:
       description: allow incoming web traffic via http from anywhere. 
-      name: allow incoming traffic, tcp port 80 and 443
+      name: allow incoming traffic, tcp port 80
       rules: 
         - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 80, port_range_max: 80, protocol: tcp } 
-        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 443, port_range_max: 443, protocol: tcp } 
 
   net:
     type: OS::Neutron::Net
@@ -96,6 +95,45 @@ resources:
       router: { get_resource: router }
       subnet: { get_resource: subnet }
 
+  lb_monitor:
+    type: OS::Neutron::LBaaS::HealthMonitor
+    depends_on: [ lb_pool ]
+    properties:
+      delay: 3
+      type: TCP 
+      timeout: 3
+      max_retries: 3
+      pool: { get_resource: lb_pool }
+
+  lb_pool:
+    type: OS::Neutron::LBaaS::Pool
+    depends_on: [ lb_listener ]
+    properties:
+      lb_algorithm: ROUND_ROBIN
+      protocol: TCP 
+      listener: { get_resource: lb_listener }
+
+  lb_listener:
+    type: OS::Neutron::LBaaS::Listener
+    depends_on: [ lb_loadbalancer ]
+    properties:
+      loadbalancer: { get_resource: lb_loadbalancer }
+      protocol: TCP 
+      protocol_port: 80
+
+  lb_loadbalancer:
+    depends_on: [ router_subnet_bridge ]
+    type: OS::Neutron::LBaaS::LoadBalancer
+    properties:
+      vip_subnet: { get_resource: net }
+
+  lb_floating_ip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network: { get_param: public_network }
+      port_id: { get_attr: [lb_loadbalancer, vip_port_id ]}
+
+
   ### DB server as resource group ###
   db_server_group:
     type: OS::Heat::ResourceGroup
@@ -115,7 +153,7 @@ resources:
   ### APP server as resource group ###
   app_server_group:
     type: OS::Heat::ResourceGroup
-    depends_on: [ router_subnet_bridge ]
+    depends_on: [ router_subnet_bridge, pool ]
     properties:
       count: { get_param: number_app_servers } 
       resource_def: 
@@ -127,6 +165,28 @@ resources:
           ssh_keys: { get_param: ssh_keys }
           net: { get_resource: net }
           public_network: { get_param: public_network }
-          allow_ssh: { get_resource: allow_ssh }
-          allow_webtraffic: { get_resource: allow_webtraffic }
-          
+          lb_pool: { get_resource: lb_pool } 
+          allow_ssh: { get_resource: allow_ssh }      
+
+outputs:
+
+  lb_url:
+    value:
+      str_replace:
+        template: http://IP_ADDRESS:PORT
+        params:
+          IP_ADDRESS: { get_attr: [ lb_floating_ip, floating_ip_address ] }
+          PORT: 80
+    description: >
+      This URL is the "external" URL that can be used to access the load balancer.
+
+  sec_group_connection:
+    value:
+      str_replace:
+        template: openstack port set --security-group SECGROUP LBPORT 
+        params:
+          SECGROUP: { get_resource: allow_webtraffic }
+          LBPORT: { get_attr: [lb_loadbalancer, vip_port_id ]}
+    description: >
+      This command can be used to connect security groups to the 
+      load balancer port. After the LB is accessible from the outside.

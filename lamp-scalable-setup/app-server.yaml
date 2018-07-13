@@ -9,6 +9,8 @@ parameters:
     type: string
   net:
     type: string
+  subnet:
+    type: string
   public_network:
     type: string
   ssh_keys:
@@ -16,6 +18,8 @@ parameters:
   allow_ssh:
     type: string
   allow_webtraffic:
+    type: string
+  lb_pool:
     type: string
 
 resources:
@@ -27,7 +31,6 @@ resources:
       network: { get_param: net }
       security_groups: 
         - { get_param: allow_ssh }
-        - { get_param: allow_webtraffic }
         - default
 
   app_floating_ip:
@@ -36,6 +39,15 @@ resources:
     properties:
       floating_network: { get_param: public_network }
       port_id: { get_resource: app_server_port }
+  
+  lb_pool_member:
+    type: OS::Neutron::LBaaS::PoolMember
+    depends_on: [ app_server ]
+    properties:
+      pool: { get_param: lb_pool }
+      address: { get_attr: [ app_server, first_address ]}
+      protocol_port: 80
+      subnet: { get_param: subnet }
 
   app_server:
     type: OS::Nova::Server
