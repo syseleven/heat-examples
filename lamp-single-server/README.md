@@ -25,18 +25,17 @@ Using this simple template you launch an LAMP server on the SysEleven Stack wher
 
 * Go to "Compute" --> "Instances" in order to retrieve the floating IP that is required to access the instance via SSH  
 * Copy the floating IP from the example server  
-* Open a terminal of your choice and log in to the instance via ssh with the username `syseleven`  
+* Open a terminal of your choice and log in to the instance via ssh with the username `syseleven`:  
 `$ ssh syseleven@<floating IP> -i ~/.ssh/< private ssh key >`
 * You should now be logged in your instance via SSH  
 
 ### Final tests
 
-* You can follow the installation progress:
+In the background, the web server, database server and a up-to-date PHP version is being installed.  
+You can check the progress with the following command: `tail -f /var/log/cloud-init-output.log`
 
-    In the background, the web server, database server and a up-to-date PHP version is being installed.  
-    We can check the progress with the following command: `tail -f /var/log/cloud-init-output.log`
-    
-* Furthermore you may test the webserver:
+This template deploys a simple PHP application. Once the initial installation
+is done you can test the webserver by opening its floating IP in you browser.
 
-    This template deploys a simple PHP application.    
-    You can now place any PHP application to `/var/www/html` and test it.
+You can now place any PHP application to `/var/www/html` and test it.
+
