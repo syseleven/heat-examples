@@ -1,0 +1,198 @@
+heat_template_version: 2016-04-08
+#
+# you can deploy this template using the following command:
+# 'openstack stack create -t example.yaml <stackName>'
+#
+# after successful stack creation you have to assign the security group
+# to the loadbalancer network port. - see OUTPUT section of stack.
+# 
+# If you need to login via SSH to any host create and associate a
+# floating IP via CLI or GUI and connect it to any of the APP server.
+# From the APP server jumping further to other hosts in the cluster is possible.
+
+description: Simple template to deploy a lamp stack with separate 
+  DB server and scalable app server behind a LoadBalancer where 
+  you can deploy and run you PHP-Application.
+
+parameters:
+  public_network:
+    type: string
+    default: ext-net 
+  ssh_keys:
+    type: comma_delimited_list
+    description: This parameter contains a comma separated list of ssh keys to be injected into all instances.
+    default: 
+      - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDN7WgiiXGQju8PlZ2IVoQygxeLzxvt2baZx9Q1JmfHed6Pxz+yiibbWiZIMDYiu76FSf6SENoUdSb56jcuFv4CCfu1lnLa3p/si/ic7BlDeIs6754cqdQTMlHShPw9z69cJKdd0qsA5KPBL7tEzCUWrRDidsiHza9cj/mlZ7w5X6+BUhXYa/0UK6cjkYD/T7qHhgYAGCalhwRIIPdoFhllkGaoO5r0gUgvkv1PFpK7psNfuxbuA4th0gU4Qhgj8hTpmcRFceneIwG9ZpEIbhbfyQcA3pPSZFDGsdcnDhHMHXHZsjGLca1lXDh7izn3t8fHLXAjwMnw5OdsNu6vARk+JZsZprrwSi++WWd43KUeGNdr5KLgHQDaNiLhgBKwZk+4ZpK1BAl4PZidX6P+idu4qWHNEv49yzxfI+puPbwhNBtWIrehZVKSah9/ALYtDyYBtMRyF9i9fW4O17Ov5dR10vrq4Mm6NlBJynCFjMY6z8hZFZCHc3QnPLCwfIeRH2PRMJonF5+wsyc4kxCwqK1HLsvwSFcAVdsEtFeppEEq5/WjDiv6sb62h+lckL/hXm+Y3rKULpEoHuVl/BX/rwCI1c6ES6asLQ3ZkEYo/0s3FnzZlu2qEYERddUAmzunAPx3fzcMjNUsEmpZS1uXUOFIenL+rj1kSmDfb90fQQRnnQ== dschwabe@dschwabe'
+  image:
+    type: string
+    default: "Ubuntu 16.04 LTS sys11 optimized 2018.03.21" 
+    description: This parameter defines the image for all instances.
+  number_db_servers:
+    type: number
+    default: 1
+    description: This parameter defines the number of db servers to launch, default is one.
+  number_app_servers:
+    type: number
+    default: 2
+    description: This parameter defines the number of app servers to launch.
+  flavor_db_server:
+    type: string
+    default: m1.small
+    description: This parameter defines the flavor for the app servers.
+  flavor_app_server:
+    type: string
+    default: m1.tiny
+    description: This parameter defines the flavor for the db servers.
+ 
+
+resources:
+
+  allow_ssh:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: allow incoming SSH and ICMP traffic from anywhere.
+      name: allow incoming traffic, tcp port 22 and icmp
+      rules: 
+        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 22, port_range_max: 22, protocol: tcp } 
+        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, protocol: icmp } 
+
+  allow_webtraffic:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: allow incoming web traffic via http from anywhere. 
+      name: allow incoming traffic, tcp port 80
+      rules: 
+        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 80, port_range_max: 80, protocol: tcp } 
+
+  net:
+    type: OS::Neutron::Net
+    properties: 
+      name: lamp-scalable-net
+
+  subnet:
+    type: OS::Neutron::Subnet
+    depends_on: [ net ]
+    properties:
+      name: lamp-scalable-subnet
+      dns_nameservers:
+        - 8.8.8.8
+        - 8.8.4.4
+      network: { get_resource: net }
+      ip_version: 4
+      cidr: 10.0.0.0/24
+      allocation_pools:
+      - {start: 10.0.0.10, end: 10.0.0.250}
+
+  router:
+    type: OS::Neutron::Router
+    properties:
+      external_gateway_info: {"network": { get_param: public_network }}
+      name: lamp-scalable-router
+
+  router_subnet_bridge:
+    type: OS::Neutron::RouterInterface
+    depends_on: [ subnet ]
+    properties:
+      router: { get_resource: router }
+      subnet: { get_resource: subnet }
+
+  lb_monitor:
+    type: OS::Neutron::LBaaS::HealthMonitor
+    depends_on: [ lb_pool ]
+    properties:
+      delay: 3
+      type: TCP 
+      timeout: 3
+      max_retries: 3
+      pool: { get_resource: lb_pool }
+
+  lb_pool:
+    type: OS::Neutron::LBaaS::Pool
+    depends_on: [ lb_listener ]
+    properties:
+      lb_algorithm: ROUND_ROBIN
+      protocol: TCP 
+      listener: { get_resource: lb_listener }
+
+  lb_listener:
+    type: OS::Neutron::LBaaS::Listener
+    depends_on: [ lb_loadbalancer ]
+    properties:
+      loadbalancer: { get_resource: lb_loadbalancer }
+      protocol: TCP 
+      protocol_port: 80
+
+  lb_loadbalancer:
+    depends_on: [ router_subnet_bridge ]
+    type: OS::Neutron::LBaaS::LoadBalancer
+    properties:
+      vip_subnet: { get_resource: subnet }
+
+  lb_floating_ip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network: { get_param: public_network }
+      port_id: { get_attr: [lb_loadbalancer, vip_port_id ]}
+
+
+  ### DB server as resource group ###
+  db_server_group:
+    type: OS::Heat::ResourceGroup
+    depends_on: [ router_subnet_bridge ]
+    properties:
+      count: { get_param: number_db_servers } 
+      resource_def: 
+        type: db-server.yaml
+        properties:
+          name: db%index%
+          flavor: { get_param: flavor_db_server }
+          image: { get_param: image }
+          ssh_keys: { get_param: ssh_keys }
+          net: { get_resource: net }
+          
+
+  ### APP server as resource group ###
+  app_server_group:
+    type: OS::Heat::ResourceGroup
+    depends_on: [ router_subnet_bridge, lb_pool ]
+    properties:
+      count: { get_param: number_app_servers } 
+      resource_def: 
+        type: app-server.yaml
+        properties:
+          name: app%index%
+          flavor: { get_param: flavor_app_server }
+          image: { get_param: image }
+          ssh_keys: { get_param: ssh_keys }
+          net: { get_resource: net }
+          subnet: { get_resource: subnet }
+          public_network: { get_param: public_network }
+          lb_pool: { get_resource: lb_pool } 
+          allow_ssh: { get_resource: allow_ssh }    
+          allow_webtraffic: { get_resource: allow_webtraffic }      
+
+outputs:
+
+  LoadBalancer_URL:
+    value:
+      str_replace:
+        template: http://IP_ADDRESS:PORT
+        params:
+          IP_ADDRESS: { get_attr: [ lb_floating_ip, floating_ip_address ] }
+          PORT: 80
+    description: >
+      This URL is the "external" URL that can be used to access the load balancer.
+
+  lb_sec_group_connection:
+    value:
+      str_replace:
+        template: openstack port set --security-group SECGROUP LBPORT 
+        params:
+          SECGROUP: { get_resource: allow_webtraffic }
+          LBPORT: { get_attr: [lb_loadbalancer, vip_port_id ]}
+    description: >
+      This command can be used to connect the webtraffic security group to 
+      the load balancer port. After the LB is accessible from the outside.
+
+  ip_database_server:
+    value: { get_attr: [ db_server_group, instance_ip ] }

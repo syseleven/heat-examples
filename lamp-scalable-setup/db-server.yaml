@@ -1,0 +1,71 @@
+heat_template_version: 2016-04-08
+
+parameters:
+  name:
+    type: string
+  flavor:
+    type: string
+  image:
+    type: string
+  net:
+    type: string
+  ssh_keys:
+    type: comma_delimited_list
+
+resources:
+
+  db_server_port:
+    type: OS::Neutron::Port
+    properties:
+      name: db server port
+      network: { get_param: net }
+      
+  db_server:
+    type: OS::Nova::Server
+    depends_on: [ db_server_port, cloud-init-config ]
+    properties:
+      name: { get_param: name }
+      user_data_format: RAW
+      user_data: { get_resource: cloud-init-config }    
+      image: { get_param: image }
+      flavor: { get_param: flavor }
+      networks:
+        - port: { get_resource: db_server_port }
+
+  cloud-init-config:
+   # cloud init demo resource
+   type: OS::Heat::CloudConfig
+   properties:
+     cloud_config:
+        users:
+          - name: syseleven
+            gecos: service user
+            lock-passwd: false
+            sudo: ALL=(ALL) NOPASSWD:ALL
+            shell: /bin/bash
+            ssh-authorized-keys: { get_param: ssh_keys }
+        write_files:
+          - content: |
+              #!/usr/bin/env bash
+              # wait for valid network
+              until ping -c 1 syseleven.de > /dev/null; do sleep 2; done
+              # wait for a valid user
+              until id syseleven > /dev/null; do sleep 2; done
+              mkdir -p /home/syseleven/.ssh
+              curl -s http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key >> /home/syseleven/.ssh/authorized_keys
+              chown -R syseleven: /home/syseleven
+              # get install script
+              curl "https://raw.githubusercontent.com/syseleven/heat-examples/master/lamp-scalable-setup/scripts/install_lamp_db.sh" > /root/install_lamp_db.sh
+              chmod 700 /root/install_lamp_db.sh
+            path: /root/inject_userkey
+            permissions: 0700
+        runcmd:
+          - /root/inject_userkey
+          - /root/install_lamp_db.sh
+        packages:
+          - curl
+
+outputs:
+  instance_ip:
+    description: IP address of the deployed compute instance
+    value: { get_attr: [db_server, first_address] }

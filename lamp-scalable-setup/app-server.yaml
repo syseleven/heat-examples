@@ -1,0 +1,106 @@
+heat_template_version: 2016-04-08
+
+parameters:
+  name:
+    type: string
+  flavor:
+    type: string
+  image:
+    type: string
+  net:
+    type: string
+  subnet:
+    type: string
+  public_network:
+    type: string
+  ssh_keys:
+    type: comma_delimited_list
+  allow_ssh:
+    type: string
+  allow_webtraffic:
+    type: string
+  lb_pool:
+    type: string
+
+resources:
+
+  app_server_port:
+    type: OS::Neutron::Port
+    properties:
+      name: app server port
+      network: { get_param: net }
+      security_groups: 
+        - { get_param: allow_ssh }
+        - { get_param: allow_webtraffic }
+        - default
+
+  # Uncomment the following block to assign a floating IP to the app server
+  # app_floating_ip:
+  #   type: OS::Neutron::FloatingIP
+  #   depends_on: [ app_server_port ]
+  #   properties:
+  #     floating_network: { get_param: public_network }
+  #     port_id: { get_resource: app_server_port }
+  
+  lb_pool_member:
+    type: OS::Neutron::LBaaS::PoolMember
+    depends_on: [ app_server ]
+    properties:
+      pool: { get_param: lb_pool }
+      address: { get_attr: [ app_server, first_address ]}
+      protocol_port: 80
+      subnet: { get_param: subnet }
+
+  app_server:
+    type: OS::Nova::Server
+    depends_on: [ app_server_port, cloud-init-config ]
+    properties:
+      name: { get_param: name }
+      user_data_format: RAW
+      user_data: { get_resource: cloud-init-config }    
+      image: { get_param: image }
+      flavor: { get_param: flavor }
+      networks:
+        - port: { get_resource: app_server_port }
+
+  cloud-init-config:
+   # cloud init demo resource
+   type: OS::Heat::CloudConfig
+   properties:
+     cloud_config:
+        users:
+          - name: syseleven
+            gecos: service user
+            lock-passwd: false
+            sudo: ALL=(ALL) NOPASSWD:ALL
+            shell: /bin/bash
+            ssh-authorized-keys: { get_param: ssh_keys }
+        write_files:
+          - content: |
+              #!/usr/bin/env bash
+              # wait for valid network
+              until ping -c 1 syseleven.de > /dev/null; do sleep 2; done
+              # wait for a valid user
+              until id syseleven > /dev/null; do sleep 2; done
+              mkdir -p /home/syseleven/.ssh
+              curl -s http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key >> /home/syseleven/.ssh/authorized_keys
+              chown -R syseleven: /home/syseleven
+              # get install script
+              curl "https://raw.githubusercontent.com/syseleven/heattemplates-examples/master/lamp-scalable-setup/scripts/install_lamp_app.sh" > /root/install_lamp_app.sh
+              chmod 700 /root/install_lamp_app.sh
+            path: /root/inject_userkey
+            permissions: 0700
+          - content: |
+              #!/usr/bin/env bash
+              # get AnyApp php
+              curl "https://raw.githubusercontent.com/syseleven/heat-examples/master/sources/AnyApp/index.php" > /var/www/html/index.php
+              chown www-data:www-data /var/www/html/index.php
+              rm -f /var/www/html/index.html
+            path: /root/inject_anyapp
+            permissions: 0700
+        runcmd:
+          - /root/inject_userkey
+          - /root/install_lamp_app.sh
+          - /root/inject_anyapp
+        packages:
+          - curl
