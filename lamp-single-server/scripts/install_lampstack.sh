@@ -21,12 +21,12 @@ systemctl restart apache2
 # creating a database
 rootpass=$(pwgen 16 1)
 customerpass=$(pwgen 16 1)
-/usr/bin/mysqladmin -u root password "$mypass"
+/usr/bin/mysqladmin -u root password "$rootpass"
 
 cat <<EOF> /root/.my.cnf
 [client]
 user = root
-password = ${mypass} 
+password = ${rootpass} 
 host = localhost
 EOF
 
