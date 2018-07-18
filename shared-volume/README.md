@@ -22,7 +22,7 @@ openstack volume list
 ```
 parameters:
 
-/.../
+...
 
 volume_id:
   type: string
@@ -35,7 +35,7 @@ volume_id:
 ```
 parameters:
 
-/.../
+...
 
 ssh-keys:
     type: comma_delimited_list
