@@ -10,14 +10,17 @@ heat_template_version: 2014-10-16
 # 
 
 description: Simple template to deploy a lamp stack 
-  where you can deploy and run you PHP-Appliaction.
+  where you can deploy and run your PHP-Application.
 
 parameters:
- key_name:
-  type: string
- public_network:
-  type: string
-  default: ext-net 
+  key_name:
+    type: string
+  public_network:
+    type: string
+    default: ext-net 
+  image:
+    type: string
+    default: "Ubuntu 16.04 LTS sys11 optimized 2018.03.21" 
 
 resources:
   allow_ssh:
@@ -43,7 +46,7 @@ resources:
       name: lampserver 
       user_data_format: RAW
       user_data: { get_resource: cloud-init-config }    
-      image: "Ubuntu 16.04 LTS sys11 optimized 2018.03.21" 
+      image: { get_param: image }
       key_name: { get_param: key_name }
       flavor: m1.tiny
       networks:
@@ -67,11 +70,11 @@ resources:
               until ping -c 1 syseleven.de > /dev/null; do sleep 2; done
               # wait for a valid user
               until id syseleven > /dev/null; do sleep 2; done
-              mkdir /home/syseleven/.ssh
+              mkdir -p /home/syseleven/.ssh
               curl -s http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key > /home/syseleven/.ssh/authorized_keys
               chown -R syseleven: /home/syseleven
               # get install script
-              curl "https://raw.githubusercontent.com/syseleven/heattemplates-examples/master/lampServer/scripts/install_lampstack.sh" > /root/install_lampstack.sh
+              curl "https://raw.githubusercontent.com/syseleven/heat-examples/master/lampServer/scripts/install_lampstack.sh" > /root/install_lampstack.sh
               chmod 700 /root/install_lampstack.sh
             path: /root/inject_userkey
             permissions: 0700
@@ -93,6 +96,7 @@ resources:
              
   port:
     type: OS::Neutron::Port
+    depends_on: [ net, allow_ssh, allow_webtraffic ]
     properties:
       network: { get_resource: net }
       security_groups: [ get_resource: allow_ssh, get_resource: allow_webtraffic ]
@@ -104,6 +108,7 @@ resources:
 
   subnet:
     type: OS::Neutron::Subnet
+    depends_on: [ net ]
     properties:
       name: lampserver-subnet
       dns_nameservers:
@@ -123,13 +128,14 @@ resources:
 
   router_subnet_bridge:
     type: OS::Neutron::RouterInterface
-    depends_on: subnet
+    depends_on: [ router, subnet ]
     properties:
       router: { get_resource: router }
       subnet: { get_resource: subnet }
 
   floating_ip:
     type: OS::Neutron::FloatingIP
+    depends_on: [ port ]
     properties:
       floating_network: { get_param: public_network }
       port_id: { get_resource: port }
