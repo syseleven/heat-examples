@@ -16,14 +16,14 @@ if mountpoint -q "/mnt/nfs"
 then
   echo "nfs is mounted"
 else
-  mount -t xfs /dev/vdb /mnt/nfs
+  mount -t ext4 /dev/vdb /mnt/nfs
 fi
 if [ $? -eq 0 ]
 then
   echo "Already Formatted Volume. Mounted"
 else
-  /sbin/mkfs.xfs /dev/vdb
-  mount -t xfs /dev/vdb /mnt/nfs/
+  /sbin/mkfs.ext4 /dev/vdb
+  mount -t ext4 /dev/vdb /mnt/nfs/
   echo "RAW Volume. Formatted and mounted"
 fi
 if grep -q "/mnt/nfs 10.10.10.0/24(rw,no_root_squash)" "/etc/exports"
