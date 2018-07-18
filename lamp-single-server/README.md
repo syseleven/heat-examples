@@ -2,7 +2,7 @@
 
 ## Overview
 
-Using this simple template you launch an LAMP server on the SysEleven Stack where you can deploy and run you PHP-Application.
+Using this simple template you launch an LAMP server on the SysEleven Stack where you can deploy and run your PHP-Application.
 
 ## Usage
 

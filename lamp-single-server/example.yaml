@@ -10,7 +10,7 @@ heat_template_version: 2014-10-16
 # 
 
 description: Simple template to deploy a lamp stack 
-  where you can deploy and run you PHP-Application.
+  where you can deploy and run your PHP-Application.
 
 parameters:
   key_name:
