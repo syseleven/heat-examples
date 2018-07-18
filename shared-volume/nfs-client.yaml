@@ -7,6 +7,8 @@ parameters:
     type: string
   syseleven_net:
     type: string
+  ssh-keys:
+    type: comma_delimited_list
 
 resources:
   nfs_server:
@@ -50,8 +52,7 @@ resources:
              lock-passwd: false
              sudo: ALL=(ALL) NOPASSWD:ALL
              shell: /bin/bash
-             ssh-authorized-keys:
-               - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBHhKPUBIv4EhNIDrXYsoBPNTCzMXtIkCcqEiXjx1AH8WNRHYN7blzV+qv9SJOzfi9OcfQ3o+qR2YwYT+z2464crW9xZHrtEerVDWMeCs3ZsnGxiFM40xpKhWHuTZNv+Y+07t8CHAdfGlSM3st2NrdwB2qWBTvoXTuhc9/4UeEM5rsLFDFIb84P4VXiMLooo8ovDWZ4I1A1+cmbiG9PDPIXn2I3LLvXfSn7rbTal5dJixZAfue1sKCwoFxzEIjdD2MRfkkwcYRbm2wyU2Gf3XTE4OOl/AIoCvgnp2+zFH6rdVme+lsX32ddS2dayoU50VpMz1jWq+fR5bnGyvYnJux janpeschke@ws171.sys11.net'
+             ssh-authorized-keys: { get_param: ssh-keys }
 
 outputs:
   interesting_stuff:
