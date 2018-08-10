@@ -27,7 +27,7 @@ subDirectories.forEach((directory) => {
         hasErrors = true;
         hasGlobalErrors = true;
     }
-    if (!fs.existsSync(path.join(directory, '.*\.\yaml'))) {
+    if (glob.sync(directory + '/*.yaml').length === 0) {
         leprechaun.error(`Example ${exampleName} does not contain any .yaml file`);
         hasErrors = true;
         hasGlobalErrors = true;
