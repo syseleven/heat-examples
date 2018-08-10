@@ -7,3 +7,4 @@ __pycache__
 *.py[oc]
 .tox
 ssh_rsa*
+node_modules
