@@ -1,5 +1,7 @@
 # OpenStack Heat examples
 
+[![Build Status](https://travis-ci.org/syseleven/heat-examples.svg?branch=master)](https://travis-ci.org/syseleven/heat-examples)
+
 ## What is "Heat"?
 Heat is a service to orchestrate multiple composite cloud applications using templates.  
 Each template is launched into a so called 'heat stack'.
@@ -23,4 +25,9 @@ This template is prepared to be used as a copy & paste file that you can use wit
 Even if SysEleven maintains this library we do not provide support for its content.
 
 ## Contribution
-Everybody is welcome to contribute to this repository. Just commit your code and open a pull request.
+We welcome contributions and fixes for our IaC Examples library. Just commit your code, run lint tests (see below) and open a pull request.
+
+## Development
+
+- Install required packages `npm install`
+- Run `npm run lint` to ensure that there are no syntax errors and that a README.md and .yaml file(s) is/are present, before creating a pull request.

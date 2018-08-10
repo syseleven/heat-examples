@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "lint": "npm-run-all -l -c lint:*",
-    "lint:examples": "node .ci/check-examples.js",
+    "lint:files": "node .ci/check-examples.js",
     "lint:markdown": "markdownlint -c .markdownlint.json -i node_modules/ .",
     "lint:yaml": "yamllint --ignore=node_modules/**/*.yaml --schema=DEFAULT_FULL_SCHEMA **/*.yaml"
   },
