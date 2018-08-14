@@ -1,0 +1,15 @@
+{
+  "default": true,
+  "no-trailing-punctuation": {
+    "punctuation": ".,;:!"
+  },
+  "line-length": false,
+  "no-inline-html": false,
+  "first-header-h1": {
+    "level": 1
+  },
+  "first-line-h1": false,
+  "valid-metadata-block": true,
+  "no-multiple-blanks": false,
+  "no-duplicate-heading": false
+}
