@@ -10,29 +10,29 @@ Create a reference snapshot.
 the running instance that you want to use as reference:
 
 ```
-openstack server image create --name <MyInstanceSnapshotName> <MyInstanceName>
+$ openstack server image create --name <MyInstanceSnapshotName> <MyInstanceName>
 +------------------+-----------------------------------------------------------------------------------------------------------+
-| Field            | Value                                                                                                                       
+| Field            | Value                                                                                                     |                 
 +------------------+-----------------------------------------------------------------------------------------------------------+
 | checksum         | None                                                                                                      |
-| container_format | None                                                                                                      |                                                                                                                                                                                                                    
-| created_at       | 2018-05-28T13:00:55Z                                                                                      |                                                                                                                                                                                                                    
-| disk_format      | None                                                                                                      |                                                                                                                                                                                                                     
-| file             | /v2/images/21484215-7679-4673-9093-5d3a4f77a2ab/file                                                      |                                                                                                                                                                                                                     
-| id               | 21484215-7679-4673-9093-5d3a4f77a2ab                                                                      |                                                                                                                                                                                                                     
-| min_disk         | 50                                                                                                        |                                                                                                                                                                                                                     
-| min_ram          | 0                                                                                                         |                                                                                                                                                                                                                     
-| name             | jumphostsnapshot                                                                                          |                                                                                                                                                                                                                     
-| owner            | xxxxxxxx931c4gggggf946yyyyy                                                                                |                                                                                                                                                                                                                     
+| container_format | None                                                                                                      |
+| created_at       | 2018-05-28T13:00:55Z                                                                                      |
+| disk_format      | None                                                                                                      |
+| file             | /v2/images/21484215-7679-4673-9093-5d3a4f77a2ab/file                                                      |
+| id               | 21484215-7679-4673-9093-5d3a4f77a2ab                                                                      |
+| min_disk         | 50                                                                                                        |
+| min_ram          | 0                                                                                                         |
+| name             | jumphostsnapshot                                                                                          |
+| owner            | xxxxxxxx931c4gggggf946yyyyy                                                                               | 
 | properties       | base_image_ref='34faf858-f2e9-4656-93ac-fcc8371a9877', basename='Ubuntu 16.04 LTS sys11 optimized ...... '|
-| protected        | False                                                                                                     |                                                                                                                                                                                                                     
-| schema           | /v2/schemas/image                                                                                         |                                                                                                                                                                                                                     
-| size             | None                                                                                                      |                                                                                                                                                                                                                     
-| status           | queued                                                                                                    |                                                                                                                                                                                                                     
-| tags             |                                                                                                           |                                                                                                                                                                                                                     
-| updated_at       | 2018-05-28T13:00:55Z                                                                                      |                                                                                                                                                                                                                     
-| virtual_size     | None                                                                                                      |                                                                                                                                                                                                                     
-| visibility       | private                                                                                                   |                                                                                                                                                                                                                     
+| protected        | False                                                                                                     |
+| schema           | /v2/schemas/image                                                                                         |
+| size             | None                                                                                                      |
+| status           | queued                                                                                                    |
+| tags             |                                                                                                           |
+| updated_at       | 2018-05-28T13:00:55Z                                                                                      |
+| virtual_size     | None                                                                                                      |
+| visibility       | private                                                                                                   |
 +------------------+-----------------------------------------------------------------------------------------------------------+
 ```
 

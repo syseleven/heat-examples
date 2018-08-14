@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "npm-run-all -l -c lint:*",
     "lint:files": "node .ci/check-examples.js",
-    "lint:markdown": "markdownlint -c .markdownlint.json -i node_modules/ .",
+    "lint:markdown": "markdownlint -c .ci/.markdownlint.json -i node_modules/ .",
     "lint:yaml": "yamllint --ignore=node_modules/**/*.yaml --schema=DEFAULT_FULL_SCHEMA **/*.yaml"
   },
   "devDependencies": {
