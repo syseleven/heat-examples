@@ -14,7 +14,7 @@ This template can be used to logically seperate and deploy distributed services 
 * `$ cd /heatteampltes-examples/substacks/`
 * Start the setup:
 
-```
+```shell
 openstack stack create -t masterstack.yaml <stack_name>
 ```
 
@@ -23,7 +23,7 @@ openstack stack create -t masterstack.yaml <stack_name>
 As a quick test we can list our stacks:
 
 ```bash
-syselevenstack@kickstart:~$ openstack stack list
+$ syselevenstack@kickstart:~$ openstack stack list
 +--------------------------------------+------------------------------------+-----------------+---------------------+--------------+
 | ID                                   | Stack Name                         | Stack Status    | Creation Time       | Updated Time |
 +--------------------------------------+------------------------------------+-----------------+---------------------+--------------+

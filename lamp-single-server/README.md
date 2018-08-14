@@ -8,7 +8,7 @@ Using this simple template you launch an LAMP server on the SysEleven Stack wher
 
 ### Launch stack
 
-* Log in to the [SysEleven Stack Dashboard](https://dashboard.cloud.syseleven.net) using the username and password (API credentials) that were provided by SysEleven. 
+* Log in to the [SysEleven Stack Dashboard](https://dashboard.cloud.syseleven.net) using the username and password (API credentials) that were provided by SysEleven.
 * In order to launch the example stack using the dashboard go to "Project" --> "Orchestration" --> "Stacks".  
 * Click the button "Launch Stack"
 * Select "URL" as "Template Source"
@@ -25,8 +25,7 @@ Using this simple template you launch an LAMP server on the SysEleven Stack wher
 
 * Go to "Compute" --> "Instances" in order to retrieve the floating IP that is required to access the instance via SSH  
 * Copy the floating IP from the example server  
-* Open a terminal of your choice and log in to the instance via ssh with the username `syseleven`:  
-`$ ssh syseleven@<floating IP> -i ~/.ssh/< private ssh key >`
+* Open a terminal of your choice and log in to the instance via ssh with the username `syseleven`: `$ ssh syseleven@<floating IP> -i ~/.ssh/< private ssh key >`
 * You should now be logged in your instance via SSH  
 
 ### Final tests

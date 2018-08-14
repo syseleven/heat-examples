@@ -6,7 +6,7 @@ Using this template you can start two instances which are organised as `OS::Heat
 
 ## Usage
 
-```$ openstack stack create -t group.yaml <stackName> ```
+```$ openstack stack create -t group.yaml <stackName>```
 
 This will start two instances without access from public network. They are only meant as an example how you can organise a number of resources.
 

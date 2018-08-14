@@ -17,7 +17,7 @@ With this example we demonstrate an LBaaS setup with the following features:
 
 You can start the stack using the usual command line:
 
-```
+```shell
 openstack stack create -t lbstack.yaml --parameter key_name=<publicKeyName> <stackName>
 ```
 
@@ -30,17 +30,18 @@ To simplify this process the example gives you a vaild openstack command in the 
 
 You can get the the relevant output field including resource IDs using this command:
 
-```
+```shell
 openstack stack show <stackName> -f value -c outputs | grep -i 'port set'
 ```
 
 Ports can be assigned as follows:
-```
+
+```shell
 openstack port set --security-group <Security Group> <LoadBalander Port>
 ```
 
 [1]Port-Updates can't be done in heat at the moment:
-https://blueprints.launchpad.net/heat/+spec/add-security-group-to-port
+[https://blueprints.launchpad.net/heat/+spec/add-security-group-to-port](https://blueprints.launchpad.net/heat/+spec/add-security-group-to-port)
 
 
 ## Open Anyapp

@@ -2,18 +2,16 @@
 
 ## Overview
 
-Using this template you launch an instance connecting it to an existing network. 
+Using this template you launch an instance connecting it to an existing network.
 You only need to configure the ID of the existing network in the parameter section of the main template.
 
 ## Usage
 
 ### Get ID of existing network
-```
-$ openstack network list -f table -c ID -c Name
-```
 
-Output example:
-```
+```shell
+$ openstack network list -f table -c ID -c Name
+
 +--------------------------------------+-----------------+
 | ID                                   | Name            |
 +--------------------------------------+-----------------+
@@ -23,21 +21,26 @@ Output example:
 ```
 
 ### Configure parameter
+
 Configure the ID of the existing network in `example-env.yaml`.
 
 Replace ID_OF_NETWORK_GOES_HERE with the network ID.
 
 
 ### Launch stack
+
 Create a stack with this template
-```
-$ openstack stack create -t example.yaml -e example-env.yaml <Stack Name>
+
+```shell
+openstack stack create -t example.yaml -e example-env.yaml <Stack Name>
 ```
 
 ### SSH Login
+
 Login to the new instance
-```
-$ ssh syseleven@<instance IP>
+
+```shell
+ssh syseleven@<instance IP>
 ```
 
 ## Parameters

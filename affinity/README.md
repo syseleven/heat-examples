@@ -6,7 +6,7 @@ Using this template you can control the host on which instances are started via 
 
 ## Usage
 
-```$ openstack stack create -t servergroups.yaml <stackName> ```
+```$ openstack stack create -t servergroups.yaml <stackName>```
 
 This will start four instances without access from public network. They are only meant as an example how to use affinity with server groups.
 

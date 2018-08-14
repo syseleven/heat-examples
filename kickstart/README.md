@@ -1,9 +1,12 @@
-## Getting started 
+# Kickstart
 
-This template can be used to deploy a single server with every CLI-Clients you need to start working with the SysEleven Stack. It is meant as an alternative to install OpenStack Clients by hand on 
+## Getting started
+
+This template can be used to deploy a single server with every CLI-Clients you need to start working with the SysEleven Stack. It is meant as an alternative to install OpenStack Clients by hand on
 your local machine, which is documented [here](https://doc.syselevenstack.com/en/tutorials/openstack-cli/).
 
-Prerequisites:  
+Prerequisites:
+
 - You need a valid SSH public key that you can import as described [here](https://doc.syselevenstack.com/en/tutorials/ssh-keys/)  
 
 
@@ -20,30 +23,30 @@ Prerequisites:
 After a couple of seconds you should see a new machine spawning under --> "Compute" --> "Instances".  
 Copy the IP address from "Floating IPs" and you should be ready to login via SSH.
 
-```bash
+```shell
 ssh syseleven@< Floating IP > -A
 ```
 
-The home directory has a prepared ["openrc" file](https://doc.syselevenstack.com/en/tutorials/api-access/#setting-up-the-environment-variables), 
+The home directory has a prepared ["openrc" file](https://doc.syselevenstack.com/en/tutorials/api-access/#setting-up-the-environment-variables),
 which allows you to work with openstack endpoints. The required values can be found under [Project --> Access and Security --> API Access](https://dashboard.cloud.syseleven.net/horizon/project/access_and_security/?tab=access_security_tabs__api_access_tab) --> View Credentials.
 
 Open it with a text editor of your choice.
 
-```bash
+```shell
 syseleven@kickstart:~$ vim openrc
 ```
 
 You just need to adjust `OS_PROJECT_ID`, `OS_USERNAME` and `OS_PASSWORD` to the actual values.
 To be able to use the command line tools just source the environment variables:
 
-```bash
+```shell
 source openrc
 ```
 
 Now you are ready to deploy any template from this repository or any other heat template.
 As a quick test we can list our currently running machines:
 
-```bash
+```shell
 syselevenstack@kickstart:~$ openstack server list
 +--------------------------------------+-----------+--------+--------------------------------------------+
 | ID                                   | Name      | Status | Networks                                   |
