@@ -4,9 +4,9 @@
 
 With this example we demonstrate how to create a single network as well as two networks with one stack.
 
-The separation of network and compute resources allows to create multiple stacks containing instances and 
-volumes that are all connected to the same network. This can be useful if one uses the same network(s) 
-for multiple groups of instances(servers) that need to run separately from other instance groups. 
+The separation of network and compute resources allows to create multiple stacks containing instances and
+volumes that are all connected to the same network. This can be useful if one uses the same network(s)
+for multiple groups of instances(servers) that need to run separately from other instance groups.
 Of course the same rule applies for single instances too.
 
 ## single network
@@ -20,7 +20,7 @@ Of course the same rule applies for single instances too.
 
 You can start the stack using the usual command line:
 
-```
+```shell
 openstack stack create -t 1.single-network.yaml <stackName>
 ```
 
@@ -35,22 +35,27 @@ openstack stack create -t 1.single-network.yaml <stackName>
 
 You can start the stack using the usual command line:
 
-```
+```shell
 openstack stack create -t 2.two-networks.yaml <stackName>
 ```
 
 ## Network IDs for further usage
 
 ### GUI
+
 After a successful launch you can see the network ID in the stack output section in Horizon.
 
 ### CLI
+
 You can get the the relevant output field including resource IDs using this command:
-```
+
+```shell
 openstack stack show <stackName> -f value -c outputs
 ```
-**Output example**  
-```
+
+#### Output example
+
+```shell
 [
   {
     "output_value": "edb0e670-8588-494a-b331-30c824c510c6",

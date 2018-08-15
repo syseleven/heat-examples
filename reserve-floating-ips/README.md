@@ -14,8 +14,9 @@ section of the main template. The stack overview shows the current association(s
 Set the number of required FIPs in the parameter.
 
 Create a stack with this template
-```
-$ openstack stack create -t 1.1_reserve_floating_ips.yaml <new stackName>
+
+```shell
+openstack stack create -t 1.1_reserve_floating_ips.yaml <new stackName>
 ```
 
 ### Upgrade/Changes
@@ -23,8 +24,9 @@ $ openstack stack create -t 1.1_reserve_floating_ips.yaml <new stackName>
 Adjust the number of required FIPs in the parameter.
 
 Update the existing stack with this template
-```
-$ openstack stack update -t 1.1_reserve_floating_ips.yaml <existing stackName>
+
+```shell
+openstack stack update -t 1.1_reserve_floating_ips.yaml <existing stackName>
 ```
 
 ## Code organisation

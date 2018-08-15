@@ -2,18 +2,16 @@
 
 ## Overview
 
-Using this template you launch an instance using an existing security group. 
+Using this template you launch an instance using an existing security group.
 You only need to configure the ID of the existing security group in the parameter section of the main template.
 
 ## Usage
 
 ### Get ID of existing security group
-```
-$ openstack security group list -f table -c ID -c Name
-```
 
-Output example:
-```
+```shell
+$ openstack security group list -f table -c ID -c Name
+
 +--------------------------------------+----------------------------------------------------------------------+
 | ID                                   | Name                                                                 |
 +--------------------------------------+----------------------------------------------------------------------+
@@ -23,20 +21,26 @@ Output example:
 ```
 
 ### Configure parameter
+
 Configure the ID of the existing security group in `example-env.yaml`.
 
 Replace ID_OF_SECURITY_GROUP_GOES_HERE with the security group ID.
 
 
 ### Launch stack
+
 Create a stack with this template
+
+```shell
+openstack stack create -t example.yaml -e example-env.yaml <Stack Name>
 ```
-$ openstack stack create -t example.yaml -e example-env.yaml <Stack Name>
-```
+
 ### SSH Login
+
 Login to the new instance
-```
-$ ssh syseleven@<instance IP>
+
+```shell
+ssh syseleven@<instance IP>
 ```
 
 ## Parameters

@@ -2,7 +2,7 @@
 
 ## Overview
 
-Using this template you can create volumes that can be attached to instances later on. You only need to adjust the 
+Using this template you can create volumes that can be attached to instances later on. You only need to adjust the
 number of required volumes and their sizes in the main heat template. This is useful if you want to manage volumes
 separately from stacks that manage instances and their association. Volumes of a resource group should be used for
  a single or at least a specific group of instances.
@@ -17,8 +17,9 @@ The stack overview shows the current association(s) of its volumes(s) in the out
 Copy and configure the required Volume blocks in the main heat template.
 
 Create a stack with this template
-```
-$ openstack stack create -t 1.1_volumes.yaml <new stackName>
+
+```shell
+openstack stack create -t 1.1_volumes.yaml <new stackName>
 ```
 
 ### Upgrade/Changes
@@ -26,8 +27,9 @@ $ openstack stack create -t 1.1_volumes.yaml <new stackName>
 Copy and configure the required volume blocks in the main heat template.
 
 Update the existing stack with this template
-```
-$ openstack stack update -t 1.1_volumes.yaml <existing stackName>
+
+```shell
+openstack stack update -t 1.1_volumes.yaml <existing stackName>
 ```
 
 ## Code organisation
@@ -48,7 +50,8 @@ Size of each volume that will be created.
 Provides the command that can be used to show a list of all volumes within the current project.
 
 Output example based on this heat example configuration:
-```
+
+```shell
 +--------------------------------------+---------------+--------+------+------------------------------------+
 | ID                                   | Name          | Status | Size | Attached to                        |
 +--------------------------------------+---------------+--------+------+------------------------------------+

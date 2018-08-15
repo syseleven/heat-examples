@@ -10,18 +10,23 @@ You only need to configure your ssh key in the parameter section of the env file
 ## Usage
 
 ### Configure parameter
+
 Configure your ssh key in `example-env.yaml`.
 
 ### Launch stack
+
 Create a stack with this template
-```
-$ openstack stack create -t example.yaml -e example-env.yaml <Stack Name>
+
+```shell
+openstack stack create -t example.yaml -e example-env.yaml <Stack Name>
 ```
 
 ### SSH Login
+
 Login to the new instance
-```
-$ ssh syseleven@<instance IP>
+
+```shell
+ssh syseleven@<instance IP>
 ```
 
 ## Parameters
@@ -30,7 +35,7 @@ $ ssh syseleven@<instance IP>
 References the external network connected to the internet.
 
 **flavor**  
-Instance flavor to be used. 
+Instance flavor to be used.
 
 **ssh_keys**  
 SSH key to be injected into the instance.

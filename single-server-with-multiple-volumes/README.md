@@ -13,15 +13,19 @@ Configure the size of volumes in `example-env.yaml`.
 
 
 ### Launch stack
+
 Create a stack with this template
-```
-$ openstack stack create -t example.yaml -e example-env.yaml <Stack Name>
+
+```shell
+openstack stack create -t example.yaml -e example-env.yaml <Stack Name>
 ```
 
 ### SSH Login
+
 Login to the new instance
-```
-$ ssh syseleven@<instance IP>
+
+```shell
+ssh syseleven@<instance IP>
 ```
 
 ## Parameters
