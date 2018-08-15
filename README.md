@@ -23,7 +23,7 @@ To work through these examples you need to install OpenStack command line client
 
 or
 
-You can build your own environment using the [gettingStarted](gettingStarted/README.md) template.
+You can build your own environment using the [gettingStarted](kickstart/README.md) template.
 This template is prepared to be used as a copy & paste file that you can use within the openstack dashboard. The only needed parameter is either "key_name" where you insert the name of your public SSH key or "ssh-keys" where you insert your SSH key directly.
 
 ## Support / Liability
