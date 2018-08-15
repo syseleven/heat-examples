@@ -41,7 +41,7 @@ openstack port set --security-group <Security Group> <LoadBalander Port>
 ```
 
 [1]Port-Updates can't be done in heat at the moment:
-[https://blueprints.launchpad.net/heat/+spec/add-security-group-to-port](https://blueprints.launchpad.net/heat/+spec/add-security-group-to-port)
+<https://blueprints.launchpad.net/heat/+spec/add-security-group-to-port>
 
 
 ## Open Anyapp

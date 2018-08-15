@@ -19,7 +19,7 @@ This library demonstrates certain aspects of deployment with heat but does not c
 ## Getting Started
 
 To work through these examples you need to install OpenStack command line clients as described here:  
-[http://docs.openstack.org/user-guide/content/install_clients.html](http://docs.openstack.org/user-guide/content/install_clients.html)
+<http://docs.openstack.org/user-guide/content/install_clients.html>
 
 or
 
