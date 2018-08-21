@@ -74,7 +74,7 @@ resources:
               curl -s http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key > /home/syseleven/.ssh/authorized_keys
               chown -R syseleven: /home/syseleven
               # get install script
-              curl "https://raw.githubusercontent.com/syseleven/heat-examples/master/lampServer/scripts/install_lampstack.sh" > /root/install_lampstack.sh
+              curl "https://raw.githubusercontent.com/syseleven/heat-examples/master/lamp-single-server/scripts/install_lampstack.sh" > /root/install_lampstack.sh
               chmod 700 /root/install_lampstack.sh
             path: /root/inject_userkey
             permissions: 0700
