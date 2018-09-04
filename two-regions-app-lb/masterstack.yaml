@@ -1,0 +1,98 @@
+heat_template_version: 2016-04-08
+
+description: This template launches application instances in two regions behind a LoadBalancer.
+
+parameters:
+
+  app_port:
+    type: number
+    default: 80
+    description: Port used by the servers
+  lb_port:
+    type: number
+    default: 80
+    description: Port used by the load balancer
+  image:
+    type: string
+    description: Image used by instances
+    default: "Ubuntu 18.04 LTS sys11 optimized - 2018-08-13"
+  ssh_keys:
+    type: comma_delimited_list
+    description: SSH-Key injected into instances
+    default:
+      - 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGnAoWHSWNKIwJUslcVdk0xUF6wNqDYwfXfTJaLcYwfw d.schwabe@syseleven.de'
+
+resources:
+
+  region1:
+    type: OS::Heat::Stack
+    properties:
+      context:
+        region_name: cbk
+      template: { get_file: region.yaml }
+      parameters:
+        backend_name: region1
+        app_port: { get_attr: app_port }
+        image: { get_attr: image }
+        ssh_keys: { get_attr: ssh_keys }
+  region2:
+    type: OS::Heat::Stack
+    properties:
+      context:
+        region_name: dbl
+      template: { get_file: region.yaml }
+      parameters:
+        backend_name: region2
+        app_port: { get_attr: app_port }
+        image: { get_attr: image }
+        ssh_keys: { get_attr: ssh_keys }
+  balancer:
+    type: OS::Heat::Stack
+    depends_on: [ region1, region2 ] 
+    properties:
+      context:
+        region_name: dbl
+      template: { get_file: balancer.yaml }
+      parameters:
+        backend1: { get_attr: [ region1, outputs, fip1 ] }
+        backend2: { get_attr: [ region2, outputs, fip1 ] }
+        app_port: { get_attr: app_port }
+        lb_port: { get_attr: lb_port }
+
+# PLACEHOLDER ################
+# Currently it is not possible to get sec group association working with HEAT
+#  sec_group_association:
+#    type: OS::Heat::Stack
+#    depends_on: [ balancer ] 
+#    properties:
+#      context:
+#        region_name: dbl
+#      template: { get_file: sec_group_attach.yaml }
+#      parameters:
+#        lb_network_port: { get_attr: [ balancer, outputs, lb_network_port ] }
+#        lb_secgroup: { get_attr: [ balancer, outputs, lb_secgroup ] }
+# PLACEHOLDER ################
+
+outputs:
+
+  region1:
+    value: { get_attr: [ region1, outputs, fip1 ] }
+    description: Public IP to access backend in region1 (cbk)
+  region2:
+    value: { get_attr: [ region2, outputs, fip1 ] }
+    description: Public IP to access backend in region2 (dbl)
+  balancer:
+    value: { get_attr: [ balancer, outputs, lb_fip ] }
+    description: Public IP of the loadbalancer in region2 (dbl)
+  assign_sec_group_cli:
+    value:
+      str_replace:
+        template: openstack port set  --security-group SECGROUP LBPORT 
+        params:
+          SECGROUP: { get_attr: [ balancer, outputs, lb_secgroup ] } 
+          LBPORT: { get_attr: [ balancer, outputs, lb_network_port ] }
+    description: >
+      This command can be used to connect security groups to the 
+      load balancer port. The LB is accessible from the outside once
+      the security group is assigned.
+      
