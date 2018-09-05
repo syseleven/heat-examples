@@ -32,9 +32,9 @@ resources:
       template: { get_file: region.yaml }
       parameters:
         backend_name: region1
-        app_port: { get_attr: app_port }
-        image: { get_attr: image }
-        ssh_keys: { get_attr: ssh_keys }
+        app_port: { get_param: app_port }
+        image: { get_param: image }
+        ssh_keys: { get_param: ssh_keys }
   region2:
     type: OS::Heat::Stack
     properties:
@@ -43,9 +43,9 @@ resources:
       template: { get_file: region.yaml }
       parameters:
         backend_name: region2
-        app_port: { get_attr: app_port }
-        image: { get_attr: image }
-        ssh_keys: { get_attr: ssh_keys }
+        app_port: { get_param: app_port }
+        image: { get_param: image }
+        ssh_keys: { get_param: ssh_keys }
   balancer:
     type: OS::Heat::Stack
     depends_on: [ region1, region2 ] 
@@ -56,8 +56,8 @@ resources:
       parameters:
         backend1: { get_attr: [ region1, outputs, fip1 ] }
         backend2: { get_attr: [ region2, outputs, fip1 ] }
-        app_port: { get_attr: app_port }
-        lb_port: { get_attr: lb_port }
+        app_port: { get_param: app_port }
+        lb_port: { get_param: lb_port }
 
 # PLACEHOLDER ################
 # Currently it is not possible to get sec group association working with HEAT
@@ -84,7 +84,7 @@ outputs:
   balancer:
     value: { get_attr: [ balancer, outputs, lb_fip ] }
     description: Public IP of the loadbalancer in region2 (dbl)
-  assign_sec_group_cli:
+  assign_sec_group:
     value:
       str_replace:
         template: openstack port set  --security-group SECGROUP LBPORT 
