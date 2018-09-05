@@ -32,10 +32,12 @@ resources:
         region_name: cbk
       template: { get_file: region.yaml }
       parameters:
-        backend_name: region1
+        backend_name:
+          list_join: [ '-', [ { get_param: "OS::stack_name" }, 'region1']]
         app_port: { get_param: app_port }
         image: { get_param: image }
         ssh_keys: { get_param: ssh_keys }
+
   region2:
     type: OS::Heat::Stack
     properties:
@@ -43,10 +45,12 @@ resources:
         region_name: dbl
       template: { get_file: region.yaml }
       parameters:
-        backend_name: region2
+        backend_name:
+          list_join: [ '-', [ { get_param: "OS::stack_name" }, 'region2']]
         app_port: { get_param: app_port }
         image: { get_param: image }
         ssh_keys: { get_param: ssh_keys }
+
   balancer:
     type: OS::Heat::Stack
     depends_on: [ region1, region2 ] 
