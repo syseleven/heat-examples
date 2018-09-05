@@ -20,7 +20,8 @@ parameters:
     type: comma_delimited_list
     description: SSH-Key injected into instances
     default:
-      - 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGnAoWHSWNKIwJUslcVdk0xUF6wNqDYwfXfTJaLcYwfw d.schwabe@syseleven.de'
+      - '< SSH PUBLIC KEY GOES HERE>'
+      - '< ANOTHER SSH PUBLIC KEY GOES HERE>'
 
 resources:
 
