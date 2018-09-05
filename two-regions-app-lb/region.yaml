@@ -65,8 +65,17 @@ resources:
          -  content: { get_file: scripts/install_lampstack.sh }
             permissions: 700
             path: /root/install_lampstack.sh
+         -  content: |
+              #!/usr/bin/env bash
+              # get AnyApp php
+              curl "https://raw.githubusercontent.com/syseleven/heat-examples/master/sources/AnyApp/index.php" > /var/www/html/index.php
+              chown www-data:www-data /var/www/html/index.php
+              rm -f /var/www/html/index.html
+            path: /root/inject_anyapp
+            permissions: 0700
        runcmd:
          - /root/install_lampstack.sh
+         - /root/inject_anyapp
        packages:
          - curl
              
