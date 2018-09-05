@@ -13,11 +13,7 @@ The stack overview shows the FIP(s) as well as the security group assignment com
 ### Initial launch
 
 - Configure your ssh key in the parameter of the `masterstack.yaml` template.
-- Create a stack with this template
-
-```shell
-openstack stack create -t 1.1_reserve_floating_ips.yaml <new stackName>
-```
+- Create a stack with this template: `openstack stack create -t masterstack.yaml <new stackName>`
 
 ## Code organisation
 
