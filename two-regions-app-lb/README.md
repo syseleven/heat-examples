@@ -14,7 +14,7 @@ The stack overview shows the FIP(s) as well as the security group assignment com
 
 - Configure your ssh key in the parameter of the `masterstack.yaml` template.
 - Create a stack with this template: `openstack stack create -t masterstack.yaml <new stackName>`
-- Once the stack launched finished and every resource was build the LB port requires a security group. The command how to assign the security group to the LB port is shown in the output section of the masterstack. It needs to be executed in region dbl, since the load-balancer runs there.
+- Once the stack creation has finished and every resource was built the LB port requires a security group. The command how to assign the security group to the LB port is shown in the output section of the masterstack. It needs to be executed in region dbl, since the load-balancer runs there.
 
 ## Code organisation
 
