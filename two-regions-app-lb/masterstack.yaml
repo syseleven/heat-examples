@@ -20,8 +20,8 @@ parameters:
     type: comma_delimited_list
     description: SSH-Key injected into instances
     default:
-      - 'SSH PUBLIC KEY GOES HERE'
-      - 'ANOTHER SSH PUBLIC KEY GOES HERE'
+      - 'ssh-rsa REPLACE_THIS_WITH_YOUR_OWN_SSH_PUBLIC_KEY email_or_comment_are_optional'
+      - 'ssh-rsa YOU_CAN_SPECIFY_MULTIPLE_SSH_PUBLIC_KEYS_LIKE_THIS it_is_still_optional'
 
 resources:
 
