@@ -20,8 +20,8 @@ parameters:
     type: comma_delimited_list
     description: SSH-Key injected into instances
     default:
-      - '< SSH PUBLIC KEY GOES HERE>'
-      - '< ANOTHER SSH PUBLIC KEY GOES HERE>'
+      - 'SSH PUBLIC KEY GOES HERE'
+      - 'ANOTHER SSH PUBLIC KEY GOES HERE'
 
 resources:
 
