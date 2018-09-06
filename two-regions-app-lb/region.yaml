@@ -1,0 +1,132 @@
+heat_template_version: 2016-04-08
+
+description: a single server backend
+
+parameters:
+
+  app_port:
+    type: number
+  public_network:
+    type: string
+    description: Network used by instances
+    default: ext-net
+  image:
+    type: string
+  ssh_keys:
+    type: comma_delimited_list
+  backend_name: 
+    type: string
+    description: Name of this backend target
+  
+
+resources:
+
+  allow_ssh:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: allow incoming SSH and ICMP traffic from anywhere.
+      name: allow incoming traffic, tcp port 22 and icmp
+      rules: 
+        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 22, port_range_max: 22, protocol: tcp } 
+        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, protocol: icmp } 
+
+  allow_webtraffic:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: allow incoming web traffic via http from anywhere. 
+      name: allow incoming traffic, tcp port 80
+      rules: 
+        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: { get_param: app_port } , port_range_max: { get_param: app_port } , protocol: tcp } 
+
+  host:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: backend_name }
+      user_data_format: RAW
+      user_data: { get_resource: cloud-init-config }    
+      image: { get_param: image }
+      flavor: m1.tiny
+      networks:
+        - port: { get_resource: port }
+
+  cloud-init-config:
+   # cloud init resource
+   type: OS::Heat::CloudConfig
+   properties:
+     cloud_config:
+       manage_etc_hosts: true
+       users:
+           - name: syseleven
+             gecos: SysEleven Stack user
+             sudo: ALL=(ALL) NOPASSWD:ALL
+             shell: /bin/bash
+             ssh-authorized-keys: { get_param: ssh_keys }
+       write_files:
+         -  content: { get_file: scripts/install_lampstack.sh }
+            permissions: 700
+            path: /root/install_lampstack.sh
+         -  content: |
+              #!/usr/bin/env bash
+              # get AnyApp php
+              curl "https://raw.githubusercontent.com/syseleven/heat-examples/master/sources/AnyApp-stateless/index.php" > /var/www/html/index.php
+              chown www-data:www-data /var/www/html/index.php
+              rm -f /var/www/html/index.html
+            path: /root/inject_anyapp
+            permissions: 0700
+       runcmd:
+         - /root/install_lampstack.sh
+         - /root/inject_anyapp
+       packages:
+         - curl
+             
+  port:
+    type: OS::Neutron::Port
+    depends_on: [ net, allow_ssh, allow_webtraffic ]
+    properties:
+      network: { get_resource: net }
+      security_groups: [ get_resource: allow_ssh, get_resource: allow_webtraffic ]
+
+  net:
+    type: OS::Neutron::Net
+    properties: 
+      name: lampserver-net
+
+  subnet:
+    type: OS::Neutron::Subnet
+    depends_on: [ net ]
+    properties:
+      name: lampserver-subnet
+      dns_nameservers:
+        - 8.8.8.8
+        - 8.8.4.4
+      network: { get_resource: net }
+      ip_version: 4
+      cidr: 10.0.0.0/24
+      allocation_pools:
+      - {start: 10.0.0.10, end: 10.0.0.250}
+
+  router:
+    type: OS::Neutron::Router
+    properties:
+      external_gateway_info: { "network": { get_param: public_network }}
+      name: lampserver-router
+
+  router_subnet_bridge:
+    type: OS::Neutron::RouterInterface
+    depends_on: [ router, subnet ]
+    properties:
+      router: { get_resource: router }
+      subnet: { get_resource: subnet }
+
+  floating_ip:
+    type: OS::Neutron::FloatingIP
+    depends_on: [ port ]
+    properties:
+      floating_network: { get_param: public_network }
+      port_id: { get_resource: port }
+
+outputs:
+
+  fip1:
+    description: Floating IP address
+    value: { get_attr: [ floating_ip, floating_ip_address ] }

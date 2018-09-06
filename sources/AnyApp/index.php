@@ -30,7 +30,9 @@ if (isset($_SESSION['upstream-servers'])) {
 }
 echo "<br>";
 echo "<br>";
-echo "Backend server ".$_SERVER["SERVER_ADDR"];
+echo "Backend server: ";
+echo "<br>";
+echo gethostname() . " (" . $_SERVER["SERVER_ADDR"] . ")";
 echo "<br>";
 
 #$conn_string = "host=db0 port=5432 dbname=syseleven user=syseleven password=syseleven_pass";
