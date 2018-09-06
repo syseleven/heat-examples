@@ -126,5 +126,16 @@ outputs:
   lb_network_port:
     value: { get_attr: [ loadbalancer, vip_port_id ] }
   lb_secgroup:
-    value: { get_resource: sec_group }  
+    value: { get_resource: sec_group }
+  assign_sec_group:
+    value:
+      str_replace:
+        template: openstack port set  --security-group SECGROUP LBPORT 
+        params:
+          SECGROUP: { get_resource: sec_group }
+          LBPORT: { get_attr: [ loadbalancer, vip_port_id ] }
+    description: >
+      This command can be used to connect security groups to the 
+      load balancer port. The LB is accessible from the outside once
+      the security group is assigned.
 
