@@ -12,7 +12,7 @@ Using this simple template you launch an LAMP server on the SysEleven Stack wher
 * In order to launch the example stack using the dashboard go to "Project" --> "Orchestration" --> "Stacks".  
 * Click the button "Launch Stack"
 * Select "URL" as "Template Source"
-* Copy the URL of the example code file `https://raw.githubusercontent.com/syseleven/heat-examples/master/lamp-server/example.yaml`
+* Copy the URL of the example code file `https://raw.githubusercontent.com/syseleven/heat-examples/master/lamp-single-server/example.yaml`
 * Paste the copied URL into the field "Template URL"
 * Select "File" as "Environment Source"  
 * Click "Next"
