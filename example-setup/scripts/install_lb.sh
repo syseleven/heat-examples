@@ -8,7 +8,7 @@ until ping -c 1 syseleven.de; do sleep 1; done
 echo "# Install dependencies"
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
-apt-get install -q -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" nginx memcached
+apt-get install -q -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" nginx
 
 # generate a upstream-template used by consul-template
 cat <<EOF> /opt/consul-http-upstreams.ctpl
@@ -47,12 +47,6 @@ EOF
 
 systemctl enable consultemplate-upstreams
 systemctl restart consultemplate-upstreams
-
-
-#until pgrep -f 'consul-template -template /opt/consul-http-upstreams.ctpl:/etc/nginx/upstream.conf:service nginx restart'; do 
-#	consul-template -template "/opt/consul-http-upstreams.ctpl:/etc/nginx/upstream.conf:service nginx restart" >> /var/log/consul-template.log & sleep 2; 
-#done
-
 
 # create a default nginx vhost
 cat <<EOF> /etc/nginx/sites-enabled/default
@@ -122,10 +116,6 @@ http {
 }
 EOF
 
-# set memcache to listen global and act as a session store
-sed -i s'/127.0.0.1/0.0.0.0/'g /etc/memcached.conf
-
-systemctl restart memcached
 systemctl restart nginx
 
 logger "# Finished lbserver installation"

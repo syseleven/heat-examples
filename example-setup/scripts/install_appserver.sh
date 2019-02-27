@@ -47,6 +47,8 @@ EOF
 
 systemctl restart consul 
 
+# use memcache on lb as central session store
+
 # we call it "deployment" :)
 git clone https://github.com/syseleven/exampleapp-php.git /root/exampleapp-php 
 rm /var/www/html/index.html && cp /root/exampleapp-php/index.php /var/www/html/ 

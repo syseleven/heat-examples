@@ -50,6 +50,7 @@ resources:
        runcmd:
          - [ /root/install_generic.sh ]
          - [ /root/install_lb.sh ]
+         - [ /root/install_sessionstore.sh ]
        write_files:
          -  content: { get_file: scripts/install_generic.sh }
             permissions: 0700
@@ -57,6 +58,9 @@ resources:
          -  content: { get_file: scripts/install_lb.sh }
             permissions: 0700
             path: /root/install_lb.sh
+         -  content: { get_file: scripts/install_sessionstore.sh }
+            permissions: 0700
+            path: /root/install_sessionstore.sh
        users:
            - name: syseleven
              gecos:  Workshop user
