@@ -47,5 +47,9 @@ EOF
 
 systemctl restart consul 
 
+# we call it "deployment" :)
+git clone https://github.com/syseleven/exampleapp-php.git /root/exampleapp-php 
+rm /var/www/html/index.html && cp /root/exampleapp-php/index.php /var/www/html/ 
+
 logger "# Finished appserver installation"
 echo "# Finished deployment host setup"
