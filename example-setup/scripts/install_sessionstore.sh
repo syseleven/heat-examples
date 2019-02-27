@@ -30,5 +30,6 @@ EOF
 sed -i s'/127.0.0.1/0.0.0.0/'g /etc/memcached.conf
 
 systemctl restart memcached
+systemctl restart consul 
 
 
