@@ -16,7 +16,7 @@ phpenmod php7.0-mysql
 # configure apache vhost
 cat <<EOF> /etc/apache2/sites-enabled/000-default.conf
 <VirtualHost *:80>
-	ServerName shopware.syseleven.de
+	ServerName examplesetup.syseleven.de
 	ServerAdmin admin@syseleven.de
 	DocumentRoot /var/www/html
 	ErrorLog /var/log/apache2/error.log
