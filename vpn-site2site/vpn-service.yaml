@@ -1,0 +1,27 @@
+heat_template_version: 2016-04-08
+
+description: VPN 
+
+parameters:
+  router_id:
+    type: string
+  subnet_id:
+    type: string
+
+resources:
+
+  vpn_service:
+    type: OS::Neutron::VPNService
+    properties: 
+      name: vpn service cbk
+      description: site to site endpoint cbk
+      admin_state_up: true
+      router_id: {get_param: router_id}
+      subnet_id: {get_param: subnet_id}
+
+outputs:
+  # our gateway-enpoint for the other side
+#  gateway_ip:
+#    value: {get_attr: [ vpn_service, external_v4_ip ] }
+  vpnservice_id:
+    value: { get_resource: vpn_service }

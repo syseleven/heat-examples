@@ -1,0 +1,57 @@
+heat_template_version: 2016-04-08
+
+description: network topology in cbk
+
+resources:
+
+  cbk_net:
+    type: OS::Neutron::Net
+    properties: 
+      name: cbk-net
+
+  cbk_subnet:
+    type: OS::Neutron::Subnet
+    depends_on: [ cbk_net ]
+    properties:
+      name: cbk_subnet
+      dns_nameservers:
+        - 8.8.8.8
+        - 8.8.4.4
+      network: {get_resource: cbk_net}
+      ip_version: 4
+      cidr: 192.168.2.0/24
+      allocation_pools:
+      - {start: 192.168.2.10, end: 192.168.2.250}
+
+  cbk_router:
+    type: OS::Neutron::Router
+    properties:
+      external_gateway_info: {"network": ext-net }
+
+  cbk_router_subnet_connect:
+    type: OS::Neutron::RouterInterface
+    depends_on: [ cbk_router, cbk_subnet ]
+    properties:
+      router: { get_resource: cbk_router }
+      subnet: { get_resource: cbk_subnet }
+
+  testmachine-cbk:
+    type: OS::Heat::Stack
+    properties:
+      context:
+        region_name: cbk
+      parameters: 
+        network_id: { get_resource: cbk_net }
+      template: { get_file: testserver.yaml }
+
+
+outputs:
+# output subnet-addres, subnet-id and router-id
+  subnet_address:
+    value: {get_attr: [cbk_subnet, cidr] }
+  router_id:
+    value: { get_resource: cbk_router }
+  subnet_id:
+    value: { get_resource: cbk_subnet }
+  external_gateway:
+    value: { get_attr: [cbk_router, external_gateway_info, external_fixed_ips, 0, ip_address] }

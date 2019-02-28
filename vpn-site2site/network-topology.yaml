@@ -1,0 +1,78 @@
+heat_template_version: 2016-04-08
+
+parameters:
+
+resources:
+  vpn_shared_secret:
+    type: OS::Heat::RandomString
+    properties:
+      length: 56
+
+  network-cbk:
+    type: OS::Heat::Stack
+    properties:
+      context:
+        region_name: cbk
+      template: {get_file: network-cbk.yaml}
+
+  network-dbl:
+    type: OS::Heat::Stack
+    properties:
+      context:
+        region_name: dbl
+      template: {get_file: network-dbl.yaml}
+      
+  vpn_service-cbk:
+    depends_on: [ network-cbk ]
+    type: OS::Heat::Stack
+    properties:
+      context:
+        region_name: cbk
+      parameters:
+        subnet_id: { get_attr: [ network-cbk, outputs, subnet_id ] }
+        router_id: { get_attr: [ network-cbk, outputs, router_id ] }
+      template: { get_file: vpn-service.yaml }
+
+  vpn_service-dbl:
+    depends_on: [ network-dbl ]
+    type: OS::Heat::Stack
+    properties:
+      context:
+        region_name: dbl
+      parameters:
+        subnet_id: { get_attr: [ network-dbl, outputs, subnet_id ] }
+        router_id: { get_attr: [ network-dbl, outputs, router_id ] }
+      template: { get_file: vpn-service.yaml }
+
+  vpn_connection-cbk:
+    depends_on: [ vpn_service-dbl, vpn_service-cbk ]
+    type: OS::Heat::Stack
+    properties:
+      context:
+        region_name: cbk
+      parameters:
+        gateway_ip: { get_attr: [ network-dbl, outputs, external_gateway ] }
+        vpnservice_id: { get_attr: [ vpn_service-cbk, outputs, vpnservice_id ] } 
+        shared_secret: { get_resource: vpn_shared_secret }
+        peer_subnet_address: { get_attr: [ network-dbl, outputs, subnet_address ] }
+      template: { get_file: vpn-connection.yaml }
+
+  vpn_connection-dbl:
+    depends_on: [ vpn_service-dbl, vpn_service-cbk ]
+    type: OS::Heat::Stack
+    properties:
+      context:
+        region_name: dbl
+      parameters:
+        gateway_ip: { get_attr: [ network-cbk, outputs, external_gateway ] }
+        vpnservice_id: { get_attr: [ vpn_service-dbl, outputs, vpnservice_id ] } 
+        shared_secret: { get_resource: vpn_shared_secret }
+        peer_subnet_address: { get_attr: [ network-cbk, outputs, subnet_address ] }
+      template: { get_file: vpn-connection.yaml }
+
+outputs:
+# Show the names of the substacks in the output
+  cbk:
+    value: { get_attr: [network-cbk, stack_name] }
+  dbl:
+    value: { get_attr: [network-dbl, stack_name] }
