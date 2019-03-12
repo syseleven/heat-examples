@@ -55,15 +55,49 @@ scrape_configs:
     static_configs:
     - targets: ['localhost:9090']
 
-  - job_name: 'node_exporter'
-    consul_sd_configs:
-      - server: 'localhost:8500'
-        datacenter: 'dc1'
-        services: ["node_exporter"]
+  - job_name: 'node_exporter-cbk'
+    openstack_sd_configs:
+      - identity_endpoint: https://api.cbk.cloud.syseleven.net:5000/v3
+        username: $1
+        project_id: $3
+        domain_name: Default
+        password: $2
+        role: instance
+        region: cbk
+        port: 9100
 
     relabel_configs:
-    - source_labels: [__meta_consul_node]
+    - source_labels: [__meta_openstack_instance_name]
       target_label: node_name
+    - source_labels: [__meta_openstack_instance_status]
+      target_label: status
+    - source_labels: [__meta_openstack_instance_id]
+      target_label: openstack_id
+    - source_labels: [__meta_openstack_tag_stackid]
+      regex: $4
+      action: keep
+
+  - job_name: 'node_exporter-dbl'
+    openstack_sd_configs:
+      - identity_endpoint: https://api.cbk.cloud.syseleven.net:5000/v3
+        username: $1
+        project_id: $3
+        domain_name: Default
+        password: $2
+        role: instance
+        region: dbl
+        port: 9100
+
+    relabel_configs:
+    - source_labels: [__meta_openstack_instance_name]
+      target_label: node_name
+    - source_labels: [__meta_openstack_instance_status]
+      target_label: status
+    - source_labels: [__meta_openstack_instance_id]
+      target_label: openstack_id
+    - source_labels: [__meta_openstack_tag_stackid]
+      regex: $4
+      action: keep
 
 EOF
 
@@ -153,21 +187,19 @@ cat <<EOF > /opt/prometheus/upscale.sh
 
 set -e
 
-scale_up_url="${1/sys11cloud.net/cloud.syseleven.net}"
-
-. /etc/sysconfig/consul
+scale_up_url="${5/sys11cloud.net/cloud.syseleven.net}"
 
 export OS_AUTH_URL=https://keystone.cloud.syseleven.net:5000
-export OS_PASSWORD=\$OS_PASSWORD
-export OS_USERNAME=\$OS_USERNAME
-export OS_PROJECT_ID=\$OS_TENANT_ID
+export OS_PASSWORD=$2
+export OS_USERNAME=$1
+export OS_PROJECT_ID=$3
 
 token=\$(openstack token issue -c id -f value)
 curl -s -H "X-Auth-Token: \$token" -X POST "\$scale_up_url"
 
 EOF
 
-chown consul /opt/prometheus/upscale.sh
+chown prometheus /opt/prometheus/upscale.sh
 chmod 500 /opt/prometheus/upscale.sh
 
 cat <<EOF > /etc/systemd/system/prometheus-am-executor.service 
@@ -178,8 +210,7 @@ Wants=network-online.target
 After=network-online.target
 
 [Service]
-EnvironmentFile=/etc/sysconfig/consul
-User=consul
+User=prometheus
 Type=simple
 ExecStart=/opt/prometheus/prometheus-am-executor -l 127.0.0.1:5001 -v /opt/prometheus/upscale.sh
 

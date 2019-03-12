@@ -1,8 +1,0 @@
-{
-  "service": {
-    "id": "node_exporter",
-    "name": "node_exporter",
-    "port": 9100,
-    "enable_tag_override": false
-    }
-}

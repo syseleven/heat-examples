@@ -3,9 +3,6 @@ heat_template_version: ocata
 description: A template to deploy and configure a loadbalanced server setup.
 
 parameters:
-  consul_count:
-    type: number
-    default: 1
   appserver_port:
     type: number
     default: 80
@@ -14,16 +11,13 @@ parameters:
     default: "Ubuntu 16.04 LTS sys11 optimized 2018.03.21"
   ssh_keys:
     type: comma_delimited_list
-  consul_key:
-    type: string
-    constraints:
-      - length: { min: 24, max: 24 }
   os_username:
     type: string
     constraints:
       - length: { min: 1 }
   os_password:
     type: string
+    hidden: true
     constraints:
       - length: { min: 1 }
   os_tenant_id:
@@ -95,15 +89,24 @@ resources:
       max_retries: 3
       pool: { get_resource: pool }
 
+
+  sg_lb:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: allow incoming HTTP traffic from anywhere.
+      name: allow HTTP and Prometheus traffic
+      rules:
+        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 80, port_range_max: 80, protocol: tcp }
+        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 9090, port_range_max: 9090, protocol: tcp }
+        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 9093, port_range_max: 9093, protocol: tcp }
+        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, protocol: icmp }
+
   floating_ip_lb:
     type: OS::Neutron::FloatingIP
     depends_on: [ loadbalancer ]
     properties:
       floating_network: ext-net
       port_id: { get_attr: [loadbalancer, vip_port_id ]}
-
-
-
 
   anti-affinity_group:
     type: OS::Nova::ServerGroup
@@ -127,28 +130,6 @@ resources:
       cooldown: 60
       scaling_adjustment: '-1'
 
-## Consul Server
-  consul_group:
-    type: OS::Heat::ResourceGroup
-#    depends_on: [ sg_consul ]
-    properties:
-      count: { get_param: consul_count }
-      resource_def: 
-        type: consul.yaml
-        properties:
-          name: consul-%index% 
-          image: { get_param: image }
-          network_id: { get_resource: net }
-          ssh_keys: { get_param: ssh_keys }
-          affinity_group: { get_resource: anti-affinity_group }
-          consul_key: { get_param: consul_key }
-          os_username: { get_param: os_username }
-          os_password: { get_param: os_password }
-          os_tenant_id: { get_param: os_tenant_id }
-          consul_count: { get_param: consul_count }
-          heatstack_id: { get_param: 'OS::stack_id' }
-
-
 #  ### Appserver nodes as resource group ###
   appserver_group:
     type: OS::Heat::AutoScalingGroup
@@ -165,13 +146,10 @@ resources:
           subnet_id: { get_resource: subnet }
           ssh_keys: { get_param: ssh_keys }
           affinity_group: { get_resource: anti-affinity_group }
-          consul_key: { get_param: consul_key }
-          os_username: { get_param: os_username }
-          os_password: { get_param: os_password }
-          os_tenant_id: { get_param: os_tenant_id }
           backend_port: { get_param: appserver_port }
           pool_id: { get_resource: pool }
           heatstack_id: { get_param: 'OS::stack_id' }
+          security_groups: [ { get_resource: sg_lb } ]
 
 #  ### Prometheus as resource group ###
 #  #######################
@@ -202,7 +180,6 @@ resources:
           ssh_keys: { get_param: ssh_keys }
           security_groups: [ { get_resource: sg_prometheus}, default ]
           affinity_group: { get_resource: anti-affinity_group }
-          consul_key: { get_param: consul_key }
           os_username: { get_param: os_username }
           os_password: { get_param: os_password }
           os_tenant_id: { get_param: os_tenant_id }
@@ -229,3 +206,24 @@ outputs:
          template: { get_attr: [scale_down_policy, signal_url]}
          params:
            sys11cloud.net: cloud.syseleven.net
+
+  lburl:
+    value:
+      str_replace:
+        template: http://IP_ADDRESS:PORT
+        params:
+          IP_ADDRESS: { get_attr: [ floating_ip_lb, floating_ip_address ] }
+          PORT: { get_param: appserver_port }
+    description: >
+      This URL is the "external" URL that can be used to access the load balancer.
+
+  sec_group_connection:
+    value:
+      str_replace:
+        template: openstack port set --security-group SECGROUP LBPORT 
+        params:
+          SECGROUP: { get_resource: sg_lb }
+          LBPORT: { get_attr: [loadbalancer, vip_port_id ]}
+    description: >
+      This command can be used to connect security groups to the 
+      load balancer port. After the LB is accessible from the outside.
