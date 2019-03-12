@@ -1,0 +1,111 @@
+heat_template_version: ocata
+#
+
+
+parameters:
+  name:
+    type: string
+  network_id:
+    type: string
+  subnet_id:
+    type: string
+  pool_id:
+    type: string
+  backend_port:
+    type: string
+  image:
+    type: string
+  ssh_keys:
+    type: comma_delimited_list
+  affinity_group:
+    type: string
+  consul_key:
+    type: string
+  os_username:
+    type: string
+  os_password:
+    type: string
+  os_tenant_id:
+    type: string
+  heatstack_id:
+    type: string
+
+resources:
+  host:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: name }
+      user_data_format: RAW
+      user_data: { get_resource: cloud-init-config }    
+      image: { get_param: image }
+      flavor: m1.tiny
+      networks:
+        - port: { get_resource: port }
+      scheduler_hints:
+        group: { get_param: affinity_group }
+
+  cloud-init-config:
+   # cloud init resource
+   type: OS::Heat::CloudConfig
+   properties:
+     cloud_config:
+       manage_etc_hosts: true
+       users:
+          - name: syseleven
+            gecos: SysEleven Stack user
+            sudo: ALL=(ALL) NOPASSWD:ALL
+            shell: /bin/bash
+            ssh-authorized-keys: { get_param: ssh_keys }
+       write_files:
+          - content: { get_file: scripts/install_consul.sh }
+            permissions: '0500'
+            path: /root/bootstrap_consul.sh
+          - content: { get_file: scripts/setup_prometheus_node.sh }
+            permissions: '0500'
+            path: /root/setup_prometheus_node.sh
+          - content: { get_file: scripts/node_exporter.json }
+            permissions: '0444'
+            path: /etc/consul.d/node_exporter.json
+          - content: { get_file: scripts/app.json }
+            permissions: '0444'
+            path: /etc/consul.d/appserver.json
+          - content:
+              str_replace:
+                template: { get_file: scripts/consul_server.json }
+                params:
+                  "%heatstack_id%": { get_param: heatstack_id }
+            permissions: '0400'
+            path: /etc/consul.d/server.json
+          - content:
+              str_replace:
+                template: { get_file: scripts/consul_env }
+                params:
+                  "%os_username%": { get_param: os_username }
+                  "%os_password%": { get_param: os_password }
+                  "%os_tenant%": { get_param: os_tenant_id }
+            permissions: '0500'
+            path: /etc/sysconfig/consul
+
+       runcmd:
+         - [ /root/bootstrap_consul.sh, {get_param: consul_key } ]
+         - [ /root/setup_prometheus_node.sh ]
+
+       packages:
+         - curl
+         - unzip
+         - iptables-persistent
+         - nginx
+             
+  port:
+    type: OS::Neutron::Port
+    properties:
+      security_groups: [default]
+      network: { get_param: network_id }
+
+  pool_member:
+    type: OS::Neutron::LBaaS::PoolMember
+    properties:
+      pool: { get_param: pool_id }
+      address: { get_attr: [ host, first_address ]}
+      protocol_port: { get_param: backend_port }
+      subnet: { get_param: subnet_id }

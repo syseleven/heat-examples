@@ -1,0 +1,3 @@
+{
+"retry_join": [ "auth_url=https://keystone.cloud.syseleven.net:5000/v2.0 region=dbl  provider=os tag_key=role tag_value=consul-server-%heatstack_id%" ]
+}

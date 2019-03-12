@@ -1,0 +1,3 @@
+OS_PASSWORD="%os_password%"
+OS_TENANT_ID="%os_tenant%"
+OS_USERNAME="%os_username%"
