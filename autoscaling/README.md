@@ -1,9 +1,10 @@
+# Autoscaling using heat and prometheus
 
-This repository contains heat code examples that will demonstrate autoscaling with heat. 
+This example contains heat code that will demonstrate autoscaling with heat. 
 
-This template starts one appservers and a prometheus server. The prometheus servers has one alert that triggers the autoscaling of the appserver group. 
+This template starts one appservers and a prometheus server. The prometheus server has one alert that triggers the upscaling of the appserver group. 
 
-The prometheus server requires openstack credentials. 
+The prometheus server requires openstack credentials to auto generate server inventory. 
 
 You can create a stack with the following command:
 
