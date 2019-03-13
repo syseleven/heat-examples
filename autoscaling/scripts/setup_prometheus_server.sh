@@ -44,8 +44,6 @@ alerting:
 # Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
 rule_files:
   - rules.yml
-  # - "first_rules.yml"
-  # - "second_rules.yml"
 
 # A scrape configuration containing exactly one endpoint to scrape:
 # Here it's Prometheus itself.
@@ -103,16 +101,24 @@ EOF
 
 cat <<EOF > /opt/prometheus/rules.yml
 groups:
-- name: load appserver
-  rules:
-  - alert: load
-    expr: avg(node_load1{node_name=~"app.*"}) > 0.3
-    for: 1m
-    labels:
-      severity: upscale
-    annotations:
-      summary: Example alert to trigger a heat upscaling
+  - name: load appserver
+    rules:
+    - alert: load
+      expr: avg(node_load1{node_name="app"}) > 0.3
+      for: 30s
+      labels:
+        severity: upscale
+      annotations:
+        summary: Example alert to trigger a heat upscaling
 
+  - name: instance error
+    rules:
+    - alert: instance_error
+      expr: node_load1{node_name="app", status="ERROR"}
+      labels:
+        severity: instance_error
+      annotations:
+        summary: Replace a server that is in error state
 EOF
 
 touch /opt/prometheus/rules.yml
@@ -159,22 +165,14 @@ route:
   group_by: ['alertname']
   group_wait: 10s
   group_interval: 10s
-  repeat_interval: 1h
+  repeat_interval: 15m
   receiver: 'web.hook'
 
 receivers:
-- name: 'web.hook'
-  webhook_configs:
-  - url: 'http://127.0.0.1:5001/'
-    send_resolved: false
-inhibit_rules:
-  - source_match:
-      severity: 'critical'
-    target_match:
-      severity: 'warning'
-    equal: ['alertname', 'dev', 'instance']
-
-
+  - name: 'web.hook'
+    webhook_configs:
+    - url: 'http://127.0.0.1:5001/'
+      send_resolved: true
 EOF
 
 chown prometheus /opt/prometheus/alertmanager
@@ -182,12 +180,13 @@ chown prometheus /opt/prometheus/alertmanager.yml
 chown prometheus /opt/prometheus/amtool
 
 
-cat <<EOF > /opt/prometheus/upscale.sh
-#!/bin/bash 
+cat <<EOF > /opt/prometheus/scale.sh
+#!/bin/bash
 
 set -e
 
 scale_up_url="${5/sys11cloud.net/cloud.syseleven.net}"
+scale_down_url="${6/sys11cloud.net/cloud.syseleven.net}"
 
 export OS_AUTH_URL=https://keystone.cloud.syseleven.net:5000
 export OS_PASSWORD=$2
@@ -195,12 +194,33 @@ export OS_USERNAME=$1
 export OS_PROJECT_ID=$3
 
 token=\$(openstack token issue -c id -f value)
-curl -s -H "X-Auth-Token: \$token" -X POST "\$scale_up_url"
+
+
+if [[ "\$AMX_ALERT_1_LABEL_severity" == "upscale" ]]; then
+    if [[ "\$AMX_ALERT_1_STATUS" == "firing" ]]; then
+        echo "Start a new appserver"
+        curl -s -H "X-Auth-Token: \$token" -X POST "\$scale_up_url"
+    else
+        echo "Delete an appserver"
+        curl -s -H "X-Auth-Token: \$token" -X POST "\$scale_down_url"
+    fi
+fi
+
+
+if [[ "\$AMX_ALERT_1_LABEL_severity" == "instance_error" ]] &&  [[ "\$AMX_ALERT_1_STATUS" == "firing" ]]; then
+
+    echo "Start a new appserver"
+	curl -s -H "X-Auth-Token: \$token" -X POST "\$scale_up_url"
+
+	echo "Delete server in error state: \$AMX_ALERT_1_LABEL_openstack_id"
+	openstack server delete \$AMX_ALERT_1_LABEL_openstack_id
+fi
+
 
 EOF
 
-chown prometheus /opt/prometheus/upscale.sh
-chmod 500 /opt/prometheus/upscale.sh
+chown prometheus /opt/prometheus/scale.sh
+chmod 500 /opt/prometheus/scale.sh
 
 cat <<EOF > /etc/systemd/system/prometheus-am-executor.service 
 
@@ -212,7 +232,7 @@ After=network-online.target
 [Service]
 User=prometheus
 Type=simple
-ExecStart=/opt/prometheus/prometheus-am-executor -l 127.0.0.1:5001 -v /opt/prometheus/upscale.sh
+ExecStart=/opt/prometheus/prometheus-am-executor -l 127.0.0.1:5001 -v /opt/prometheus/scale.sh
 
 [Install]
 WantedBy=multi-user.target

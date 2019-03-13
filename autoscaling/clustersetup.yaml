@@ -97,8 +97,6 @@ resources:
       name: allow HTTP and Prometheus traffic
       rules:
         - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 80, port_range_max: 80, protocol: tcp }
-        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 9090, port_range_max: 9090, protocol: tcp }
-        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 9093, port_range_max: 9093, protocol: tcp }
         - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, protocol: icmp }
 
   floating_ip_lb:
@@ -161,9 +159,9 @@ resources:
       name: allow incoming traffic, tcp port 22 and icmp
       rules:
         - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 22, port_range_max: 22, protocol: tcp }
-#        - { direction: ingress, remote_ip_prefix: { get_param: remote_network_cidr }, port_range_min: 9100, port_range_max: 9100, protocol: tcp }
-#        - { direction: ingress, remote_ip_prefix: { get_param: remote_network_cidr }, port_range_min: 9090, port_range_max: 9090, protocol: tcp }
-#        - { direction: ingress, remote_ip_prefix: { get_param: remote_network_cidr }, port_range_min: 9093, port_range_max: 9094, protocol: tcp }
+        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 9100, port_range_max: 9100, protocol: tcp }
+        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 9090, port_range_max: 9090, protocol: tcp }
+        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 9093, port_range_max: 9093, protocol: tcp }
         - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, protocol: icmp }
 
   prometheus_group:
