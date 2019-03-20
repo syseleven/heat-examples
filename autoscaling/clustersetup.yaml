@@ -155,8 +155,8 @@ resources:
   sg_prometheus:
     type: OS::Neutron::SecurityGroup
     properties:
-      description: allow incoming SSH and ICMP traffic from anywhere.
-      name: allow incoming traffic, tcp port 22 and icmp
+      description: allow accessing pports 22, 9100, 9090 9093.
+      name: allow prometheus traffic
       rules:
         - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 22, port_range_max: 22, protocol: tcp }
         - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 9100, port_range_max: 9100, protocol: tcp }
