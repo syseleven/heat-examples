@@ -1,6 +1,4 @@
 parameters:
-  public_network: ext-net
-  flavor: l1.tiny
+  image: "Ubuntu 18.04 LTS sys11 optimized - 2018-08-13"
   ssh_keys:
     - 'ssh-rsa AAAAB [...] QQRnnQ== user@host'
- 

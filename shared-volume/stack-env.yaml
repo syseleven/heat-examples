@@ -1,6 +1,4 @@
 parameters:
-  public_network: ext-net
-  flavor: l1.tiny
   ssh_keys:
     - 'ssh-rsa AAAAB [...] QQRnnQ== user@host'
- 
+  volume_id: 66489efd-10d6-47f0-b9f6-285fa0b560de

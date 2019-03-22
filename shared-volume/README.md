@@ -19,30 +19,26 @@ openstack stack create -t persistent_volume.yaml volume_storage
 openstack volume list
 ```
 
-## Paste Cinder volume ID into the parameter section
+## Paste Cinder volume ID into the parameter section in the stack-env.yaml file
 
 ```shell
 parameters:
 
 ...
 
-volume_id:
-  type: string
-  default: "6f603cae-10e2-4b32-b1ad-a285e5edf2ae"
+volume_id: "6f603cae-10e2-4b32-b1ad-a285e5edf2ae"
 ```
 
 
-## Paste your SSH Key
+## Paste your SSH Key in the stack-env.yaml file
 
 ```shell
 parameters:
 
 ...
 
-ssh-keys:
-    type: comma_delimited_list
-    default:
-      - 'ssh-rsa AAAAB3NzaC1yc2...
+ssh_keys:
+    - 'ssh-rsa AAAAB3NzaC1yc2...
 ```
 
 ## Create NFS client/server stack
@@ -50,6 +46,6 @@ ssh-keys:
 Create the stack with the following command
 
 ```shell
-openstack stack create -t stack.yaml demo_stack
+openstack stack create -t stack.yaml -e stack-env.yaml demo_stack
 ```
 

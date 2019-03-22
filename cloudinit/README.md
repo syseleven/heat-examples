@@ -7,7 +7,7 @@ To be able to access the machine a security group gets deployed to allow ssh. Ke
 
 ## Usage
 
-`openstack stack create -t userExample.yaml <stackName>`
+`openstack stack create -t userExample.yaml -e userExampleEnv.yaml <stackName>`
 
 This will start an instances with access from public network.
 

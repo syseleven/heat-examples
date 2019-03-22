@@ -11,7 +11,7 @@ parameters:
     type: string
   volume_id:
     type: string
-  ssh-keys:
+  ssh_keys:
     type: comma_delimited_list
 
 resources:
@@ -70,7 +70,7 @@ resources:
              lock-passwd: false
              sudo: ALL=(ALL) NOPASSWD:ALL
              shell: /bin/bash
-             ssh-authorized-keys: { get_param: ssh-keys }
+             ssh-authorized-keys: { get_param: ssh_keys }
 
 outputs:
   lb_ip:

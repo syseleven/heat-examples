@@ -12,10 +12,8 @@ parameters:
   volume_id:
     type: string
     default: 
-  ssh-keys:
+  ssh_keys:
     type: comma_delimited_list
-    default: 
-      - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDN7WgiiXGQju8PlZ2IVoQygxeLzxvt2baZx9Q1JmfHed6Pxz+yiibbWiZIMDYiu76FSf6SENoUdSb56jcuFv4CCfu1lnLa3p/si/ic7BlDeIs6754cqdQTMlHShPw9z69cJKdd0qsA5KPBL7tEzCUWrRDidsiHza9cj/mlZ7w5X6+BUhXYa/0UK6cjkYD/T7qHhgYAGCalhwRIIPdoFhllkGaoO5r0gUgvkv1PFpK7psNfuxbuA4th0gU4Qhgj8hTpmcRFceneIwG9ZpEIbhbfyQcA3pPSZFDGsdcnDhHMHXHZsjGLca1lXDh7izn3t8fHLXAjwMnw5OdsNu6vARk+JZsZprrwSi++WWd43KUeGNdr5KLgHQDaNiLhgBKwZk+4ZpK1BAl4PZidX6P+idu4qWHNEv49yzxfI+puPbwhNBtWIrehZVKSah9/ALYtDyYBtMRyF9i9fW4O17Ov5dR10vrq4Mm6NlBJynCFjMY6z8hZFZCHc3QnPLCwfIeRH2PRMJonF5+wsyc4kxCwqK1HLsvwSFcAVdsEtFeppEEq5/WjDiv6sb62h+lckL/hXm+Y3rKULpEoHuVl/BX/rwCI1c6ES6asLQ3ZkEYo/0s3FnzZlu2qEYERddUAmzunAPx3fzcMjNUsEmpZS1uXUOFIenL+rj1kSmDfb90fQQRnnQ== dschwabe@dschwabe'
 
 resources:
   syseleven_net:
@@ -60,7 +58,7 @@ resources:
         properties:
           name: nfs-server%index%
           syseleven_net: { get_resource: syseleven_net }
-          ssh-keys: { get_param: ssh-keys }
+          ssh_keys: { get_param: ssh_keys }
           public_network: { get_param: public_network }
           volume_id: { get_param: volume_id } 
 
@@ -76,5 +74,5 @@ resources:
         properties:
           name: nfs-client%index%
           syseleven_net: { get_resource: syseleven_net }
-          ssh-keys: { get_param: ssh-keys }
+          ssh_keys: { get_param: ssh_keys }
 
