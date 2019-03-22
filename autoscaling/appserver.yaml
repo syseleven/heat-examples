@@ -68,7 +68,6 @@ resources:
     type: OS::Neutron::Port
     properties:
       security_groups: { get_param: security_groups }
-      security_groups: [default]
       network: { get_param: network_id }
 
   pool_member:
