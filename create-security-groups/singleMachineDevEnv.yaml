@@ -13,14 +13,21 @@ description: Simple template to deploy a single compute instance
   with external network and associated security group.
 
 parameters:
- key_name:
-  type: string
- public_network:
-  type: string
-  default: ext-net
- ip_whitelist:
-  type: string
-  description: ip address or range in CIDR
+  key_name:
+    type: string
+    constraints:
+      - custom_constraint: nova.keypair
+    
+  public_network:
+    type: string
+    default: ext-net
+    constraints:
+      - custom_constraint: neutron.network
+  ip_whitelist:
+    type: string
+    description: ip address or range in CIDR
+    constraints:
+      - custom_constraint: net_cidr
 
 
 resources:

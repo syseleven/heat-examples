@@ -5,6 +5,8 @@ description: single server resource used by resource groups.
 parameters:
   network_id:
     type: string
+    constraints:
+      - custom_constraint: neutron.network
   server_name:
     type: string
 

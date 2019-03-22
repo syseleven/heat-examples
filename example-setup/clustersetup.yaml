@@ -26,20 +26,32 @@ parameters:
     default: 1
   public_network:
     type: string
+    constraints:
+      - custom_constraint: neutron.network
   flavor_lb:
     type: string
     default: m1.micro
+    constraints:
+      - custom_constraint: nova.flavor
   flavor_appserver:
     type: string
     default: m1.micro
+    constraints:
+      - custom_constraint: nova.flavor
   flavor_dbserver:
     type: string
     default: m1.micro
+    constraints:
+      - custom_constraint: nova.flavor
   flavor_servicehost:
     type: string
     default: m1.micro
+    constraints:
+      - custom_constraint: nova.flavor
   image: 
     type: string
+    constraints:
+      - custom_constraint: glance.image
   consul_mastertoken_length:
     type: number
     default: 30

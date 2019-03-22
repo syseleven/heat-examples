@@ -11,10 +11,16 @@ parameters:
   public_network:
     type: string
     default: ext-net
+    constraints:
+      - custom_constraint: neutron.network
   key_name:
     type: string
+    constraints:
+      - custom_constraint: nova.keypair
   image:
     type: string
+    constraints:
+      - custom_constraint: glance.image
 
 resources:
 

@@ -9,6 +9,8 @@ parameters:
   image: 
     type: string
     default: "Ubuntu 16.04 LTS sys11 optimized 2018.03.21"
+    constraints:
+      - custom_constraint: glance.image
   ssh_keys:
     type: comma_delimited_list
   os_username:

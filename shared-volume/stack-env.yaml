@@ -1,4 +1,4 @@
 parameters:
   ssh_keys:
     - 'ssh-rsa AAAAB [...] QQRnnQ== user@host'
-  volume_id: 66489efd-10d6-47f0-b9f6-285fa0b560de
+  volume_id: a1f3fb33-8698-4f88-8c73-da76bb764738

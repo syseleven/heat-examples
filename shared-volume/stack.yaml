@@ -9,9 +9,12 @@ parameters:
   public_network:
     type: string
     default: ext-net 
+    constraints:
+      - custom_constraint: neutron.network
   volume_id:
     type: string
-    default: 
+    constraints:
+      - custom_constraint: cinder.volume
   ssh_keys:
     type: comma_delimited_list
 

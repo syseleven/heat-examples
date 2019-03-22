@@ -12,6 +12,8 @@ description: Stack that launches a single server
 parameters:
   public_network:
     type: string
+    constraints:
+      - custom_constraint: neutron.network
   floating_ip:
     type: string
     constraints:
@@ -19,8 +21,12 @@ parameters:
         description: "The ID of a floating IP address"
   image:
     type: string
+    constraints:
+      - custom_constraint: glance.image
   flavor:
     type: string
+    constraints:
+      - custom_constraint: nova.flavor
   ssh_keys:
     type: comma_delimited_list
 

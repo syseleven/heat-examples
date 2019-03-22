@@ -15,17 +15,26 @@ description: Simple template to deploy a single compute instance with a user nam
   This template is prepared to be used with https://dashboard.cloud.syseleven.net.
 
 parameters:
- key_name:
-   type: string
- image:
-   type: string
-   default: Ubuntu 16.04 LTS sys11 optimized 2018.03.21
- flavor:
-   type: string
-   default: m1.tiny
- public_network:
-   type: string
-   default: ext-net
+  key_name:
+    type: string
+    constraints:
+      - custom_constraint: nova.keypair
+   
+  image:
+    type: string
+    default: Ubuntu 16.04 LTS sys11 optimized 2018.03.21
+    constraints:
+      - custom_constraint: glance.image
+  flavor:
+    type: string
+    default: m1.tiny
+    constraints:
+      - custom_constraint: nova.flavor
+  public_network:
+    type: string
+    default: ext-net
+    constraints:
+      - custom_constraint: neutron.network
 
 resources:
 

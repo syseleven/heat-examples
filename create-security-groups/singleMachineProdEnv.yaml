@@ -13,13 +13,19 @@ description: Simple template to deploy a single compute instance
   with external network and associated security group (login will be possible through vnc console and via SSH).
 
 parameters:
- key_name:
-  type: string
- public_network:
-  type: string
-  default: ext-net
- ip_whitelist:
-  type: string
+  key_name:
+    type: string
+    constraints:
+      - custom_constraint: nova.keypair
+  public_network:
+    type: string
+    default: ext-net
+    constraints:
+      - custom_constraint: neutron.network
+  ip_whitelist:
+    type: string
+    constraints:
+      - custom_constraint: net_cidr
 
 resources:
   allow_http:

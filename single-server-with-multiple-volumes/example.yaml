@@ -16,8 +16,12 @@ parameters:
       - custom_constraint: neutron.network
   image:
     type: string
+    constraints:
+      - custom_constraint: glance.image
   flavor:
     type: string
+    constraints:
+      - custom_constraint: nova.flavor
   ssh_keys:
     type: comma_delimited_list
   volume_size_db:
