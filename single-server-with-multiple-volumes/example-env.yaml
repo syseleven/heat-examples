@@ -5,5 +5,5 @@ parameters:
   volume_size_db: 30
   volume_size_www: 50
   ssh_keys:
-      - 'ssh-rsa AAAAB [...] QQRnnQ== user@host'
+    - 'ssh-rsa AAAAB [...] QQRnnQ== user@host'
  
