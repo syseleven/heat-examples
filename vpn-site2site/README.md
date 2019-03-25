@@ -12,7 +12,8 @@ The result will be a VPN-Service running in region CBK, a VPN-Service running in
 
 These services are built high available running as distributed objects in our software defined network.
 
-Part of this example is also a simpel testserver per region you can login to (if you give your puzblic SSH-key as a parameter obviously).
+Part of this example is also a simple testserver per region you can login to (if you give your public SSH-key as a parameter obviously). 
+
 These VMs are only meant as a placeholder for your own infrastructure.
 
 

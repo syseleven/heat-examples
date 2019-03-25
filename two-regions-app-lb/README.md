@@ -3,7 +3,7 @@
 ## Overview
 
 Using this template you can launch a simple application setup split over two regions and behind a load-balancer. You only need to enter your ssh key in the parameter
-section of the `masterstack.yaml` template.  
+section of the `masterstack-env.yaml` template.  
 The stack overview shows the FIP(s) as well as the security group assignment command example in the outputs section.
 
 ![network topology](img/tworegionsapplbhorizonstackoutput.png)
@@ -12,8 +12,8 @@ The stack overview shows the FIP(s) as well as the security group assignment com
 
 ### Initial launch
 
-- Configure your ssh key in the parameter of the `masterstack.yaml` template.
-- Create a stack with this template: `openstack stack create -t masterstack.yaml <new stackName>`
+- Configure your ssh key in the parameter of the `masterstack-env.yaml` template.
+- Create a stack with this template: `openstack stack create -t masterstack.yaml -e masterstack-env.yaml <new stackName>`
 - Once the stack creation has finished and every resource was built the LB port requires a security group. The command how to assign the security group to the LB port is shown in the output section of the masterstack. It needs to be executed in region dbl, since the load-balancer runs there.
 
 ## Code organisation

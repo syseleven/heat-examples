@@ -6,13 +6,17 @@ description: simple test server
 parameters:
   network_id:
     type: string
+    constraints:
+      - custom_constraint: neutron.network
   image:
     type: string
     default: "Ubuntu 16.04 LTS sys11 optimized 2018.03.21" 
+    constraints:
+      - custom_constraint: glance.image
   ssh_keys:
     type: comma_delimited_list
     default: 
-      - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC4sRbOBEPsGGvYTI5OZ8qpq4AOocVar+6XRbKrOUozk6dPN62267U8MasvO5YFNwX1hJRA+pA6JTMgzGjJgJSrhzjTh+WLpNKr70UtGmI5bOrwjrvEsROhfJArt9iMwPPoDSAURnW0Oekm5SXknxK6NrGvDB8wGOI+T2fgUiCDL/8rVk8+WCNaknKvWbtvTeXgUPvvE+X+zpRgtQH+rwZHF7zU066KE9tqslXJHfl/dRQfm8a0k8HFIkliqmyVBOesK4S/beDDfgffBlX14EqTXY6dHwR1I2kYfI2nfTwUKyzE77aRNuvkoFiGlRPpWf2ty/yo5RgHDGSjrTf56r7r jan@x230'
+      - 'ssh-rsa AAAAB [...] QQRnnQ== user@host'
 
 resources:
   allow_ssh:

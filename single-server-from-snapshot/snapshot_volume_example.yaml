@@ -5,15 +5,19 @@ heat_template_version: 2014-10-16
 # 'openstack stack create -t example.yaml  <stackName>'
 #
 
-description: Simple template to deploy a single compute instance from an image snapshot.
+description: Simple template to deploy a single compute instance from an volume snapshot.
 
 parameters:
   public_network:
     type: string
     default: ext-net
+    constraints:
+      - custom_constraint: neutron.network
   key_name:
     type: string
-  image:
+    constraints:
+      - custom_constraint: nova.keypair
+  snapshot:
     type: string
 
 resources:
@@ -31,10 +35,11 @@ resources:
     type: OS::Nova::Server
     depends_on: [ example_port ]
     properties:
-      image: { get_param: image }
       flavor: m1.small
       user_data_format: RAW
       key_name: {get_param: key_name}
+      block_device_mapping: 
+        - { device_name: "vda", snapshot_id : { get_param: snapshot }, delete_on_termination : "false" } 
       networks:
         - port: { get_resource: example_port }
 

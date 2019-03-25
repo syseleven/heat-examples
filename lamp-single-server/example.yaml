@@ -15,12 +15,19 @@ description: Simple template to deploy a lamp stack
 parameters:
   key_name:
     type: string
+    constraints:
+      - custom_constraint: nova.keypair
   public_network:
     type: string
     default: ext-net 
+    constraints:
+      - custom_constraint: neutron.network
   image:
     type: string
     default: "Ubuntu 16.04 LTS sys11 optimized 2018.03.21" 
+    constraints:
+      - custom_constraint: glance.image
+
 
 resources:
   allow_ssh:

@@ -13,12 +13,18 @@ parameters:
   public_network:
     type: string
     default: ext-net
+    constraints:
+      - custom_constraint: neutron.network
   flavor:
     type: string
     default: m1.micro
+    constraints:
+      - custom_constraint: nova.flavor
   image:
     type: string
     default: private_coreos
+    constraints:
+      - custom_constraint: glance.image
 
 resources:
   coreos_net:

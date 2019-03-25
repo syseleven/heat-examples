@@ -8,7 +8,8 @@ parameters:
 
   key_name:
     type: string
-    default: ""
+    constraints:
+      - custom_constraint: nova.keypair
   app_port:
     type: number
     default: 80
@@ -18,13 +19,13 @@ parameters:
     description: Flavor used for servers
     default: m1.tiny
     constraints:
-    - custom_constraint: nova.flavor
+      - custom_constraint: nova.flavor
   image:
     type: string
     description: Image used for servers
     default: "Ubuntu 16.04 LTS sys11 optimized 2018.03.21" 
     constraints:
-    - custom_constraint: glance.image
+      - custom_constraint: glance.image
   lb_port:
     type: number
     default: 80
@@ -34,7 +35,7 @@ parameters:
     description: Network used by the load balancer
     default: ext-net 
     constraints:
-    - custom_constraint: neutron.network
+      - custom_constraint: neutron.network
   number_upstreams:
     type: string
     default: 4
