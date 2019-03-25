@@ -17,8 +17,8 @@ subDirectories.forEach((directory) => {
     let hasErrors = false;
     const exampleName = directory.split('/').slice(-2, -1)[0];
 
-    if (!exampleName.match(/^[a-z\-]+$/)) {
-        leprechaun.error(`Example folder ${exampleName} should only contain lowercase characters and dashes`);
+    if (!exampleName.match(/^[a-z0-9\-]+$/)) {
+        leprechaun.error(`Example folder ${exampleName} should only contain lowercase characters, numbers and dashes`);
         hasErrors = true;
         hasGlobalErrors = true;
     }
