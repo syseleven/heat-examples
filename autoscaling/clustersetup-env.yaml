@@ -1,5 +1,5 @@
 parameters:
-  image: Ubuntu 18.04 LTS sys11 optimized - 2018-08-13 
+  image: Ubuntu Xenial 16.04 (2019-03-27)
   ssh_keys:
     - 'ssh-rsa AAAAB3 [...] evCC62Lw== user@host'
 

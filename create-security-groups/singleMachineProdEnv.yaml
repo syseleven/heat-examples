@@ -53,7 +53,7 @@ resources:
     type: OS::Nova::Server
     properties:
       key_name: { get_param: key_name }
-      image: Ubuntu 16.04 LTS sys11 optimized 2018.03.21
+      image: Ubuntu Xenial 16.04 (2019-03-27)
       flavor: m1.micro
       user_data_format: RAW
       networks:
