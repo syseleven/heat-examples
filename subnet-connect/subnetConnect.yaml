@@ -10,8 +10,6 @@ parameters:
   public_network:
     type: string
     default: ext-net 
-    constraints:
-      - custom_constraint: neutron.network
   key_name:
     type: string
     constraints:

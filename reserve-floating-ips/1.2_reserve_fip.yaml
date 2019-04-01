@@ -5,8 +5,7 @@ description: Reserve permanent fip
 parameters:
   public_network:
     type: string
-    constraints:
-      - custom_constraint: neutron.network
+    default: ext-net
 
 resources:
   fip:

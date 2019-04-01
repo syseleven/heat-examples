@@ -34,8 +34,6 @@ parameters:
     type: string
     description: Network used by the load balancer
     default: ext-net 
-    constraints:
-      - custom_constraint: neutron.network
   number_upstreams:
     type: string
     default: 4
