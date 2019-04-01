@@ -11,8 +11,6 @@ parameters:
   public_network:
     type: string
     default: ext-net
-    constraints:
-      - custom_constraint: neutron.network
   flavor:
     type: string
     constraints:
