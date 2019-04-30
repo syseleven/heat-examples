@@ -67,7 +67,7 @@ resources:
         list_join: [ '-', [ { get_param: "OS::stack_name" }, 'example-server' ]]
       user_data_format: RAW
       user_data: { get_resource: cloud-init-config }    
-      image: Ubuntu Bionic 18.04 (2019-04-27)
+      image: Ubuntu Bionic 18.04 (2019-04-30)
       flavor: { get_param: flavor } 
       networks:
         - port: { get_resource: port }
