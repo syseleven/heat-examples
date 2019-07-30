@@ -1,6 +1,6 @@
 parameters:
   public_network: ext-net
-  image: Ubuntu Xenial 16.04 (2019-07-26)
+  image: Ubuntu Xenial 16.04 (2019-07-30)
   flavor: m1.tiny
   volume_size_db: 30
   volume_size_www: 50
