@@ -14,7 +14,7 @@ resources:
   nfs_server:
     type: OS::Nova::Server 
     properties:
-      image: Ubuntu Xenial 16.04 (2019-08-01)
+      image: Ubuntu Xenial 16.04 (2019-08-07)
       user_data_format: RAW
       user_data: { get_resource: cloud-init-config }
       name:  { get_param: name }

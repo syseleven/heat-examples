@@ -79,7 +79,7 @@ resources:
     properties:
       key_name: { get_param: key_name }
       user_data_format: RAW
-      image: Ubuntu Xenial 16.04 (2019-08-01)
+      image: Ubuntu Xenial 16.04 (2019-08-07)
       flavor: m1.micro
       name: manager
       networks:
@@ -96,7 +96,7 @@ resources:
     properties:
       key_name: { get_param: key_name }
       user_data_format: RAW
-      image: Ubuntu Xenial 16.04 (2019-08-01)
+      image: Ubuntu Xenial 16.04 (2019-08-07)
       flavor: m1.micro
       name: appserver
       networks:
