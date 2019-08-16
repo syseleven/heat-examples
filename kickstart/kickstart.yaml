@@ -22,7 +22,7 @@ parameters:
    
   image:
     type: string
-    default: Ubuntu Xenial 16.04 (2019-08-09)
+    default: Ubuntu Xenial 16.04 (2019-08-16)
     constraints:
       - custom_constraint: glance.image
   flavor:
