@@ -1,7 +1,7 @@
 parameters:
   public_network: ext-net
   floating_ip: ID_OF_FLOATING_IP_GOES_HERE
-  image: Ubuntu Xenial 16.04 (2019-09-12)
+  image: Ubuntu Xenial 16.04 (2019-09-17)
   flavor: m1.micro
   ssh_keys:
     - 'ssh-rsa AAAAB [...] QQRnnQ== user@host'
