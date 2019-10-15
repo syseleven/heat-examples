@@ -22,7 +22,7 @@ parameters:
     default: ext-net 
   image:
     type: string
-    default: Ubuntu Xenial 16.04 (2019-10-11)
+    default: Ubuntu Xenial 16.04 (2019-10-15)
     constraints:
       - custom_constraint: glance.image
 
