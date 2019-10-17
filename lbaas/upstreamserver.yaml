@@ -15,7 +15,7 @@ parameters:
   image:
     type: string
     description: Image used for servers
-    default: Ubuntu Xenial 16.04 (2019-10-15)
+    default: Ubuntu Xenial 16.04 (2019-10-17)
     constraints:
     - custom_constraint: glance.image
   pool:
