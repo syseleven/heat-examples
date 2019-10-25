@@ -32,7 +32,7 @@ resources:
       name: demo 
       user_data_format: RAW
       user_data: { get_resource: cloud-init-config }
-      image: Ubuntu Xenial 16.04 (2019-10-22)
+      image: Ubuntu Xenial 16.04 (2019-10-25)
       flavor: m1.micro
       networks:
         - port: { get_resource: port }
