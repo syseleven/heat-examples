@@ -1,7 +1,7 @@
 parameters:
   public_network: ext-net
   net: ID_OF_NETWORK_GOES_HERE
-  image: Ubuntu Xenial 16.04 (2019-11-27)
+  image: Ubuntu Xenial 16.04 (2019-12-06)
   flavor: m1.tiny
   ssh_keys:
     - 'ssh-rsa AAAAB [...] QQRnnQ== user@host'
