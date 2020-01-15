@@ -9,7 +9,7 @@ parameters:
   flavor:
     type: string
     description: Flavor used for servers
-    default: m1.micro
+    default: m1.tiny
     constraints:
     - custom_constraint: nova.flavor
   image:

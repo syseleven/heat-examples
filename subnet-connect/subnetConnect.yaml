@@ -80,7 +80,7 @@ resources:
       key_name: { get_param: key_name }
       user_data_format: RAW
       image: Ubuntu Xenial 16.04 (2020-01-15)
-      flavor: m1.micro
+      flavor: m1.tiny
       name: manager
       networks:
         - port: { get_resource: mgm_node_port }
@@ -97,7 +97,7 @@ resources:
       key_name: { get_param: key_name }
       user_data_format: RAW
       image: Ubuntu Xenial 16.04 (2020-01-15)
-      flavor: m1.micro
+      flavor: m1.tiny
       name: appserver
       networks:
         - port: { get_resource: appserver_port }
