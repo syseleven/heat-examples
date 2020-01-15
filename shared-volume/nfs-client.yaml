@@ -18,7 +18,7 @@ resources:
       user_data_format: RAW
       user_data: { get_resource: cloud-init-config }
       name:  { get_param: name }
-      flavor: m1.micro
+      flavor: m1.tiny
       networks:
         - port: { get_resource: syseleven_port }
   

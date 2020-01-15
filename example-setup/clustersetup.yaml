@@ -29,22 +29,22 @@ parameters:
     default: ext-net
   flavor_lb:
     type: string
-    default: m1.micro
+    default: m1.tiny
     constraints:
       - custom_constraint: nova.flavor
   flavor_appserver:
     type: string
-    default: m1.micro
+    default: m1.tiny
     constraints:
       - custom_constraint: nova.flavor
   flavor_dbserver:
     type: string
-    default: m1.micro
+    default: m1.tiny
     constraints:
       - custom_constraint: nova.flavor
   flavor_servicehost:
     type: string
-    default: m1.micro
+    default: m1.tiny
     constraints:
       - custom_constraint: nova.flavor
   image: 

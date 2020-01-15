@@ -33,7 +33,7 @@ resources:
       user_data_format: RAW
       user_data: { get_resource: cloud-init-config }
       image: Ubuntu Xenial 16.04 (2020-01-15)
-      flavor: m1.micro
+      flavor: m1.tiny
       networks:
         - port: { get_resource: port }
 
