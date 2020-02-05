@@ -1,4 +1,4 @@
 parameters:
-  image: Ubuntu Xenial 16.04 (2020-01-30)
+  image: Ubuntu Xenial 16.04 (2020-02-05)
   ssh_keys:
     - 'ssh-rsa AAAAB [...] QQRnnQ== user@host'
