@@ -9,7 +9,7 @@ parameters:
     type: string
   image:
     type: string
-    default: Ubuntu Xenial 16.04 (2020-02-05)
+    default: Ubuntu Xenial 16.04 (2020-02-13)
   security_groups:
     type: comma_delimited_list
   ssh_keys:
