@@ -8,7 +8,7 @@ parameters:
     default: 80
   image: 
     type: string
-    default: Ubuntu Xenial 16.04 (2020-03-27)
+    default: Ubuntu Xenial 16.04 (2020-04-04)
     constraints:
       - custom_constraint: glance.image
   ssh_keys:
