@@ -51,7 +51,7 @@ resources:
     type: OS::Nova::Server
     properties:
       key_name: { get_param: key_name }
-      image: Ubuntu Xenial 16.04 (2020-04-29)
+      image: Ubuntu Xenial 16.04 (2020-05-01)
       flavor: m1.tiny
       user_data_format: RAW
       networks:
