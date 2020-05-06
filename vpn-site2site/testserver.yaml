@@ -10,7 +10,7 @@ parameters:
       - custom_constraint: neutron.network
   image:
     type: string
-    default: Ubuntu Xenial 16.04 (2020-05-01)
+    default: Ubuntu Xenial 16.04 (2020-05-06)
     constraints:
       - custom_constraint: glance.image
   ssh_keys:
