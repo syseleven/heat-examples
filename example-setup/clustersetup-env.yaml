@@ -1,7 +1,7 @@
 # This parameter file is configured to be used with a 30 Core / 120 GB RAM quota provided by SysEleven GmbH.
 parameters:
   public_network: ext-net
-  image: Ubuntu Xenial 16.04 (2020-05-26)
+  image: Ubuntu Xenial 16.04 (2020-05-27)
 
   # Used resources can be configures with the following parameters
   number_appservers: 4
