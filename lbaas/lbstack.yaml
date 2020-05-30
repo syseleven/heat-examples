@@ -23,7 +23,7 @@ parameters:
   image:
     type: string
     description: Image used for servers
-    default: Ubuntu Xenial 16.04 (2020-05-27)
+    default: Ubuntu Xenial 16.04 (2020-05-26)
     constraints:
       - custom_constraint: glance.image
   lb_port:
