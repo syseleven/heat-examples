@@ -1,7 +1,7 @@
 parameters:
   public_network: ext-net
   security_group: ID_OF_SECURITY_GROUP_GOES_HERE
-  image: Ubuntu Xenial 16.04 (2020-06-11)
+  image: Ubuntu Xenial 16.04 (2020-06-12)
   flavor: m1.tiny
   ssh_keys:
     - 'ssh-rsa AAAAB [...] QQRnnQ== user@host'
