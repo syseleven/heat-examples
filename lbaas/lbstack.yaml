@@ -171,6 +171,7 @@ outputs:
           SECGROUP: { get_resource: sec_group }
           LBPORT: { get_attr: [loadbalancer, vip_port_id ]}
     description: >
-      This command can be used to connect security groups to the 
-      load balancer port. After the LB is accessible from the outside.
+      This command can be used to connect security groups to the
+      load balancer port. You need to attach a security group to the port
+      to allow access to the load balancer.
       
