@@ -127,7 +127,7 @@ resources:
     type: OS::Barbican::Secret
     properties:
       name: certificate
-      payload: { get_file : db.crt }
+      payload: { get_file : { get_param : certificate } }
       payload_content_type: text/plain
       secret_type: opaque
 
@@ -135,7 +135,7 @@ resources:
     type: OS::Barbican::Secret
     properties:
       name: intermediates
-      payload: { get_file : db.crt }
+      payload: { get_file : { get_param : intermediates } }
       payload_content_type: text/plain
       secret_type: opaque
 
@@ -143,7 +143,7 @@ resources:
     type: OS::Barbican::Secret
     properties:
       name: private_key
-      payload: { get_file : db.key }
+      payload: { get_file : { get_param : private_key } }
       payload_content_type: text/plain
       secret_type: opaque
 
