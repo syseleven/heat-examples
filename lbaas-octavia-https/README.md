@@ -1,4 +1,4 @@
-# Minimal load-balanced setup
+# Minimal https load-balanced setup
 
 ## Overview
 
@@ -6,12 +6,18 @@ This is a demonstration of the [Octavia LBaaS](https://docs.openstack.org/octavi
 
 With this example we demonstrate a load balancer setup with the following features:
 
-- an HTTP load balancer
+- an HTTPS load balancer
 - Round Robin LB algorithm
 - Health Monitor for LB pool members (upstream instances)
 - a server group with dynamic number of servers
 - every node installs Apache2 and PHP7.0 FPM via HEAT
 - "Anyapp" as simple PHP application
+
+## Prepare for the setup
+
+You need to have a certificate and the respective key present for executing the stack example
+
+Therefor you need to place an existing certificate and key in this folder (db.crt,db.key) or you generate a self-signed certificate chain using openssl following e.g. [self-signed certificate](https://docs.scylladb.com/operating-scylla/security/generate_certificate/).
 
 ## How to start this setup
 
@@ -31,4 +37,4 @@ You can get the the relevant output field using this command:
 openstack stack show <stackName> -c outputs
 ```
 
-The Anyapp is reachable via `http://<loadbalancerIP>` and shows the IP of the currently-used backend server.
+The Anyapp is reachable via `https://<loadbalancerIP>` and shows the IP of the currently-used backend server.
