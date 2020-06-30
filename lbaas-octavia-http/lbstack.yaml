@@ -23,7 +23,7 @@ parameters:
   image:
     type: string
     description: Image used for servers
-    default: Ubuntu Xenial 16.04 (2020-06-26)
+    default: Ubuntu Xenial 16.04 (2020-06-09)
     constraints:
       - custom_constraint: glance.image
   lb_port:
@@ -91,34 +91,34 @@ resources:
         port_range_max: 80
 
   monitor:
-    type: OS::Neutron::LBaaS::HealthMonitor
+    type: OS::Octavia::HealthMonitor
     depends_on: [ pool ]
     properties:
       delay: 3
-      type: TCP 
+      type: HTTP 
       timeout: 3
       max_retries: 3
       pool: { get_resource: pool }
 
   pool:
-    type: OS::Neutron::LBaaS::Pool
+    type: OS::Octavia::Pool
     depends_on: [ listener ]
     properties:
       lb_algorithm: ROUND_ROBIN
-      protocol: TCP 
+      protocol: HTTP
       listener: { get_resource: listener }
 
   listener:
-    type: OS::Neutron::LBaaS::Listener
+    type: OS::Octavia::Listener
     depends_on: [ loadbalancer ]
     properties:
       loadbalancer: { get_resource: loadbalancer }
-      protocol: TCP 
+      protocol: HTTP
       protocol_port: { get_param: lb_port }
 
   loadbalancer:
     depends_on: [ router_subnet_connect ]
-    type: OS::Neutron::LBaaS::LoadBalancer
+    type: OS::Octavia::LoadBalancer
     properties:
       vip_subnet: { get_resource: syseleven_subnet }
 
@@ -163,15 +163,3 @@ outputs:
     description: >
       This URL is the "external" URL that can be used to access the load balancer.
 
-  sec_group_connection:
-    value:
-      str_replace:
-        template: openstack port set --security-group SECGROUP LBPORT 
-        params:
-          SECGROUP: { get_resource: sec_group }
-          LBPORT: { get_attr: [loadbalancer, vip_port_id ]}
-    description: >
-      This command can be used to connect security groups to the
-      load balancer port. You need to attach a security group to the port
-      to allow access to the load balancer.
-      
