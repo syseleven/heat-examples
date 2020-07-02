@@ -105,11 +105,13 @@ resources:
 
   pool:
     type: OS::Octavia::Pool
-    depends_on: [ listner ]
+    depends_on: [ listener ]
     properties:
       lb_algorithm: ROUND_ROBIN
       protocol: HTTP
-      listener: { get_resource: listner }
+      listener: { get_resource: listener }
+      name:
+        list_join: [ '-', [ { get_param: "OS::stack_name" }, 'pool' ]]
 
   ssl_certificate:
     type: OS::Barbican::Secret
@@ -143,7 +145,7 @@ resources:
       intermediates_ref: { get_resource: ssl_intermediates }
       private_key_ref: { get_resource: ssl_private_key }
 
-  listner:
+  listener:
     type: OS::Octavia::Listener
     depends_on: [ loadbalancer, ssl_cert_container, ssl_certificate, ssl_intermediates, ssl_private_key ]
     properties:
@@ -151,12 +153,16 @@ resources:
       protocol: TERMINATED_HTTPS
       protocol_port: { get_param: https_lb_port }
       default_tls_container_ref: { get_resource: ssl_cert_container }
+      name:
+        list_join: [ '-', [ { get_param: "OS::stack_name" }, 'listener' ]]
 
   loadbalancer:
     depends_on: [ router_subnet_connect ]
     type: OS::Octavia::LoadBalancer
     properties:
       vip_subnet: { get_resource: syseleven_subnet }
+      name:
+        list_join: [ '-', [ { get_param: "OS::stack_name" }, 'lb' ]]
 
   floating_ip:
     type: OS::Neutron::FloatingIP
