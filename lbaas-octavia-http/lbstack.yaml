@@ -107,6 +107,8 @@ resources:
       lb_algorithm: ROUND_ROBIN
       protocol: HTTP
       listener: { get_resource: listener }
+      name:
+        list_join: [ '-', [ { get_param: "OS::stack_name" }, 'pool' ]]
 
   listener:
     type: OS::Octavia::Listener
@@ -115,12 +117,16 @@ resources:
       loadbalancer: { get_resource: loadbalancer }
       protocol: HTTP
       protocol_port: { get_param: lb_port }
+      name:
+        list_join: [ '-', [ { get_param: "OS::stack_name" }, 'listener' ]]
 
   loadbalancer:
     depends_on: [ router_subnet_connect ]
     type: OS::Octavia::LoadBalancer
     properties:
       vip_subnet: { get_resource: syseleven_subnet }
+      name:
+        list_join: [ '-', [ { get_param: "OS::stack_name" }, 'lb' ]]
 
 
   floating_ip:

@@ -32,3 +32,16 @@ openstack stack show <stackName> -c outputs
 ```
 
 The Anyapp is reachable via `http://<loadbalancerIP>` and shows the IP of the currently-used backend server.
+
+## Configure allowed client IP addresses
+
+By default the load balancer listener will accept connections from everywhere.
+To limit the client IP addresses you may set allowed CIDRs on the listener, e.g.
+
+```shell
+openstack loadbalancer listener set --allowed-cidr 172.20.0.0/16 --allowed-cidr 10.0.0.0/8 <listenerName>
+```
+
+The listener name in this example template is based on the stack name: `<listenerName> = <stackName>-listener`.
+
+To allow access to everyone again, set the allowed CIDR to 0.0.0.0/0.
