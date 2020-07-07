@@ -1,5 +1,5 @@
 parameters:
-  image: Ubuntu Xenial 16.04 (2020-07-02)
+  image: Ubuntu Xenial 16.04 (2020-07-07)
   ssh_keys:
     - 'ssh-rsa AAAAB3 [...] evCC62Lw== user@host'
 
