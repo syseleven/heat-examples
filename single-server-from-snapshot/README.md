@@ -27,7 +27,7 @@ $ openstack server image create --name <MyInstanceSnapshotName> <MyInstanceName>
 | min_ram          | 0                                                                                                         |
 | name             | jumphostsnapshot                                                                                          |
 | owner            | xxxxxxxx931c4gggggf946yyyyy                                                                               |
-| properties       | base_image_ref='34faf858-f2e9-4656-93ac-fcc8371a9877', basename='Ubuntu Xenial 16.04 (2020-07-09) ...... '|
+| properties       | base_image_ref='34faf858-f2e9-4656-93ac-fcc8371a9877', basename='Ubuntu Xenial 16.04 (2020-07-18) ...... '|
 | protected        | False                                                                                                     |
 | schema           | /v2/schemas/image                                                                                         |
 | size             | None                                                                                                      |
