@@ -1,0 +1,17 @@
+# copy this file to group-env.yaml and adapt it to your needs.
+
+parameters:
+
+  # This example requires a dedicated network that customers can acquire upon request
+  dedicated_public_network: ext-dedicated
+
+  # Used resources can be configured with the following parameters
+  servers_number: 1
+  servers_flavor: m1c.tiny
+  servers_image: Ubuntu Xenial 16.04 (2020-08-23)
+
+  # Please exchange the ssh public keys below with yours
+  ssh_pubkey_name: yourkeynamehere
+  ssh_pubkeys:
+    - 'ssh-rsa AAAAB3N [...] 90fQQRnnQ== user@host'
+

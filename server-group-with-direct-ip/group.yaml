@@ -1,0 +1,67 @@
+heat_template_version: 2016-04-08
+
+# you can start this stack using the following command:
+#
+#   openstack stack create --wait -t group.yaml -e group-env.yaml <stackName>
+#
+# after copying group-env-sample.yaml to group-env.yaml and adapting it to your needs.
+
+description: deploys a group of servers with only external network and directly attached public ips.
+
+parameters:
+
+  servers_number:
+    type: string
+    default: 1
+  servers_flavor:
+    type: string
+    default: m1c.tiny
+    constraints:
+      - custom_constraint: nova.flavor
+  servers_image:
+    type: string
+    default: Ubuntu Xenial 16.04 (2020-08-23)
+    constraints:
+      - custom_constraint: glance.image
+  dedicated_public_network:
+    type: string
+    constraints:
+      - custom_constraint: neutron.network
+  ssh_pubkey_name:
+    type: string
+    constraints:
+      - custom_constraint: nova.keypair
+  ssh_pubkeys:
+    type: comma_delimited_list
+
+resources:
+
+  group_secgroup:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: allow incoming web traffic from anywhere.
+      name:
+        list_join: [ " ", [ "allow incoming traffic to" , { get_param: "OS::stack_name" } ]]
+      rules:
+        - {direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 22, port_range_max: 22, protocol: tcp}
+        - {direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 80, port_range_max: 80, protocol: tcp}
+        - {direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 443, port_range_max: 443, protocol: tcp}
+        - direction: ingress
+
+  servers:
+    type: OS::Heat::ResourceGroup
+    depends_on: group_secgroup
+    properties:
+      count: { get_param: servers_number }
+      resource_def:
+        type: server.yaml
+        properties:
+          name:
+            list_join: [ '-', [ { get_param: "OS::stack_name" }, 'server', "%index%" ]]
+          flavor: { get_param: servers_flavor }
+          image: { get_param: servers_image }
+          network_id: { get_param: dedicated_public_network}
+          secgroup_id: { get_resource: group_secgroup }
+          ssh_pubkey_name: { get_param: ssh_pubkey_name }
+          ssh_pubkeys: { get_param: ssh_pubkeys }
+

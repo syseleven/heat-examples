@@ -1,0 +1,114 @@
+heat_template_version: 2016-04-08
+
+description: single server resource used by resource groups.
+
+parameters:
+
+  name:
+    type: string
+  flavor:
+    type: string
+    constraints:
+      - custom_constraint: nova.flavor
+  image:
+    type: string
+    constraints:
+      - custom_constraint: glance.image
+  network_id:
+    type: string
+    constraints:
+      - custom_constraint: neutron.network
+  secgroup_id:
+    type: string
+    constraints:
+      - custom_constraint: neutron.security_group
+  ssh_pubkey_name:
+    type: string
+    constraints:
+      - custom_constraint: nova.keypair
+  ssh_pubkeys:
+    type: comma_delimited_list
+
+resources:
+
+#  server_secgroup:
+#    type: OS::Neutron::SecurityGroup
+#    properties:
+#      description: allow incoming web traffic from anywhere.
+#      name:
+#        list_join: [ " ", [ "allow incoming traffic to" , { get_param: name } ]]
+#      rules:
+#        - {direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 22, port_range_max: 22, protocol: tcp}
+#        - {direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 80, port_range_max: 80, protocol: tcp}
+#        - {direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 443, port_range_max: 443, protocol: tcp}
+#        - direction: ingress
+
+  cloud-init-config:
+   type: OS::Heat::CloudConfig
+   properties:
+     cloud_config:
+       users:
+         - name: syseleven
+           gecos: Syseleven Stack user
+           sudo: ALL=(ALL) NOPASSWD:ALL
+           shell: /bin/bash
+           lock-passwd: false
+           ssh-import-id: { get_param: ssh_pubkey_name }
+           ssh-authorized-keys: { get_param: ssh_pubkeys }
+           ssh_authorized_keys: { get_param: ssh_pubkeys }
+       write_files:
+         -  content: |
+              #!/usr/bin/env bash
+              echo "# Started SSH key injection"
+              # wait for valid network
+              echo "# Waiting for valid network"
+              until ping -c 1 syseleven.de > /dev/null; do sleep 2; done
+              echo "# Found valid network"
+              # wait for a valid user
+              echo "# Waiting for a valid user"
+              until id syseleven > /dev/null; do sleep 2; done
+              echo "# Found id: syseleven"
+              # create ssh folder
+              if [ ! -d "/home/syseleven/.ssh/" ]; then
+              mkdir /home/syseleven/.ssh
+              fi
+              # create empty file for next command not to run into an error
+              if [ ! -f "/home/syseleven/.ssh/authorized_keys" ]; then
+              touch /home/syseleven/.ssh/authorized_keys
+              fi
+              # pull openssh key if exists
+              if [ $(curl -sL -w "%{http_code}" "http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key" -o /dev/null) -eq 200 ]; then
+              curl -s "http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key" >> /home/syseleven/.ssh/authorized_keys
+              echo "# Open SSH key file provided via OpenStack API, injecting"
+              else
+              echo "# Open SSH key file not provided via OpenStack API, skipping injection"
+              fi
+              # correct permissions
+              chown -R syseleven: /home/syseleven
+              echo "# Finished SSH key injection"
+            path: /root/inject_userkey
+            permissions: 0700
+       runcmd:
+         - /root/inject_userkey
+
+  server_instance:
+    type: OS::Nova::Server
+    depends_on: [ server_port, cloud-init-config ]
+    properties:
+      name: { get_param: name }
+      flavor: { get_param: flavor }
+      image: { get_param: image }
+      key_name: { get_param: ssh_pubkey_name }
+      user_data_format: RAW
+      user_data: { get_resource: cloud-init-config }
+      networks:
+        - port: { get_resource: server_port }
+
+  server_port:
+    type: OS::Neutron::Port
+#    depends_on: server_secgroup
+    properties:
+      network: { get_param: network_id }
+      #security_groups: [ get_resource: server_secgroup ]
+      security_groups: [ get_param: secgroup_id ]
+
