@@ -1,11 +1,10 @@
 # OpenStack Heat examples
 
-[![Build Status](https://travis-ci.org/syseleven/heat-examples.svg?branch=master)](https://travis-ci.org/syseleven/heat-examples)
 [![GitHub license](https://img.shields.io/github/license/syseleven/heat-examples.svg)](https://github.com/syseleven/heat-examples/blob/master/LICENSE)
 
 ## What is "Heat"?
 
-Heat is a service to orchestrate multiple composite cloud applications using templates.  
+Heat is a service to orchestrate multiple composite cloud applications using templates.
 Each template is launched into a so called 'heat stack'.
 
 ## What are these examples for?
@@ -18,7 +17,7 @@ This library demonstrates certain aspects of deployment with heat but does not c
 
 ## Getting Started
 
-To work through these examples you need to install OpenStack command line clients as described here:  
+To work through these examples you need to install OpenStack command line clients as described here:
 <http://docs.openstack.org/user-guide/content/install_clients.html>
 
 or
