@@ -172,7 +172,7 @@ resources:
               echo "## Installing openstack client and plugins"
               apt install -q -y python3-minimal python3-pip
               pip3 install -U pip setuptools
-              pip3 install python-openstackclient python-heatclient python-designateclient python-barbicanclient python-glanceclient python-neutronclient --ignore-installed PyYAML
+              pip3 install python-openstackclient python-heatclient python-designateclient python-barbicanclient python-glanceclient python-neutronclient python-octaviaclient --ignore-installed PyYAML
               pip3 install cryptography==3.3.2 
               if which openstack >/dev/null; then (echo "# Finished openstack client setup"; exit 0) else (echo "# Error while installing openstack client"; exit 99); fi
            path: /root/openstackclient-install.sh
