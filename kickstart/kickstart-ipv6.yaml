@@ -3,7 +3,7 @@ heat_template_version: 2016-04-08
 # You can deploy this template using one of the following commands:
 # 
 # SSH public Key file uploaded to Dashboard (Horizon) - RSA only
-# 'openstack stack create -t kickstart.yaml --parameter key_name=<publicKeyName> <stackName>'
+# 'openstack stack create -t kickstart-ipv6.yaml --parameter key_name=<publicKeyName> <stackName>'
 # 
 # or you can just paste it into the web-ui under "orchestration" >> "launch stack"
 #
