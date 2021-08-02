@@ -7,7 +7,7 @@ heat_template_version: 2016-04-08
 # 
 # or you can just paste it into the web-ui under "orchestration" >> "launch stack"
 #
-# after successful stack creation you can login with 
+# after successful stack creation you can log in with 
 # ssh -l syseleven <floatingIP> -A
 #
 
