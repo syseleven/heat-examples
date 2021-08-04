@@ -1,13 +1,13 @@
-heat_template_version: 2016-10-14
+heat_template_version: 2016-04-08
 #
 # You can deploy this template using one of the following commands:
 # 
 # SSH public Key file uploaded to Dashboard (Horizon) - RSA only
-# 'openstack stack create -t kickstart.yaml --parameter key_name=<publicKeyName> <stackName>'
+# 'openstack stack create -t kickstart-ipv6.yaml --parameter key_name=<publicKeyName> <stackName>'
 # 
 # or you can just paste it into the web-ui under "orchestration" >> "launch stack"
 #
-# after successful stack creation you can login with 
+# after successful stack creation you can log in with 
 # ssh -l syseleven <floatingIP> -A
 #
 
@@ -43,8 +43,12 @@ resources:
       name: 
         list_join: [ '-', [ { get_param: "OS::stack_name" }, 'kickstart', 'allow incoming traffic, tcp port 22 and icmp']]
       rules: 
-        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, port_range_min: 22, port_range_max: 22, protocol: tcp } 
-        - { direction: ingress, remote_ip_prefix: 0.0.0.0/0, protocol: icmp } 
+      #IPv4 rule
+        - { direction: ingress, ethertype: IPv4, remote_ip_prefix: 0.0.0.0/0, port_range_min: 22, port_range_max: 22, protocol: tcp }
+        - { direction: ingress, ethertype: IPv4, remote_ip_prefix: 0.0.0.0/0, protocol: icmp }
+      #IPv6 rule
+        - { direction: ingress, ethertype: IPv6, remote_ip_prefix: "::/0", port_range_min: 22, port_range_max: 22, protocol: tcp }
+        - { direction: ingress, ethertype: IPv6, remote_ip_prefix: "::/0", protocol: icmp }
 
   host:
     type: OS::Nova::Server
@@ -213,6 +217,21 @@ resources:
       allocation_pools:
       - {start: 10.0.0.10, end: 10.0.0.250}
 
+  subnet6:
+    type: OS::Neutron::Subnet
+    depends_on: [ net ]
+    properties:
+      ip_version: 6
+      # possible values: slaac, dhcpv6-stateless, dhcpv6-stateful
+      ipv6_address_mode: dhcpv6-stateful
+      ipv6_ra_mode: dhcpv6-stateful
+      name:
+        list_join: [ '-', [ { get_param: "OS::stack_name" }, 'kickstart', 'subnet6']]
+      network: { get_resource: net }
+      # Use this to use one of our globally routable addresses:
+      subnetpool: "subnet-pool-v6_1"
+      gateway_ip: null
+
   router:
     type: OS::Neutron::Router
     properties:
@@ -226,6 +245,14 @@ resources:
     properties:
       router: { get_resource: router }
       subnet: { get_resource: subnet }
+
+  # This is extra for IPv6:
+  router_subnet6_bridge:
+    type: OS::Neutron::RouterInterface
+    depends_on: [ subnet6, router ]
+    properties:
+      router: { get_resource: router }
+      subnet: { get_resource: subnet6 }
 
   floating_ip:
     type: OS::Neutron::FloatingIP
