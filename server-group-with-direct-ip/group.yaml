@@ -20,7 +20,7 @@ parameters:
       - custom_constraint: nova.flavor
   servers_image:
     type: string
-    default: Ubuntu Xenial 16.04 (2020-08-23)
+    default: Ubuntu Jammy 22.04 (2022-08-11)
     constraints:
       - custom_constraint: glance.image
   dedicated_public_network:

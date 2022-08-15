@@ -40,7 +40,7 @@ resources:
     type: OS::Nova::Server
     properties:
       key_name: { get_param: key_name }
-      image: Ubuntu Xenial 16.04 (2020-08-23)
+      image: Ubuntu Jammy 22.04 (2022-08-11)
       flavor: m1.tiny
       user_data_format: RAW
       networks:
