@@ -8,7 +8,7 @@ parameters:
   # Used resources can be configured with the following parameters
   servers_number: 1
   servers_flavor: m1c.tiny
-  servers_image: Ubuntu Xenial 16.04 (2020-08-23)
+  servers_image: Ubuntu Jammy 22.04 (2022-08-11)
 
   # Please exchange the ssh public keys below with yours
   ssh_pubkey_name: yourkeynamehere

@@ -1,5 +1,5 @@
 parameters:
-  image: Ubuntu Xenial 16.04 (2020-08-23)
+  image: Ubuntu Jammy 22.04 (2022-08-11)
   ssh_keys:
     - 'ssh-rsa AAAAB3 [...] evCC62Lw== user@host'
 

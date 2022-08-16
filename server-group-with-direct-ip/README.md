@@ -17,7 +17,7 @@ The file group.yaml references the resources in server.yaml via the resource gro
   `dedicated_public_network`: specifies the dedicated network that the customer must have acquired before
   `servers_number`: specifies the number of servers to be built, default: 1
   `servers_flavor`: specifies the flavor to use for each server, default: m1c.tiny
-  `servers_image`: specifies the image to initialize each server, default: Ubuntu Xenial 16.04 (2020-08-23)
+  `servers_image`: specifies the image to initialize each server, default: Ubuntu Jammy 22.04 (2022-08-11)
   `ssh_pubkey_name`: specifies the name of a public ssh key previously uploaded to keystone
   `ssh_pubkeys`: specifies a list of public ssh keys directly
 

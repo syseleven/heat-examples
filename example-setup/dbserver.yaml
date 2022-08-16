@@ -54,7 +54,7 @@ resources:
        apt:
          sources:
            percona_repo:
-             source: "deb http://repo.percona.com/apt xenial main"
+             source: "deb http://repo.percona.com/apt jammy main"
              keyid: 8507EFA5 
              filename: xtradb.list
 
