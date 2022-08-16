@@ -22,7 +22,7 @@ parameters:
    
   image:
     type: string
-    default: Ubuntu Bionic 18.04 (2021-07-22)
+    default: Jammy 22.04 (2022-08-11)
     constraints:
       - custom_constraint: glance.image
   flavor:
