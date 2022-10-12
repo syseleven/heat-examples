@@ -13,6 +13,6 @@
  \   .'  .'  \ \.'                |___/
  \.' ._ \   .
    .'  \ \.'             For documentation please visit
-   \   .                 https://doc.syselevenstack.com/en/
+   \   .                 https://docs.syseleven.de/syseleven-stack/en/
     \.'
 =========================================================================

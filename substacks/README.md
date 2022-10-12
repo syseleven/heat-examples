@@ -4,13 +4,13 @@ This template can be used to logically seperate and deploy distributed services 
 
 ## Prerequisites
 
-* You should be able to use simple heat templates, like shown in the [first steps tutorial](https://doc.syselevenstack.com/en/tutorials/firststeps/).
-* You know the basics of using the [OpenStack CLI-Tools](https://doc.syselevenstack.com/en/tutorials/openstack-cli/).
-* Environment variables are set, like shown in the [API-Access-Tutorial](https://doc.syselevenstack.com/en/tutorials/api-access/).
+* You should be able to use simple heat templates, like shown in the [first steps tutorial](https://docs.syseleven.de/syseleven-stack/en/tutorials/firststeps).
+* You know the basics of using the [OpenStack CLI-Tools](https://docs.syseleven.de/syseleven-stack/en/howtos/openstack-cli).
+* Environment variables are set, like shown in the [API-Access-Tutorial](https://docs.syseleven.de/syseleven-stack/en/tutorials/api-access).
 
 ## How to start this setup
 
-* Download this template. e.g.: `git clone https://github.com/syseleven/heattemplates-examples.git`
+* Download this template. e.g.: `git clone https://github.com/syseleven/heat-examples.git`
 * `$ cd /heatteampltes-examples/substacks/`
 * Start the setup:
 
