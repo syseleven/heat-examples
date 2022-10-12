@@ -28,7 +28,7 @@ ssh syseleven@< Floating IP > -A
 ```
 
 The home directory has a prepared ["openrc" file](https://docs.syseleven.de/syseleven-stack/en/tutorials/api-access#setting-up-the-environment-variables),
-which allows you to work with openstack endpoints. The required values can be found under [Project --> Access and Security --> API Access](https://dashboard.cloud.syseleven.net/horizon/project/access_and_security/?tab=access_security_tabs__api_access_tab) --> View Credentials.
+which allows you to work with openstack endpoints. The required values can be found under [Project --> API Access](https://cloud.syseleven.de/horizon/project/api_access/) --> View Credentials.
 
 Open it with a text editor of your choice.
 
