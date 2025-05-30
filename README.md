@@ -7,6 +7,12 @@
 Heat is a service to orchestrate multiple composite cloud applications using templates.
 Each template is launched into a so called 'heat stack'.
 
+> [!NOTE]
+> Heat is only available in the following regions: **CBK**, **DBL**, and **FES**.  
+> 
+> It is **not** supported in **DUS2** and **HAM1**.  
+> For infrastructure automation in these regions, please refer to our [Terraform examples repository](https://github.com/syseleven/terraform-examples).
+
 ## What are these examples for?
 
 These heat examples are meant to assist you while getting started with cloud computing.
